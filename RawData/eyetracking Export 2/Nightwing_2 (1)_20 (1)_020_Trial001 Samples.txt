@@ -1,0 +1,51 @@
+## [BeGaze]
+## Converted from:	C:\Users\CDR\Documents\Recorded Data\Experiment Data\Nightwing_2\20-[d7b6261f-30fd-4a56-a7f0-e1420fb6d5b3]\20-4-recording.idf
+## Date:	07.03.2017 15:02:16
+## Version:	BeGaze 3.7.42
+## IDF Version:	10
+## Sample Rate:	30
+## Separator Type:	Trial
+## Trial Count:	1
+## Uses Plane File:	False
+## Number of Samples:	18
+## Reversed:	none
+## [Run]
+## Subject:	20 (1)
+## Description:	Run20
+## [Calibration]
+## Calibration Area:	1280	960
+## [Geometry]
+## Stimulus Dimension [mm]:	1280	960
+## Head Distance [mm]:	1450
+## [Hardware Setup]
+## System ID:	
+## Operating System :	
+## IView X Version:	
+## [Filter Settings]
+## Heuristics:	False
+## Heuristics Stage:	0
+## Bilateral:	False
+## Gaze Cursor Filter:	False
+## Saccade Length [px]:	0
+## Filter Depth [ms]:	0
+## Format:	LEFT, RIGHT, DIAMETER, POR, MSG
+##
+Time	Type	Trial	L Dia X [px]	L Dia Y [px]	L Pupil Diameter [mm]	R Dia X [px]	R Dia Y [px]	R Pupil Diameter [mm]	B POR X [px]	B POR Y [px]	L POR X [px]	L POR Y [px]	R POR X [px]	R POR Y [px]	B Event Info	Stimulus
+16649864891	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16649898434	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16649931429	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16649964712	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16649997992	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650031231	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650064508	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650097773	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650131109	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650164359	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650197712	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650230909	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650264286	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650297478	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650330769	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650364090	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650397280	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
+16650430557	SMP	1	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	-	20-4-recording.avi
