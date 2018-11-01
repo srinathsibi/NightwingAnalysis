@@ -8,7 +8,7 @@ import numpy as np
 #Order of events:
 #1. Get participant number
 #2. Make Sub-Folder for subject information
-# 3. Write the information into a information file for each participant
+# 3. Write the top level information into a file for each participant
 # 4. Make a text file for all the relevant data by using
     #if row[0].split('\t')[0] == '##':
         #print "\nEnd of Intro Block at line: ", i, "\n"
@@ -17,8 +17,8 @@ import numpy as np
 PARTICIPANTNUMBER = 0;
 #############Get participant number#########################
 def GetParticipantNumber(filereader):
-    #print row[0].split('\t')[0], " : ", type(row[0].split('\t')[0]), "\n"
     pnum = 0
+    #filereader.seek(0)#Seek the top of the file
     for i,row in enumerate(filereader):
         try:
             if (row[0].split('\t')[0]).split(' ')[1] == 'Subject:':
@@ -28,10 +28,21 @@ def GetParticipantNumber(filereader):
             pass
     return pnum
 ###############Get and Write Intro Info into the subfolder########
-def WriteIntroInfo(filereader):
+def WriteIntroInfoAndStudyInfo(filereader):
     if os.path.exists('P' + str(int(PARTICIPANTNUMBER))):
         os.chdir('P' + str(int(PARTICIPANTNUMBER)))
-        print "Inside the participant folder P" + str(int(PARTICIPANTNUMBER)) ,"\n"
+        introoutfile = open('IntroP'+str(int(PARTICIPANTNUMBER)),'w')
+        introoutfilewriter = csv.writer(introoutfile)
+        studyinfofile = open('P'+str(int(PARTICIPANTNUMBER)),'w')
+        studyinfofilewriter = csv.writer(studyinfofile)
+        for i,row in enumerate(filereader):
+            if i <=31:
+                introoutfilewriter.writerow(row)
+            if i>31:
+                studyinfofilewriter.writerow(row)
+        print "Intro Information written inside the participant folder P" + str(int(PARTICIPANTNUMBER)) ,"\n"
+        introoutfile.close()
+        studyinfofile.close()
         os.chdir('../')
 ###############Starting Main Function######################
 if __name__ == '__main__':
@@ -54,5 +65,6 @@ if __name__ == '__main__':
             print "Participant folder created.\n"
         #MAKE A ELSE STATEMENT FOR IF THE FOLDER ALREADY EXISTS
         #write intro information into a txt file in subfolder for each participant
-        WriteIntroInfo(csv_file)
+        file.seek(0)#This automatically resets csv_file which is the reader to the start of the file.
+        WriteIntroInfoAndStudyInfo(csv_file)
         file.close()
