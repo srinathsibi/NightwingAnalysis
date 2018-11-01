@@ -38,3 +38,9 @@ Time	Type	Trial	L Dia X [px]	L Dia Y [px]	L Pupil Diameter [mm]	R Dia X [px]	R D
 
 	For now, I have ignored empty lines in processing the files. But I need to find out what these are from Dave Miller.
 
+6. In order to make sure that all participant numbers are in fact the actual participant numbers, I had to manually edit a few files so that Subject value at the top of the file was a integer and not anything else. Short recordings with less than a MB of data were deleted.
+6. In order to make sure that all participant numbers are in fact the actual participant numbers, I had to manually edit a few files so that Subject value at the top of the file was a integer and not anything else. Short recordings with less than a MB of data were deleted.
+6. In order to make sure that all participant numbers are in fact the actual participant numbers, I had to manually edit a few files so that Subject value at the top of the file was a integer and not anything else. Short recordings with less than a MB of data were deleted.
+6. In order to make sure that all participant numbers are in fact the actual participant numbers, I had to manually edit a few files so that Subject value at the top of the file was a integer and not anything else. Short recordings with less than a MB of data were deleted.
+6. In order to make sure that all participant numbers are in fact the actual participant numbers, I had to manually edit a few files so that Subject value at the top of the file was a integer and not anything else. Short recordings with less than a MB of data were deleted.
+6. In order to make sure that all participant numbers are in fact the actual participant numbers, I had to manually edit a few files so that Subject value at the top of the file was a integer and not anything else. Short recordings with less than a MB of data were deleted.
