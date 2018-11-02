@@ -10,6 +10,9 @@ import numpy as np
 #2. Make Sub-Folder for subject information
 # 3. Write the top level information into a file for each participant
 # 4. Make a text file for all the relevant data by using
+# 5. Clip Data further on the basis of markers
+#   5.1 1st marker is still a few minutes away from the start of baseline
+#   5.2 Need a function to identify the start point of all markers. Then clip 2 minutes before the start of marker 1.
     #if row[0].split('\t')[0] == '##':
         #print "\nEnd of Intro Block at line: ", i, "\n"
         #row[0].split('\t') is the list of all elements in a row for the relevant Data
