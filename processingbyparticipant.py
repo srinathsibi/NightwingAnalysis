@@ -11,7 +11,6 @@
 import glob, os, csv, sys
 import matplotlib as plt
 import numpy as np
-
 #Function to process iMotions data
 def ProcessiMoData():
     fileinfo =[]#Top level file information. To be written
