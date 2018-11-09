@@ -2,7 +2,7 @@
 #Purpose: To process the raw eye tracker files, quad video and the iMotions data
 #Note:
 #1. After the data was reorged by participants number, we are processing each participant one at a time.
-#2. We are clipping about 3 minutes before marker 1(Participant enters highway) and until marker 4 (study end)
+#2. We are clipping 3 minutes before marker 1(Participant enters highway) and until marker 10 (study end)
 #3. We might have to create global variables for each of the time start variables and time end varibales since markers are constant,
 #4. Running this file on the nightwing participants data will create nearly double the amount of data.
 #but time stamp formats are all different
@@ -10,16 +10,16 @@
 #STEPS: #1. Process the iMotions Data. It has some of the sim data, the physio data and the marker information. It is also quite large, beware!
 #2. The time for the iMotions file is not UTC, it is coded from standadrd military clock. It is imoprtant to note that event though the file says UTC
 #timestamp, it is not!
+#Note: The first column in every iMotionsClipped.csv file is a Time in secs. This is the shimmer file time converted to time in seconds. 0 is when marker 1 is placed.
 import glob, os, sys
 import matplotlib as plt
 import numpy as np
 import csv
-iMotionsMarker1TimeAbs =0.00#Abs Marker 1 time for iMotionsData
-iMotionsMarker1Time =0.00#Marker 1 time for iMotionsData
+
 #Function to process iMotions data
 def ProcessiMoData():
-    global iMotionsMarker1TimeAbs
-    global iMotionsMarker1Time
+    iMotionsMarker1TimeAbs=0.00#Abs Marker 1 time for iMotionsData
+    iMotionsMarker1Time=0.00#Marker 1 time for iMotionsData
     fileinfo =[]#Top level file information. To be written
     time_abs = []#Calculating absolute time for iMotions Data
     iMotionsfile = open(glob.glob('P0??.txt')[0])#There is no other discrening feature to the name of the iMotions file
@@ -45,16 +45,22 @@ def ProcessiMoData():
     print "\n\nMarker 1 Time Stamp : " , iMotionsMarker1Time ,"\n\n"
     iMotionsfile.seek(0)#Get back to top of the file again
     #Skipping the first 6 lines
-    i = 1
-    while i<=6:
-        next(iMotionsReader)
-        i=i+1
-    #Writing the rows with markers from 1 onwards. Need to clip the end at some time.
+    #i = 1
+    #while i<=6:
+    #    next(iMotionsReader)
+    #    i=i+1
+    skiplines(iMotionsReader,6)
+    #Writing the rows with markers from 1 onwards
     for row in iMotionsReader:
         try:
-            if float(row[0].split('\t')[15]) >= 1:
+            if float(row[0].split('\t')[9].split('_')[1]) > (iMotionsMarker1Time-300000):#We are starting the clipped file 4 min 30 seconds mins before the 1 Marker.
+            #To do this because of the structure of the iMotions Time data, we are going to be subtracting 430,000 from the time or 4 min and 30 seconds
+            #if float(row[0].split('\t')[15]) >= 1:
                 #print "Marker: ", float(row[0].split('\t')[15])
-                outwriter.writerow(row)
+                deltat = iMotionsTimeConverter(float(row[0].split('\t')[9].split('_')[1])) - iMotionsMarker1TimeAbs
+                newrow = [item for item in row[0].split('\t')]
+                newrow.insert(0,deltat)
+                outwriter.writerow(newrow)
         except ValueError:
             pass
     #Writing the info file
@@ -62,10 +68,19 @@ def ProcessiMoData():
     iMotionsinfowriter = csv.writer(iMotionsinfofile)
     for info in fileinfo:
         iMotionsinfowriter.writerow(info)
-    iMotionsinfowriter.writerow(headerrow)
+    newheader = headerrow[0].split('\t')
+    newheader.insert(0,'Time(in seconds)')
+    iMotionsinfowriter.writerow(newheader)
     iMotionsinfofile.close()
     iMotionsfile.close()
     outfile.close()
+#Function to skip lines in the csv files
+def skiplines(fr, lines):
+    #fp is file reader and lines is the number of lines to skip
+    i = 1
+    while i<=lines:
+        i = i+1
+        row = next(fr)
 #Function to convert the time read into number of seconds from the start
 def iMotionsTimeConverter(inputcode):
     decimal = float(inputcode%1000)/1000
