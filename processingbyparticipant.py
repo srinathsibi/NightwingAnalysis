@@ -11,7 +11,7 @@
 #2. The time for the iMotions file is not UTC, it is coded from standadrd military clock. It is imoprtant to note that event though the file says UTC
 #timestamp, it is not!
 #Note: The first column in every iMotionsClipped.csv file is a Time in secs. This is the shimmer file time converted to time in seconds. 0 is when marker 1 is placed.
-import glob, os, sys
+import glob, os, sys, shutil
 import matplotlib as plt
 import numpy as np
 import csv
@@ -91,6 +91,13 @@ def iMotionsTimeConverter(inputcode):
     hours = float(inputcode)
     time_abs = hours*3600 + mins*60 + secs + decimal
     return time_abs
+#Function to move files to some path relative to the current directory. Moves all files in the filelist
+def MoveFileToClippedData(filelist, target_relativepath):
+    if not os.path.exists('ClippedData'):
+        os.makedirs('ClippedData/')
+        print "clippedData folder created inside participant folder!"
+    for file in filelist:
+        shutil.move(file, target_relativepath+file)
 #in the main function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder
@@ -102,4 +109,5 @@ for foldername in listoffolders:
     os.chdir(foldername+'/')#Navigating into each folder
     print "\n\n\nInside the participant data folder : ",foldername,'\n'
     ProcessiMoData()#Function to process the iMotions Data
+    MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
     os.chdir('../')#Navigating back into the Data folder
