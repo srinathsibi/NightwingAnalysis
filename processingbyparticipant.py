@@ -10,21 +10,23 @@
 #STEPS: #1. Process the iMotions Data. It has some of the sim data, the physio data and the marker information. It is also quite large, beware!
 #2. The time for the iMotions file is not UTC, it is coded from standadrd military clock. It is imoprtant to note that event though the file says UTC
 #timestamp, it is not!
-import glob, os, csv, sys
+import glob, os, sys
 import matplotlib as plt
 import numpy as np
+import csv
+iMotionsMarker1TimeAbs =0.00#Abs Marker 1 time for iMotionsData
+iMotionsMarker1Time =0.00#Marker 1 time for iMotionsData
 #Function to process iMotions data
 def ProcessiMoData():
-    iMotionsMarker1TimeAbs =0.00#Abs Marker 1 time for iMotionsData
-    iMotionsMarker1Time =0.00#Marker 1 time for iMotionsData
+    global iMotionsMarker1TimeAbs
+    global iMotionsMarker1Time
     fileinfo =[]#Top level file information. To be written
     time_abs = []#Calculating absolute time for iMotions Data
     iMotionsfile = open(glob.glob('P0??.txt')[0])#There is no other discrening feature to the name of the iMotions file
     iMotionsReader = csv.reader(iMotionsfile)
     #Opening a new file for writing. I am labelling the file as "Clipped"
-    outfile = open('iMotionsClipped.txt','w')
-    outwriter = csv.writer(outfile)
-    # We need to read and store the first 4 line of the iMotions file in the clipped data folder, discard line 5, since it is empty and keep line 6, since it is the header line
+    outfile = open('iMotionsClipped.csv','wb')
+    outwriter = csv.writer(outfile)# We need to read and store the first 4 line of the iMotions file in the clipped data folder, discard line 5, since it is empty and keep line 6, since it is the header line
     i = 1
     while i<=5:
         fileinfo.append(next(iMotionsReader))
@@ -47,14 +49,23 @@ def ProcessiMoData():
     while i<=6:
         next(iMotionsReader)
         i=i+1
-    #Reading First Row and writing it manually.
-    #firstrow = next(iMotionsReader)#Reading the first row to get the time start and get the first time stamp
-    #time_abs.append(0.00)
-    #firsttimestamp = iMotionsTimeConverter(float(firstrow[0].split('\t')[9].split('_')[1]))
-    #print "\n\nFirst Time Stamp : " , firsttimestamp ,"\n\n"
-
-    #for row in iMotionsReader:
-    #    print [row[0].split('\t')[9].split('_')[1] for row in filereader]#This is the time for the iMotions file.
+    #Writing the rows with markers from 1 onwards. Need to clip the end at some time.
+    for row in iMotionsReader:
+        try:
+            if float(row[0].split('\t')[15]) >= 1:
+                #print "Marker: ", float(row[0].split('\t')[15])
+                outwriter.writerow(row)
+        except ValueError:
+            pass
+    #Writing the info file
+    iMotionsinfofile = open('iMotionsInfo.csv','wb')
+    iMotionsinfowriter = csv.writer(iMotionsinfofile)
+    for info in fileinfo:
+        iMotionsinfowriter.writerow(info)
+    iMotionsinfowriter.writerow(headerrow)
+    iMotionsinfofile.close()
+    iMotionsfile.close()
+    outfile.close()
 #Function to convert the time read into number of seconds from the start
 def iMotionsTimeConverter(inputcode):
     decimal = float(inputcode%1000)/1000
