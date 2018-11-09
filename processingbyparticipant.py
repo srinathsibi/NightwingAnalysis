@@ -32,7 +32,6 @@ def ProcessiMoData():
         fileinfo.append(next(iMotionsReader))
         i=i+1
     headerrow = next(iMotionsReader)
-    print "\n\n\nTOP LEVEL INFO:\n\n",fileinfo,'\n\n',headerrow
     #Searching for the time at which simulator marker is 1
     for i,row in enumerate(iMotionsReader):
         iMotionsMarker1TimeAbs = iMotionsTimeConverter(float(row[0].split('\t')[9].split('_')[1]))
