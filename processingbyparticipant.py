@@ -101,11 +101,31 @@ def MoveFileToClippedData(filelist, target_relativepath):
 #Function to process Eye Tracker Files
 # 1. There are 5 lines to skip from the start
 # 2. Markers are labelled as 'user event' and the column next to it contains the counter for it as well
-def EyeTrackingData():
+# 3. Note that when moving files some of the participants don't have participant eye tracking exports
+def EyeTrackingDataProcessing(participantfolder):
+    FILE_PRESENT_ = None
+    try:
+        eyetrackingfile = open(glob.glob('Raw Data*.txt')[0])
+        eyetrackingreader = csv.reader(eyetrackingfile)
+        FILE_PRESENT_ = True
+    except IndexError:
+        print "!!!!! There is no eye tracker file for this participant: " + participantfolder
+        FILE_PRESENT_ = False
+        pass
+    if FILE_PRESENT_:
+        #First Read and Save top level information
+        i =1
+        eyetrackinginfofile = open('EyeTrackingInfo.csv', 'wb')
+        eyetrackinginfowriter = csv.writer(eyetrackinginfofile)
+        while i <=5:
+            row = next(eyetrackingreader)
+            eyetrackinginfowriter.writerow(row)
+            i = i +1
+        eyetrackinginfofile.close()
 
 #in the main function
 if __name__=='__main__':
-    os.chdir('Data/')#Moving to the data folder
+    os.chdir('Data/')#Moving to the data folder6
     #Now to query all the files that exist in the data folder
     listoffolders = os.listdir('.')
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
@@ -114,5 +134,6 @@ for foldername in listoffolders:
     os.chdir(foldername+'/')#Navigating into each folder
     print "\n\n\nInside the participant data folder : ",foldername,'\n'
     ProcessiMoData()#Function to process the iMotions Data
+    EyeTrackingDataProcessing(foldername)
     MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
     os.chdir('../')#Navigating back into the Data folder
