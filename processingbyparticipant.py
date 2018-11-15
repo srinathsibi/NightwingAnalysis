@@ -122,7 +122,6 @@ def EyeTrackingDataProcessing(participantfolder):
             eyetrackinginfowriter.writerow(row)
             i = i +1
         eyetrackinginfofile.close()
-
 #in the main function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6
