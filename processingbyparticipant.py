@@ -98,6 +98,11 @@ def MoveFileToClippedData(filelist, target_relativepath):
         print "clippedData folder created inside participant folder!"
     for file in filelist:
         shutil.move(file, target_relativepath+file)
+#Function to process Eye Tracker Files
+# 1. There are 5 lines to skip from the start
+# 2. Markers are labelled as 'user event' and the column next to it contains the counter for it as well
+def EyeTrackingData():
+
 #in the main function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder
