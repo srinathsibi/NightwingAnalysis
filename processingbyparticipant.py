@@ -91,6 +91,12 @@ def iMotionsTimeConverter(inputcode):
     hours = float(inputcode)
     time_abs = hours*3600 + mins*60 + secs + decimal
     return time_abs
+def ETTimeConverter(inputtime):
+    #print "Input time here is : ", inputtime
+    pieces = inputtime.split(':')
+    pieces_ = [float(i) for i in pieces]
+    time = pieces_[0] * 3600 + pieces_[1]*60 + pieces_[2] + pieces_[3]/1000
+    return time
 #Function to move files to some path relative to the current directory. Moves all files in the filelist
 def MoveFileToClippedData(filelist, target_relativepath):
     if not os.path.exists('ClippedData'):
@@ -102,8 +108,10 @@ def MoveFileToClippedData(filelist, target_relativepath):
 # 1. There are 5 lines to skip from the start
 # 2. Markers are labelled as 'user event' and the column next to it contains the counter for it as well
 # 3. Note that when moving files some of the participants don't have participant eye tracking exports
+# 4. Markers are in the 13th column in the file (index 12). Column 14 (index 13) contains the counter for the makrker
 def EyeTrackingDataProcessing(participantfolder):
     FILE_PRESENT_ = None
+    MARKER_PRESENT = False
     try:
         eyetrackingfile = open(glob.glob('Raw Data*.txt')[0])
         eyetrackingreader = csv.reader(eyetrackingfile)
@@ -122,6 +130,33 @@ def EyeTrackingDataProcessing(participantfolder):
             eyetrackinginfowriter.writerow(row)
             i = i +1
         eyetrackinginfofile.close()
+        for row in eyetrackingreader:
+            if row[12] == 'User Event' and float(row[13]) == 1:
+                print "Eye tracker marker 1 time : " , row[1] , "\n Converted: " , ETTimeConverter(row[1])
+                eyetracker1stmarkertime = row[1]
+                MARKER_PRESENT = True
+            elif row[12] == 'User Event':
+                MARKER_PRESENT = True # This value is serving as a marker for now
+        if not MARKER_PRESENT:
+            print " !!!!!! THIS PARTICIPANT EYE TRACKER INFO HAS NO MARKER 1 : ", foldername
+        # The clipped data writing can be done only for those with the MARKER_PRESENT = True, others have no eyetracker1stmarkertime to reference
+        if MARKER_PRESENT:
+            #Resetting to the top again
+            eyetrackingfile.seek(0)
+            #Now process the rest of the data. We need to clip at 3 min before the first marker
+            #Keep in mind, we have to convert the data before comparison, Luckily ETTimeConverter returns float for string input
+            skiplines(eyetrackingreader, 5)
+            #Beginning clipping process
+            etoutfile = open('EyetrackingClipped.csv' , 'wb')
+            etoutwriter = csv.writer(etoutfile)
+            for i,row in enumerate(eyetrackingreader):
+                try:
+                    if ETTimeConverter(row[1]) >= ETTimeConverter(eyetracker1stmarkertime) - ETTimeConverter('00:03:00:000'):
+                        etoutwriter.writerow(row)
+                except ValueError:
+                    print "********This participant data has a weird row at the 1st marker row, so we skip those rows.\n"
+                    pass
+            etoutfile.close()
 #in the main function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6
@@ -132,7 +167,7 @@ if __name__=='__main__':
 for foldername in listoffolders:
     os.chdir(foldername+'/')#Navigating into each folder
     print "\n\n\nInside the participant data folder : ",foldername,'\n'
-    ProcessiMoData()#Function to process the iMotions Data
+    #ProcessiMoData()#Function to process the iMotions Data
     EyeTrackingDataProcessing(foldername)
-    MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
+    #MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
     os.chdir('../')#Navigating back into the Data folder
