@@ -109,6 +109,8 @@ def MoveFileToClippedData(filelist, target_relativepath):
 # 2. Markers are labelled as 'user event' and the column next to it contains the counter for it as well
 # 3. Note that when moving files some of the participants don't have participant eye tracking exports
 # 4. Markers are in the 13th column in the file (index 12). Column 14 (index 13) contains the counter for the makrker
+# 5. The first column of the Eye Tracking data called 'RecordingTime [ms]' is kinda useless. So we pop that data out in both the info and clipped file and then
+# replace it with our own ETTimeConverter data.
 def EyeTrackingDataProcessing(participantfolder):
     FILE_PRESENT_ = None
     MARKER_PRESENT = False
@@ -127,12 +129,15 @@ def EyeTrackingDataProcessing(participantfolder):
         eyetrackinginfowriter = csv.writer(eyetrackinginfofile)
         while i <=5:
             row = next(eyetrackingreader)
+            if i ==5:
+                row.pop(0)# Removing the First Value RecordingTime and replacing with
+                row.insert(0,'Time (sec)')
             eyetrackinginfowriter.writerow(row)
             i = i +1
         eyetrackinginfofile.close()
         for row in eyetrackingreader:
             if row[12] == 'User Event' and float(row[13]) == 1:
-                print "Eye tracker marker 1 time : " , row[1] , "\n Converted: " , ETTimeConverter(row[1])
+                #print "Eye tracker marker 1 time : " , row[1] , "\n Converted: " , ETTimeConverter(row[1])
                 eyetracker1stmarkertime = row[1]
                 MARKER_PRESENT = True
             elif row[12] == 'User Event':
@@ -152,6 +157,8 @@ def EyeTrackingDataProcessing(participantfolder):
             for i,row in enumerate(eyetrackingreader):
                 try:
                     if ETTimeConverter(row[1]) >= ETTimeConverter(eyetracker1stmarkertime) - ETTimeConverter('00:03:00:000'):
+                        row.pop(0)#Removing the first value and replacing it with Time in seconds from ETTimeConverter
+                        row.insert(0, str(ETTimeConverter(row[0])- ETTimeConverter(eyetracker1stmarkertime)) )
                         etoutwriter.writerow(row)
                 except ValueError:
                     print "********This participant data has a weird row at the 1st marker row, so we skip those rows.\n"
@@ -167,7 +174,16 @@ if __name__=='__main__':
 for foldername in listoffolders:
     os.chdir(foldername+'/')#Navigating into each folder
     print "\n\n\nInside the participant data folder : ",foldername,'\n'
-    #ProcessiMoData()#Function to process the iMotions Data
+    ProcessiMoData()#Function to process the iMotions Data
     EyeTrackingDataProcessing(foldername)
-    #MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
+    try:
+        MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
+    except IOError:
+        print "There were no iMotions files here"
+        pass
+    try:
+        MoveFileToClippedData(['EyetrackingClipped.csv','EyeTrackingInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
+    except IOError:
+        print "There were no Eyetracking files here"
+        pass
     os.chdir('../')#Navigating back into the Data folder
