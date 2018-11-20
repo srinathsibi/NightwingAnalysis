@@ -10,6 +10,8 @@
 #STEPS: #1. Process the iMotions Data. It has some of the sim data, the physio data and the marker information. It is also quite large, beware!
 #2. The time for the iMotions file is not UTC, it is coded from standadrd military clock. It is imoprtant to note that event though the file says UTC
 #timestamp, it is not!
+#3. Video Cutting: The timings for the videos were coded by hand. The file is located in the top level 'Data' folder and contains the time for Marekr 1 for
+# Quad and Eye tracker videos given that they exist.
 #Note: The first column in every iMotionsClipped.csv file is a Time in secs. This is the shimmer file time converted to time in seconds. 0 is when marker 1 is placed.
 import glob, os, sys, shutil
 import matplotlib as plt
@@ -164,6 +166,18 @@ def EyeTrackingDataProcessing(participantfolder):
                     print "********This participant data has a weird row at the 1st marker row, so we skip those rows.\n"
                     pass
             etoutfile.close()
+#Function to Compare the end times of the iMotions and Eye Trackers and clip the longer one.
+#The difference in time is recordings will be calculated and stored in a test file.
+#NOTE : We will have to add to this file the video file and sim data end times as well
+#So we hold off on this till we clip sim data and some videos as well.
+#We also have to ensure that the extracts from iMotions are the same length as the data extracts from them. Then, we can by pass having to do some
+#painful video coding.
+def CompareAndRecordEndTimeDifferences():
+    print "Doing nothing here for now!"
+#We now process Sim data. In LibreOffice Calc, we have column 'AX' for the markers. This has been visually confirmed.
+#The headers are not available here. We have to decipher them from simCreator.
+def ProcessSimData():
+    print "Clipping Sim Data now."
 #in the main function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6
@@ -186,4 +200,5 @@ for foldername in listoffolders:
     except IOError:
         print "There were no Eyetracking files here"
         pass
+    CompareAndRecordEndTimeDifferences()
     os.chdir('../')#Navigating back into the Data folder
