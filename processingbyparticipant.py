@@ -177,7 +177,29 @@ def CompareAndRecordEndTimeDifferences():
 #We now process Sim data. In LibreOffice Calc, we have column 'AX' for the markers. This has been visually confirmed.
 #The headers are not available here. We have to decipher them from simCreator.
 def ProcessSimData():
-    print "Clipping Sim Data now."
+    #print "Clipping Sim Data now."
+    os.chdir('SimData/')# All sim data exists inside this folder
+    try:
+        simfile = open (glob.glob('*Drive_[0-9][0-9].plt')[0],'r')
+        simfilereader = csv.reader(simfile)
+        print "\n\nSim File opened!\n\n"
+    except IndexError:
+        try:
+            simfile = open (glob.glob('*Drive_[0-9].plt')[0],'r')
+            simfilereader = csv.reader(simfile)
+            print "\n\nSim File opened!\n\n"
+        except IndexError:
+            try:
+                simfile = open (glob.glob('*Drive_[0-9][0-9][0-9].plt')[0],'r')
+                simfilereader = csv.reader(simfile)
+                print "\n\nSim File opened!\n\n"
+            except IndexError:
+                print "***************All three syntaxes for sim file recognition failed! Error!********************"
+                pass
+#    for row in simfilereader:
+#        if
+    simfile.close()
+    os.chdir('../')
 #in the main function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6
@@ -190,6 +212,7 @@ for foldername in listoffolders:
     print "\n\n\nInside the participant data folder : ",foldername,'\n'
     ProcessiMoData()#Function to process the iMotions Data
     EyeTrackingDataProcessing(foldername)
+    ProcessSimData()
     try:
         MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
     except IOError:
@@ -200,5 +223,5 @@ for foldername in listoffolders:
     except IOError:
         print "There were no Eyetracking files here"
         pass
-    CompareAndRecordEndTimeDifferences()
+    #CompareAndRecordEndTimeDifferences()
     os.chdir('../')#Navigating back into the Data folder
