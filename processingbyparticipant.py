@@ -163,7 +163,7 @@ def EyeTrackingDataProcessing(participantfolder):
                         row.insert(0, str(ETTimeConverter(row[0])- ETTimeConverter(eyetracker1stmarkertime)) )
                         etoutwriter.writerow(row)
                 except ValueError:
-                    print "********This participant data has a weird row at the 1st marker row, so we skip those rows.\n"
+                    print "********This participant data has a weird row at the marker row, so we skip those rows.\n"
                     pass
             etoutfile.close()
 #Function to Compare the end times of the iMotions and Eye Trackers and clip the longer one.
@@ -174,7 +174,9 @@ def EyeTrackingDataProcessing(participantfolder):
 #painful video coding.
 def CompareAndRecordEndTimeDifferences():
     print "Doing nothing here for now!"
-#We now process Sim data. In LibreOffice Calc, we have column 'AX' for the markers. This has been visually confirmed.
+#We now process Sim data. In LibreOffice Calc, we have column 'AX' for the markers. This has been visually confirmed. Python index is 49
+#NOTE: As in all other clipped files, we are adding a column at the start of each row which shows the realtive time to marker 1 placed in the data.
+#As a result column of the marker is now moved to index 50 in the output cliiped file from 49.
 #The headers are not available here. We have to decipher them from simCreator.
 def ProcessSimData():
     #print "Clipping Sim Data now."
@@ -182,22 +184,33 @@ def ProcessSimData():
     try:
         simfile = open (glob.glob('*Drive_[0-9][0-9].plt')[0],'r')
         simfilereader = csv.reader(simfile)
-        print "\n\nSim File opened!\n\n"
+        #print "\n\nSim File opened!\n\n"
     except IndexError:
         try:
             simfile = open (glob.glob('*Drive_[0-9].plt')[0],'r')
             simfilereader = csv.reader(simfile)
-            print "\n\nSim File opened!\n\n"
+            #print "\n\nSim File opened!\n\n"
         except IndexError:
             try:
                 simfile = open (glob.glob('*Drive_[0-9][0-9][0-9].plt')[0],'r')
                 simfilereader = csv.reader(simfile)
-                print "\n\nSim File opened!\n\n"
+                #print "\n\nSim File opened!\n\n"
             except IndexError:
                 print "***************All three syntaxes for sim file recognition failed! Error!********************"
                 pass
-#    for row in simfilereader:
-#        if
+    for i, row in enumerate(simfilereader):
+        if row[0].split(' ')[49] == '1':
+            print "Time at marker 1 for participant " , foldername , " is :" , row[0].split(' ')[0]
+            simtimeatmarker1 = float(row[0].split(' ')[0])
+            break
+    simfile.seek(0)#Resetting to the top of the file again
+    #To create the file in the ClippedData file, we will use the path in the open command instead. os.chdir() might be unnecessary
+    simclipfile = open('../ClippedData/ClippedSimData.csv' , 'wb')
+    simclipwriter = csv.writer(simclipfile)#This should automatically create the file in the ClippedData folder and write it there
+    for i,row in enumerate(simfilereader):
+        if float(row[0].split(' ')[0]) >= (simtimeatmarker1 - 180):#We are subtracting 180 seconds or 3 minutes
+            simclipwriter.writerow([str(float(row[0].split(' ')[0]) - simtimeatmarker1) + ' '] + row)
+    simclipfile.close()
     simfile.close()
     os.chdir('../')
 #in the main function
@@ -210,8 +223,8 @@ if __name__=='__main__':
 for foldername in listoffolders:
     os.chdir(foldername+'/')#Navigating into each folder
     print "\n\n\nInside the participant data folder : ",foldername,'\n'
-    ProcessiMoData()#Function to process the iMotions Data
-    EyeTrackingDataProcessing(foldername)
+    #ProcessiMoData()#Function to process the iMotions Data
+    #EyeTrackingDataProcessing(foldername)
     ProcessSimData()
     try:
         MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
