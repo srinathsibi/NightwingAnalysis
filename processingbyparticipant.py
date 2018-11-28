@@ -14,9 +14,10 @@
 # Quad and Eye tracker videos given that they exist.
 #Note: The first column in every iMotionsClipped.csv file is a Time in secs. This is the shimmer file time converted to time in seconds. 0 is when marker 1 is placed.
 import glob, os, sys, shutil
-import matplotlib as plt
+#import matplotlib as plt
 import numpy as np
 import csv
+#from moviepy.editor import *
 
 #Function to process iMotions data
 def ProcessiMoData():
@@ -214,7 +215,20 @@ def ProcessSimData():
     simfile.close()
     os.chdir('../')
 def ProcessiMoVideos():
-    print " Now clipping the movies from iMotions. They are both "
+    print "\n\nNow clipping the movies to same length as the other clipped files.\n\n"
+    iMotionsinfofile = open('ClippedData/iMotionsInfo.csv','r')
+    infofilereader = csv.reader(iMotionsinfofile)
+    iMotionsClippedFile = open('ClippedData/iMotionsClipped.csv', 'r')
+    iMotionsfilereader = csv.reader(iMotionsClippedFile)
+    skiplines(infofilereader,3)
+    studystarttime_ = next(infofilereader)[0].split(' ')[3].split(':')
+    studystarttime = [float(x) for x in studystarttime_]
+    studystarttime_sec = studystarttime[0]*3600 + studystarttime[1]*60 + studystarttime[2]
+    #print "Study Start Time : " , studystarttime_sec , "\n"
+    clipfilestarttime = iMotionsTimeConverter(float(next(iMotionsfilereader)[10].split('_')[1]))
+    #print "Clip Start Time: " , clipfilestarttime , "\n"
+    timediff = clipfilestarttime - studystarttime_sec# Time difference to be taken off the front of the videos for syncing
+    print " Time Difference to be taken off at the start of the videos for syncing is : " , timediff
 #in the main function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6
@@ -227,7 +241,8 @@ for foldername in listoffolders:
     print "\n\n\nInside the participant data folder : ",foldername,'\n'
     #ProcessiMoData()#Function to process the iMotions Data
     #EyeTrackingDataProcessing(foldername)
-    ProcessSimData()
+    #ProcessSimData()
+    ProcessiMoVideos()
     try:
         MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
     except IOError:
