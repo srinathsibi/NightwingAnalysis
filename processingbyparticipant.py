@@ -213,6 +213,8 @@ def ProcessSimData():
     simclipfile.close()
     simfile.close()
     os.chdir('../')
+def ProcessiMoVideos():
+    print " Now clipping the movies from iMotions. They are both "
 #in the main function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6
