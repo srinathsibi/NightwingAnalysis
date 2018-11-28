@@ -14,10 +14,10 @@
 # Quad and Eye tracker videos given that they exist.
 #Note: The first column in every iMotionsClipped.csv file is a Time in secs. This is the shimmer file time converted to time in seconds. 0 is when marker 1 is placed.
 import glob, os, sys, shutil
-#import matplotlib as plt
+import matplotlib as plt
 import numpy as np
 import csv
-#from moviepy.editor import *
+from moviepy.editor import *
 
 #Function to process iMotions data
 def ProcessiMoData():
@@ -46,11 +46,6 @@ def ProcessiMoData():
             pass
     print "\n\nMarker 1 Time Stamp : " , iMotionsMarker1Time ,"\n\n"
     iMotionsfile.seek(0)#Get back to top of the file again
-    #Skipping the first 6 lines
-    #i = 1
-    #while i<=6:
-    #    next(iMotionsReader)
-    #    i=i+1
     skiplines(iMotionsReader,6)
     #Writing the rows with markers from 1 onwards
     for row in iMotionsReader:
@@ -229,6 +224,18 @@ def ProcessiMoVideos():
     #print "Clip Start Time: " , clipfilestarttime , "\n"
     timediff = clipfilestarttime - studystarttime_sec# Time difference to be taken off the front of the videos for syncing
     print " Time Difference to be taken off at the start of the videos for syncing is : " , timediff
+    #Get the eye tracker and the quad files with the same glob command. The same process is used for both to clip
+    videofilelist = glob.glob('*.wmv')
+    print " The video files to be clipped are : ", videofilelist , "\n"
+    #Normally I would use a try/except statement here. This time around, I don't want to do that. If there is a video file missing
+    #I want the module to exit and throw an error.
+    for i,file in enumerate(videofilelist):
+        clip_ = VideoFileClip(file)
+        clip = clip_.subclip(timediff, clip_.duration)
+        clip.write_videofile('ClippedData/File' + str(i) + '.mp4', fps = clip_.fps)
+    iMotionsinfofile.close()
+    iMotionsClippedFile.close()
+    print " The video files for " , foldername , " have been clipped!"
 #in the main function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6
@@ -246,12 +253,12 @@ for foldername in listoffolders:
     try:
         MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
     except IOError:
-        print "There were no iMotions files here"
+        print "There were no iMotions files here to move to Clipped Data Folder"
         pass
     try:
         MoveFileToClippedData(['EyetrackingClipped.csv','EyeTrackingInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
     except IOError:
-        print "There were no Eyetracking files here"
+        print "There were no Eyetracking files here to move to Clipped Data Folder"
         pass
     #CompareAndRecordEndTimeDifferences()
     os.chdir('../')#Navigating back into the Data folder
