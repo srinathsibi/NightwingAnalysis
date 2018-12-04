@@ -246,9 +246,9 @@ if __name__=='__main__':
 for foldername in listoffolders:
     os.chdir(foldername+'/')#Navigating into each folder
     print "\n\n\nInside the participant data folder : ",foldername,'\n'
-    #ProcessiMoData()#Function to process the iMotions Data
-    #EyeTrackingDataProcessing(foldername)
-    #ProcessSimData()
+    ProcessiMoData()#Function to process the iMotions Data
+    EyeTrackingDataProcessing(foldername)
+    ProcessSimData()
     ProcessiMoVideos()
     try:
         MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
