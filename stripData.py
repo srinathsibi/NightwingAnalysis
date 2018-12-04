@@ -8,8 +8,11 @@ import csv
 import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
+# The sigle participant folder actions have only plotting options for individual participant data. Make sure to run the AllParticipantFolderActions()
+# at least once before you run the plot functions in this function
 def SingleParticipantFolderActions():
     print "In single participant folder actions"
+#This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
 def AllParticipantFolderActions():
     print "In all folder common actions"
 

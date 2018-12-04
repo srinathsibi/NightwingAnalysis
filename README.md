@@ -59,3 +59,7 @@ I can't seem to reconcile the time stamps and the clock times.
 10. Each participant folder should contain an iMotionsClipped.csv and iMotionsInfo.csv file which contain the clipped iMotions and the top sheet information from the iMotions file. They have separated before clipping to make the csv files easier to process.
 
 11. Each iMotionsClipped.csv file has a "Time (in seconds)" column as its first column. This column starts at -180 seconds. Marker 1 placement time is considered 0 time. I clipped the file 3 minutes before that to make sure that there is sufficient time before the start for a baseline.
+
+12. stripData.py file is made to ensure that the relevant data from the three major files (eye tracking, sim, iMotions) are stripped to the bare essentials. This means that only the relevant columns are gathered. The stripped files should be considerably smaller than the source cliiped file.
+
+13. stripData.py also contains individual participant plotting functions to plot the data after the data is stripped. (Note this caveat)
