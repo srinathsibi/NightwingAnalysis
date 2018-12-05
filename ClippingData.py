@@ -238,6 +238,7 @@ def ProcessiMoVideos():
             print "***************************************************************\n\n\
  Participant : ", foldername, " has problematic video files in iMotions. Please verify or clip them by hand! \n\
 ***************************************************************"
+            pass
     iMotionsinfofile.close()
     iMotionsClippedFile.close()
     print " The video files for " , foldername , " have been clipped!"
@@ -245,7 +246,7 @@ def ProcessiMoVideos():
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6
     #Now to query all the files that exist in the data folder
-    listoffolders = ['P026']#os.listdir('.')
+    listoffolders = os.listdir('.')
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
     #The os.listdir() returns a list of strings. each folder name is convenienetly a string
 for foldername in listoffolders:
