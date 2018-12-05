@@ -14,8 +14,25 @@ def SingleParticipantFolderActions():
     print "In single participant folder actions"
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
 def AllParticipantFolderActions():
-    print "In all folder common actions"
+    print "In all folder common actions. This is a function to strip the iMotions, Eyetracking and the Sim Data. \
+The stripped files will be stored in the ClippedData Folder as well."
+    for folder in listoffolders:
+        os.chdir(folder+'/ClippedData/')
+        print "################# In folder : " , folder , " ####################"
+        strip_imotions_data()
+        strip_sim_data()
+        strip_eyetracking_data()
+        os.chdir('../../')
+#iMotions data stripper function
+def strip_imotions_data():
+    print "\niMotions Stripping begun.\n"
+#Sim data stripper function
+def strip_sim_data():
+    print "\nSim Stripping begun.\n"
 
+#Eyetracking data stripper function
+def strip_eyetracking_data():
+    print "\nEyetracking Stripping begun.\n"
 #Start of main function
 if __name__ == '__main__':
     os.chdir('Data/')#Moving to the data folder6
@@ -24,7 +41,8 @@ if __name__ == '__main__':
     endflag = False
     options = {1: SingleParticipantFolderActions, 2: AllParticipantFolderActions}
     while not endflag:
-        input = raw_input("\n\n\n\nChoose an option from here : \n\n1. Participant Number (Enter the number here) \n\n2. Common Operation to all participant folders (Type 'All') \n\n3.Exit (Type 'exit')\n\n")
+        input = raw_input("\n\n\n\nChoose an option from here : \n\n1. Participant Number (Enter the number here) \
+\n\n2. Common Operation to all participant folders (Type 'All') \n\n3.Exit (Type 'exit')\n\n")
         if input == 'Exit' or input =='exit':
             endflag = True
             print "Ending Now! Goodbye!"
