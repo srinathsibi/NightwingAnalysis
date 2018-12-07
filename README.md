@@ -62,4 +62,12 @@ I can't seem to reconcile the time stamps and the clock times.
 
 12. stripData.py file is made to ensure that the relevant data from the three major files (eye tracking, sim, iMotions) are stripped to the bare essentials. This means that only the relevant columns are gathered. The stripped files should be considerably smaller than the source cliiped file.
 
-13. stripData.py also contains individual participant plotting functions to plot the data after the data is stripped. (Note this caveat)
+13. stripData.py file has a function to <INSET MORE INFORMATION HERE>
+
+14. Sim file columns : { 'RelativeTime': 0, 'SimTime': 1, 'EndAutonomousMode':2 , 'SitAwOnTab':3 , 'TakeOverOnTab':4, 'LonAccel':5 , 'LatAccel':6 , 'ThrottlePedal':7 ,'BrakePedal':8\
+'Gear':9 ,'heading':10 , 'headingerror':11, 'headwaydist':12, 'headwaytime':13 ,'lanenumber':14 ,'laneoffset':15,'roadoffset':16, 'steeringwheelpos':17 ,\
+'tailwaydist':18 , 'tailwaytime':19 , 'velocity':20, 'lateralvel':21 , 'verticalvel':22 , 'xpos':23 , 'ypos':24 , 'zpos':25, 'roll':26 , 'pitch':27\
+'yaw':28, 'enginerpm':29 , 'slip1':30 , 'slip2':31 , 'slip3':33, 'slip4':34,'SubId' :54, 'DriveID' : 53, 'AutomationType':52 , 'ModeSwitch': 51 , 'EventMarker': 50 \
+, 'SteerTouch': 49 , 'UnixTime':48 }
+
+Columns not mentioned here are empty. Please ignore them)
