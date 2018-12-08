@@ -20,24 +20,42 @@ The stripped files will be stored in the ClippedData Folder as well."
         os.chdir(folder+'/ClippedData/')
         print "################# In folder : " , folder , " ####################"
         strip_imotions_data()
-        strip_sim_data()
+        strip_sim_data(folder)
         strip_eyetracking_data()
         os.chdir('../../')
-#iMotions data stripper function
+#iMOTIONS DATA STRIPPING FUNCTION
 def strip_imotions_data():
     print "\niMotions Stripping begun.\n"
-#Sim data stripper function
+#SIM DATA STRIPPING FUNCTION
 #NOTE: The clipped Sim file is kinda weird. I added a column that indicated relative time ahead of all the other columns when clipping.
 # As a result the row structure is weird; the first columsn is comma separateed and the rest are space separated. A row looks like this
 # ['-179.9928 ', '832.716689999436 1 0 0 -0.29072093963623 -0.94616311788559 0 0.801034569740295 3 87.3806454483458 0.00137846119818993 10000 685.723448583853 -1 -0.630452023804135 -1.16954792851215 0.131464287638664 10000 685.723448583853 14.5829992294312 -0.0311381593346596 -0.0566742084920406 -3900.9013671875 526.386901855469 -0.533323347568512 0.424907571862279 -0.229437248585732 87.3191455874348 1432.11218261719 0.00977549608796835 0.00960742868483067 0.00513751804828644 0.00514872372150421 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1487556507 0 -1 0 1 8 8']
-def strip_sim_data():
+def strip_sim_data(foldername):
     print "\nSim Stripping begun.\n"
-    headerkey = { 'RelativeTime': 0, 'SimTime': 1, 'EndAutonomousMode':2 , 'SitAwOnTab':3 , 'TakeOverOnTab':4, 'LonAccel':5 , 'LatAccel':6 , 'ThrottlePedal':7 ,'BrakePedal':8\
-'Gear':9 ,'heading':10 , 'headingerror':11, 'headwaydist':12, 'headwaytime':13 ,'lanenumber':14 ,'laneoffset':15,'roadoffset':16, 'steeringwheelpos':17 ,\
-'tailwaydist':18 , 'tailwaytime':19 , 'velocity':20, 'lateralvel':21 , 'verticalvel':22 , 'xpos':23 , 'ypos':24 , 'zpos':25, 'roll':26 , 'pitch':27\
-'yaw':28, 'enginerpm':29 , 'slip1':30 , 'slip2':31 , 'slip3':33, 'slip4':34,'SubId' :54, 'DriveID' : 53, 'AutomationType':52 , 'ModeSwitch': 51 , 'EventMarker': 50 \
-, 'SteerTouch': 49 , 'UnixTime':48 }#Total of 55 columns in the row [index 0 - 54]. The first three columns after SimTime are SitAw options
+    headerkey = { 'RelativeTime': 0, 'SimTime': 1, 'EndAutonomousMode':2 , 'SitAwOnTab':3 , 'TakeOverOnTab':4, 'LonAccel':5 , 'LatAccel':6 , 'ThrottlePedal':7 ,'BrakePedal':8 ,\
+'Gear':9 ,'Heading':10 , 'HeadingError':11, 'HeadwayDistance':12, 'HeadwayTime':13 ,'LaneNumber':14 , 'LaneOffset':15 , 'RoadOffset':16, 'SteeringWheelPos':17 ,\
+'TailwayDistance':18 , 'TailwayTime':19 , 'Velocity':20, 'LateralVelocity':21 , 'verticalvel':22 , 'xpos':23 , 'ypos':24 , 'zpos':25, 'Roll':26 , 'Pitch':27 ,\
+'Yaw':28, 'enginerpm':29 , 'slip1':30 , 'slip2':31 , 'slip3':33, 'slip4':34,'SubId' :54, 'DriveID' : 53, 'AutomationType':52 , 'ModeSwitch': 51 , 'EventMarker': 50 , \
+'SteerTouch': 49 , 'UnixTime':48 }#Total of 55 columns in the row [index 0 - 54]. The first three columns after SimTime are SitAw options
 # that were left behind a long time ago. Ignore them.
+    #relevantcols is meant to contain the relevant columns for stripping data. I might add functionality to choose the columns as needed.
+    relevantcols = ['RelativeTime' , 'SimTime' , 'LonAccel' , 'LatAccel' , 'ThrottlePedal','BrakePedal'\
+,'Heading' , 'HeadingError', 'HeadwayDistance', 'HeadwayTime' ,'LaneNumber' ,'LaneOffset' , 'RoadOffset', 'SteeringWheelPos',\
+'TailwayDistance' , 'TailwayTime' , 'Velocity', 'LateralVelocity','Roll' , 'Pitch' , 'Yaw', 'EventMarker' , 'UnixTime']
+    simfile = open('ClippedSimData.csv','r')
+    simreader = csv.reader(simfile)
+    strippedsimfile = open('StrippedSimData.csv' , 'wb')
+    strippedsimwriter = csv.writer(strippedsimfile)
+    strippedsimwriter.writerow(relevantcols)
+    for row in simreader:
+        simline = row[1].split(' ')
+        del row[-1]
+        row = row + simline
+        strippedrow = [ row[headerkey[i]] for i in relevantcols ]
+        strippedsimwriter.writerow(strippedrow)
+    strippedsimfile.close()
+    simfile.close()
+    print "************** Participant " , foldername , " sim file stripped to essential data!**************"
 #Eyetracking data stripper function
 def strip_eyetracking_data():
     print "\nEyetracking Stripping begun.\n"
