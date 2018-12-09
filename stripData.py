@@ -37,9 +37,17 @@ def strip_imotions_data():
     del headerrow[0]
     headerrow.insert(0,'RelativeTime')
     headerkey = {headerrow[i]:i for i in range((len(headerrow)))}
-    relevantcols = { }
-    print headerkey, '\n'
+    relevantcols = ['RelativeTime', 'UTCTimestamp', 'SimulatorEvent (0.0)', 'Steer (0.0)', 'Throttle (0.0)', 'Brake (0.0)', 'Cal InternalAdc13 (Shimmer Sensor)', \
+'Speed (0.0)', 'Cal GSR (Shimmer Sensor)', 'Raw InternalAdc13 (Shimmer Sensor)', 'Raw GSR (Shimmer Sensor)']
+    #print headerkey, '\n'
+    strippediMotionsfile = open('StrippediMotionsData.csv' , 'wb')
+    strippediMotionswriter = csv.writer(strippediMotionsfile)
+    strippediMotionswriter.writerow(relevantcols)
+    for row in filereader:
+        strippedrow = [ row[headerkey[i]] for i in relevantcols ]
+        strippediMotionswriter.writerow(strippedrow)
     infofile.close()
+    strippediMotionsfile.close()
     file.close()
 #SIM DATA STRIPPING FUNCTION
 #NOTE: The clipped Sim file is kinda weird. I added a column that indicated relative time ahead of all the other columns when clipping.
