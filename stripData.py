@@ -20,13 +20,13 @@ The stripped files will be stored in the ClippedData Folder as well."
         os.chdir(folder+'/ClippedData/')
         print "################# In folder : " , folder , " ####################"
         #Stripping the files in individual functions
-        strip_imotions_data()
+        #strip_imotions_data(folder)
         #strip_sim_data(folder)
-        strip_eyetracking_data()
+        strip_eyetracking_data(folder)
         os.chdir('../../')
 #iMOTIONS DATA STRIPPING FUNCTION
-def strip_imotions_data():
-    print "\niMotions Stripping begun.\n"
+def strip_imotions_data(foldername):
+    #print "\niMotions Stripping begun.\n"
     infofile = open('iMotionsInfo.csv', 'r')
     file = open('iMotionsClipped.csv','r')
     inforeader = csv.reader(infofile)
@@ -49,6 +49,7 @@ def strip_imotions_data():
     infofile.close()
     strippediMotionsfile.close()
     file.close()
+    print "************** Participant " , foldername , " iMotions file stripped to essential data!**************"
 #SIM DATA STRIPPING FUNCTION
 #NOTE: The clipped Sim file is kinda weird. I added a column that indicated relative time ahead of all the other columns when clipping.
 # As a result the row structure is weird; the first columsn is comma separateed and the rest are space separated. A row looks like this
@@ -80,8 +81,35 @@ def strip_sim_data(foldername):
     simfile.close()
     print "************** Participant " , foldername , " sim file stripped to essential data!**************"
 #Eyetracking data stripper function
-def strip_eyetracking_data():
+def strip_eyetracking_data(foldername):
     print "\nEyetracking Stripping begun.\n"
+    try:
+        infofile = open('EyeTrackingInfo.csv','r')
+        inforeader = csv.reader(infofile)
+        eyetrackingfile = open('EyetrackingClipped.csv','r')
+        eyetrackingreader = csv.reader(eyetrackingfile)
+        strippedETfile = open('StrippedEyeTrackingFile.csv' , 'wb')
+        strippedETwriter = csv.writer(strippedETfile)
+        skiplines(inforeader,4)
+        headerrow = next(inforeader)
+        #Ensuring that the first column is identical for all stripped files
+        del headerrow[0]
+        headerrow.insert(0,'RelativeTime')
+        headerkey = {headerrow[i]:i for i in range((len(headerrow)))}
+        print headerkey , '\n'
+        relevantcols = ['RelativeTime', 'Time of Day [h:m:s:ms]', 'Pupil Diameter Right [mm]', 'Category Binocular', 'Point of Regard Binocular Y [px]' , 'Point of Regard Left Y [px]' , 'Pupil Diameter Left [mm]', 'Gaze Vector Left Y', 'Gaze Vector Left X', 'Gaze Vector Left Z'\
+        , 'Point of Regard Left X [px]', 'Gaze Vector Right Y', 'Gaze Vector Right X', 'Gaze Vector Right Z', 'Tracking Ratio [%]', 'Index Binocular' ,  'Point of Regard Right Y [px]', 'Point of Regard Binocular X [px]' , 'Point of Regard Right X [px]']
+        strippedETwriter.writerow(relevantcols)
+        for row in eyetrackingreader:
+            strippedrow = [ row[headerkey[i]] for i in relevantcols ]
+            strippedETwriter.writerow(strippedrow)
+        infofile.close()
+        eyetrackingfile.close()
+        strippedETfile.close()
+        print "************** Participant " , foldername , " eye tracking file stripped to essential data!**************"
+    except IOError:
+        print " There are no clipped eye tracking files for this participant " , foldername, ' . Ingoring this participant\
+        and moving on.'
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
     #fp is file reader and lines is the number of lines to skip
