@@ -14,15 +14,16 @@ def SingleParticipantFolderActions():
     print "In single participant folder actions"
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
 def AllParticipantFolderActions():
-    print "In all folder common actions. This is a function to strip the iMotions, Eyetracking and the Sim Data. \
-The stripped files will be stored in the ClippedData Folder as well."
+    #print "In all folder common actions. This is a function to strip the iMotions, Eyetracking and the Sim Data. \
+#The stripped files will be stored in the ClippedData Folder as well."
     for folder in listoffolders:
         os.chdir(folder+'/ClippedData/')
         print "################# In folder : " , folder , " ####################"
         #Stripping the files in individual functions
         #strip_imotions_data(folder)
         #strip_sim_data(folder)
-        strip_eyetracking_data(folder)
+        #strip_eyetracking_data(folder)
+        MoveFiles(folder)
         os.chdir('../../')
 #iMOTIONS DATA STRIPPING FUNCTION
 def strip_imotions_data(foldername):
@@ -49,7 +50,7 @@ def strip_imotions_data(foldername):
     infofile.close()
     strippediMotionsfile.close()
     file.close()
-    print "************** Participant " , foldername , " iMotions file stripped to essential data!**************"
+    #print "************** Participant " , foldername , " iMotions file stripped to essential data!**************"
 #SIM DATA STRIPPING FUNCTION
 #NOTE: The clipped Sim file is kinda weird. I added a column that indicated relative time ahead of all the other columns when clipping.
 # As a result the row structure is weird; the first columsn is comma separateed and the rest are space separated. A row looks like this
@@ -79,7 +80,7 @@ def strip_sim_data(foldername):
         strippedsimwriter.writerow(strippedrow)
     strippedsimfile.close()
     simfile.close()
-    print "************** Participant " , foldername , " sim file stripped to essential data!**************"
+    #print "************** Participant " , foldername , " sim file stripped to essential data!**************"
 #Eyetracking data stripper function
 def strip_eyetracking_data(foldername):
     print "\nEyetracking Stripping begun.\n"
@@ -96,7 +97,7 @@ def strip_eyetracking_data(foldername):
         del headerrow[0]
         headerrow.insert(0,'RelativeTime')
         headerkey = {headerrow[i]:i for i in range((len(headerrow)))}
-        print headerkey , '\n'
+        #print headerkey , '\n'
         relevantcols = ['RelativeTime', 'Time of Day [h:m:s:ms]', 'Pupil Diameter Right [mm]', 'Category Binocular', 'Point of Regard Binocular Y [px]' , 'Point of Regard Left Y [px]' , 'Pupil Diameter Left [mm]', 'Gaze Vector Left Y', 'Gaze Vector Left X', 'Gaze Vector Left Z'\
         , 'Point of Regard Left X [px]', 'Gaze Vector Right Y', 'Gaze Vector Right X', 'Gaze Vector Right Z', 'Tracking Ratio [%]', 'Index Binocular' ,  'Point of Regard Right Y [px]', 'Point of Regard Binocular X [px]' , 'Point of Regard Right X [px]']
         strippedETwriter.writerow(relevantcols)
@@ -106,9 +107,9 @@ def strip_eyetracking_data(foldername):
         infofile.close()
         eyetrackingfile.close()
         strippedETfile.close()
-        print "************** Participant " , foldername , " eye tracking file stripped to essential data!**************"
+        #print "************** Participant " , foldername , " eye tracking file stripped to essential data!**************"
     except IOError:
-        print " There are no clipped eye tracking files for this participant " , foldername, ' . Ingoring this participant\
+        print ' There are no clipped eye tracking files for this participant ' , foldername, ' . Ingoring this participant\
         and moving on.'
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
@@ -117,6 +118,51 @@ def skiplines(fr, lines):
     while i<=lines:
         i = i+1
         row = next(fr)
+#Function to move the files to the ProcessedData Folder
+def MoveFiles(foldername):
+    #print "Moving Files to ProcessedData folder"
+    path = '../../../IgnoreThisFolder/ProcessedData/'
+    if not os.path.exists(path+foldername):
+        os.mkdir(path+foldername)
+    if not os.path.exists(path+foldername+'/RawData/'):#Path to the raw data folder created. Moving the data to the
+        os.mkdir(path+foldername+'/RawData/')
+    path = path+foldername +'/'
+    #Moving the stripped files now
+    try:
+        shutil.copy('StrippedSimData.csv', path+'SimData.csv')
+    except IOError:
+        print "Sim File not here for  : "+foldername
+        pass
+    try:
+        shutil.copy('StrippediMotionsData.csv' , path+'iMotionsData.csv')
+    except IOError:
+        print "iMotions file not here for  : "+foldername
+        pass
+    try:
+        shutil.copy('File1.mp4', path+'File1.mp4')
+    except IOError:
+        print "File1.mp4 not here for  : "+foldername
+        pass
+    try:
+        shutil.copy('File0.mp4', path+'File0.mp4')
+    except IOError:
+        print "File0.mp4 not here for  : "+foldername
+        pass
+    try:
+        shutil.copy('StrippedEyeTrackingFile.csv', path+'EyeTrackingdata.csv')
+    except IOError:
+        print "Eye tracking file not here for  : "+foldername
+        pass
+    try:
+        shutil.copy('EyeTrackingInfo.csv', path+'EyeTrackingInfo.csv')
+    except IOError:
+        print "Eye tracking Info file not here for  : "+foldername
+        pass
+    try:
+        shutil.copy('iMotionsInfo.csv', path+'iMotionsInfo.csv')
+    except IOError:
+        print " iMotions Info File is not here for ", foldername
+        pass
 #Start of main function
 if __name__ == '__main__':
     os.chdir('Data/')#Moving to the data folder6
