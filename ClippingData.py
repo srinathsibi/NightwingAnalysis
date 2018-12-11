@@ -246,7 +246,7 @@ def ProcessiMoVideos():
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6
     #Now to query all the files that exist in the data folder
-    listoffolders = ['P026', 'P015', 'P007', 'P014', 'P011', 'P022', 'P019', 'P021', 'P020', 'P025', 'P012'] #os.listdir('.')
+    listoffolders = ['P013','P016','P026', 'P015', 'P007', 'P014', 'P011', 'P022', 'P019', 'P021', 'P020', 'P025', 'P012'] #os.listdir('.')
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
     #The os.listdir() returns a list of strings. each folder name is convenienetly a string
 for foldername in listoffolders:

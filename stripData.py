@@ -20,14 +20,14 @@ def AllParticipantFolderActions():
         os.chdir(folder+'/ClippedData/')
         print "################# In folder : " , folder , " ####################"
         #Stripping the files in individual functions
-        #strip_imotions_data(folder)
-        #strip_sim_data(folder)
-        #strip_eyetracking_data(folder)
+        strip_imotions_data(folder)
+        strip_sim_data(folder)
+        strip_eyetracking_data(folder)
         MoveFiles(folder)
         os.chdir('../../')
 #iMOTIONS DATA STRIPPING FUNCTION
 def strip_imotions_data(foldername):
-    #print "\niMotions Stripping begun.\n"
+    print "\niMotions Stripping begun.\n"
     infofile = open('iMotionsInfo.csv', 'r')
     file = open('iMotionsClipped.csv','r')
     inforeader = csv.reader(infofile)
@@ -56,7 +56,7 @@ def strip_imotions_data(foldername):
 # As a result the row structure is weird; the first columsn is comma separateed and the rest are space separated. A row looks like this
 # ['-179.9928 ', '832.716689999436 1 0 0 -0.29072093963623 -0.94616311788559 0 0.801034569740295 3 87.3806454483458 0.00137846119818993 10000 685.723448583853 -1 -0.630452023804135 -1.16954792851215 0.131464287638664 10000 685.723448583853 14.5829992294312 -0.0311381593346596 -0.0566742084920406 -3900.9013671875 526.386901855469 -0.533323347568512 0.424907571862279 -0.229437248585732 87.3191455874348 1432.11218261719 0.00977549608796835 0.00960742868483067 0.00513751804828644 0.00514872372150421 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1487556507 0 -1 0 1 8 8']
 def strip_sim_data(foldername):
-    #print "\nSim Stripping begun.\n"
+    print "\nSim Stripping begun.\n"
     headerkey = { 'RelativeTime': 0, 'SimTime': 1, 'EndAutonomousMode':2 , 'SitAwOnTab':3 , 'TakeOverOnTab':4, 'LonAccel':5 , 'LatAccel':6 , 'ThrottlePedal':7 ,'BrakePedal':8 ,\
 'Gear':9 ,'Heading':10 , 'HeadingError':11, 'HeadwayDistance':12, 'HeadwayTime':13 ,'LaneNumber':14 , 'LaneOffset':15 , 'RoadOffset':16, 'SteeringWheelPos':17 ,\
 'TailwayDistance':18 , 'TailwayTime':19 , 'Velocity':20, 'LateralVelocity':21 , 'verticalvel':22 , 'xpos':23 , 'ypos':24 , 'zpos':25, 'Roll':26 , 'Pitch':27 ,\
