@@ -109,7 +109,7 @@ def strip_eyetracking_data(foldername):
         strippedETfile.close()
         #print "************** Participant " , foldername , " eye tracking file stripped to essential data!**************"
     except IOError:
-        print ' There are no clipped eye tracking files for this participant ' , foldername, ' . Ingoring this participant\
+        print ' There are no clipped eye tracking files for this participant. Ingoring this participant\
         and moving on.'
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
@@ -120,7 +120,7 @@ def skiplines(fr, lines):
         row = next(fr)
 #Function to move the files to the ProcessedData Folder
 def MoveFiles(foldername):
-    #print "Moving Files to ProcessedData folder"
+    print "\nMoving Files to ProcessedData folder\n"
     path = '../../../IgnoreThisFolder/ProcessedData/'
     if not os.path.exists(path+foldername):
         os.mkdir(path+foldername)
