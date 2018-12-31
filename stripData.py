@@ -15,7 +15,21 @@ def PlotParticipantData():
     while chosenfolder not in listoffolders:
         chosenfolder = raw_input("\n\nPlease enter an acceptable folder name!\n\n")
     os.chdir(folder+'/ClippedData/')#Navigating in to the participant subfolder.
-
+    print "\n ****** In the participant folder, opening all stripped files *******\n"
+    imofile = open('StrippediMotionsData.csv','r')
+    imoreader = csv.reader(imofile)
+    simfile = open('StrippedSimData.csv','r')
+    simreader = csv.reader(simfile)
+    etfile = open('StrippedEyeTrackingFile.csv','r')
+    etreader = csv.reader(etfile)
+    #Loading all the data into variabes for analysis and plotting
+    skiplines(imoreader,1)
+    skiplines(simreader,1)
+    skiplines(etreader,1)
+    imodata = list(imoreader)
+    simdata = list(simreader)
+    etdata = list(etreader)
+    #
     os.chdir('../../')#Navigating back to the main folder now.
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
 def StripAndMoveData():
