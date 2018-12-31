@@ -5,15 +5,20 @@ import glob, os, sys, shutil
 import matplotlib as plt
 import numpy as np
 import csv
-import matplotlib
+import matplotlib.pyplot as plt
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
-# The sigle participant folder actions have only plotting options for individual participant data. Make sure to run the AllParticipantFolderActions()
+# The sigle participant folder actions have only plotting options for individual participant data. Make sure to run the StripAndMoveData()
 # at least once before you run the plot functions in this function
-def SingleParticipantFolderActions():
-    print "In single participant folder actions"
+def PlotParticipantData():
+    chosenfolder = raw_input("\n\nPlease enter the name of the participant whose data we need to plot (e.g. P006/P010/P027...)\n\n")
+    while chosenfolder not in listoffolders:
+        chosenfolder = raw_input("\n\nPlease enter an acceptable folder name!\n\n")
+    os.chdir(folder+'/ClippedData/')#Navigating in to the participant subfolder.
+
+    os.chdir('../../')#Navigating back to the main folder now.
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
-def AllParticipantFolderActions():
+def StripAndMoveData():
     #print "In all folder common actions. This is a function to strip the iMotions, Eyetracking and the Sim Data. \
 #The stripped files will be stored in the ClippedData Folder as well."
     for folder in listoffolders:
@@ -169,20 +174,20 @@ if __name__ == '__main__':
     listoffolders = os.listdir('.')
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
     endflag = False
-    options = {1: SingleParticipantFolderActions, 2: AllParticipantFolderActions}
+    options = {1: PlotParticipantData, 2: StripAndMoveData}
     while not endflag:
-        input = raw_input("\n\n\n\nChoose an option from here : \n\n1. Participant Number (Enter the number here) \
-\n\n2. Common Operation to all participant folders (Type 'All') \n\n3.Exit (Type 'exit')\n\n")
+        input = raw_input("\n\n\n\nChoose an option from here : \n\n1. Plot Participant Data (Enter 'Plot') \
+\n\n2. Strip and Move all participant folders (Type 'Strip') \n\n3.Exit (Type 'exit')\n\n")
         if input == 'Exit' or input =='exit':
             endflag = True
             print "Ending Now! Goodbye!"
-        elif input in listoffolders:
-            print "This is the folder you chose : ", input
+        elif input == 'Plot' or input =='plot':
+            print "Plotting function chosen"
             choice  = 1
             options[choice]()
             pass
-        elif input == 'All' or input == 'all':
-            print "Processing all participants"
+        elif input == 'Strip' or input == 'strip':
+            print "Stripping and Moving participants all participant data"
             choice = 2
             options[choice]()
             pass
