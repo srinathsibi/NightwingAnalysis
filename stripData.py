@@ -6,15 +6,13 @@ import matplotlib as plt
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
-matplotlib.use("agg")
-import matplotlib.pyplot as plt
 # The sigle participant folder actions have only plotting options for individual participant data. Make sure to run the StripAndMoveData()
 # at least once before you run the plot functions in this function
 def PlotParticipantData():
     chosenfolder = raw_input("\n\nPlease enter the name of the participant whose data we need to plot (e.g. P006/P010/P027...)\n\n")
     while chosenfolder not in listoffolders:
         chosenfolder = raw_input("\n\nPlease enter an acceptable folder name!\n\n")
-    os.chdir(folder+'/ClippedData/')#Navigating in to the participant subfolder.
+    os.chdir(chosenfolder+'/ClippedData/')#Navigating in to the participant subfolder.
     print "\n ****** In the participant folder, opening all stripped files *******\n"
     imofile = open('StrippediMotionsData.csv','r')
     imoreader = csv.reader(imofile)
@@ -29,7 +27,45 @@ def PlotParticipantData():
     imodata = list(imoreader)
     simdata = list(simreader)
     etdata = list(etreader)
-    #
+    #Plotting imotions Data
+    time = [float(imodata[i][0]) for i in range(len(imodata))]
+    eventmarker = [float(imodata[i][2]) for i in range(len(imodata))]
+    steer = [float(imodata[i][3]) for i in range(len(imodata))]
+    throttle = [float(imodata[i][4]) for i in range(len(imodata))]
+    brake = [float(imodata[i][5]) for i in range(len(imodata))]
+    PPG = [float(imodata[i][6]) for i in range(len(imodata))]
+    speed = [float(imodata[i][7]) for i in range(len(imodata))]
+    GSR = [float(imodata[i][6]) for i in range(len(imodata))]
+    imofig = plt.figure(1)
+    plt.subplot(711)
+    plt.plot(time, eventmarker)
+    plt.xlabel('Time (sec)')
+    plt.ylabel('EventMarker')
+    plt.subplot(712)
+    plt.plot(time, steer, 'r-')
+    plt.xlabel('Time (sec)')
+    plt.ylabel('Steer')
+    plt.subplot(713)
+    plt.plot(time, throttle, 'b-')
+    plt.xlabel('Time (sec)')
+    plt.ylabel('Throttle')
+    plt.subplot(714)
+    plt.plot(time, brake, 'g-')
+    plt.xlabel('Time (sec)')
+    plt.ylabel('Brake')
+    plt.subplot(715)
+    plt.plot(time, PPG , 'y-')
+    plt.xlabel('Time (sec)')
+    plt.ylabel('PPG/HR')
+    plt.subplot(716)
+    plt.plot(time, speed, 'b--')
+    plt.xlabel('Time (sec)')
+    plt.ylabel('Speed')
+    plt.subplot(717)
+    plt.plot(time, GSR, 'r--')
+    plt.xlabel('Time (sec)')
+    plt.ylabel('GSR')
+    imofig.savefig("ImoFig.pdf",bbox_inches = 'tight')
     os.chdir('../../')#Navigating back to the main folder now.
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
 def StripAndMoveData():
