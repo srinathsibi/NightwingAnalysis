@@ -6,6 +6,7 @@ import matplotlib as plt
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
+plt.rcParams.update({'font.size': 3.5})
 # The sigle participant folder actions have only plotting options for individual participant data. Make sure to run the StripAndMoveData()
 # at least once before you run the plot functions in this function
 def PlotParticipantData():
@@ -35,37 +36,51 @@ def PlotParticipantData():
     brake = [float(imodata[i][5]) for i in range(len(imodata))]
     PPG = [float(imodata[i][6]) for i in range(len(imodata))]
     speed = [float(imodata[i][7]) for i in range(len(imodata))]
-    GSR = [float(imodata[i][6]) for i in range(len(imodata))]
-    imofig = plt.figure(1)
-    plt.subplot(711)
-    plt.plot(time, eventmarker)
-    plt.xlabel('Time (sec)')
-    plt.ylabel('EventMarker')
-    plt.subplot(712)
-    plt.plot(time, steer, 'r-')
+    GSR = [float(imodata[i][8]) for i in range(len(imodata))]
+    #Locating indices of vertical marker
+    xc = [eventmarker.index(1)]
+    xc.append(eventmarker.index(21))
+    xc.append(eventmarker.index(5))
+    xc.append(eventmarker.index(10))
+    #Starting the iMotions Figure here.
+    imofig1 = plt.figure(1)
+    imofig1.tight_layout()
+    plt.subplot(411)
+    plt.title('Driving Data Plot (Steer/Throttle/Brake)')
+    plt.plot(time, steer, 'r-', label = 'Steer')
     plt.xlabel('Time (sec)')
     plt.ylabel('Steer')
-    plt.subplot(713)
-    plt.plot(time, throttle, 'b-')
+    plt.legend(loc = 'upper right')
+    plt.subplot(412)
+    plt.plot(time, throttle, 'b-', label = 'Throttle')
     plt.xlabel('Time (sec)')
     plt.ylabel('Throttle')
-    plt.subplot(714)
-    plt.plot(time, brake, 'g-')
+    plt.legend(loc = 'upper right')
+    plt.subplot(413)
+    plt.plot(time, brake, 'g-', label = 'Brake')
     plt.xlabel('Time (sec)')
     plt.ylabel('Brake')
-    plt.subplot(715)
-    plt.plot(time, PPG , 'y-')
-    plt.xlabel('Time (sec)')
-    plt.ylabel('PPG/HR')
-    plt.subplot(716)
-    plt.plot(time, speed, 'b--')
+    plt.legend(loc = 'upper right')
+    plt.subplot(414)
+    plt.plot(time, speed, 'b-', label = 'Speed')
     plt.xlabel('Time (sec)')
     plt.ylabel('Speed')
-    plt.subplot(717)
-    plt.plot(time, GSR, 'r--')
+    plt.legend(loc = 'upper right')
+    imofig1.savefig("iMotionsDrivingData.pdf",bbox_inches = 'tight')
+    imofig2 = plt.figure(1)
+    imofig2.tight_layout()
+    plt.subplot(211)
+    plt.title('Physiological Data Plot (PPG/GSR)')
+    plt.plot(time, PPG , 'r-', label = 'PPG')
+    plt.legend(loc = 'upper right')
+    plt.xlabel('Time (sec)')
+    plt.ylabel('PPG/HR')
+    plt.subplot(212)
+    plt.plot(time, GSR, 'g-', label = 'GSR')
     plt.xlabel('Time (sec)')
     plt.ylabel('GSR')
-    imofig.savefig("ImoFig.pdf",bbox_inches = 'tight')
+    plt.legend(loc = 'upper right')
+    imofig2.savefig("iMotionsPhysioData.pdf", bbox_inches = 'tight')
     os.chdir('../../')#Navigating back to the main folder now.
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
 def StripAndMoveData():
