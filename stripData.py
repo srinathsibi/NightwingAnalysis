@@ -10,78 +10,101 @@ plt.rcParams.update({'font.size': 3.5})
 # The sigle participant folder actions have only plotting options for individual participant data. Make sure to run the StripAndMoveData()
 # at least once before you run the plot functions in this function
 def PlotParticipantData():
-    chosenfolder = raw_input("\n\nPlease enter the name of the participant whose data we need to plot (e.g. P006/P010/P027...)\n\n")
-    while chosenfolder not in listoffolders:
-        chosenfolder = raw_input("\n\nPlease enter an acceptable folder name!\n\n")
-    os.chdir(chosenfolder+'/ClippedData/')#Navigating in to the participant subfolder.
-    print "\n ****** In the participant folder, opening all stripped files *******\n"
-    imofile = open('StrippediMotionsData.csv','r')
-    imoreader = csv.reader(imofile)
-    simfile = open('StrippedSimData.csv','r')
-    simreader = csv.reader(simfile)
-    etfile = open('StrippedEyeTrackingFile.csv','r')
-    etreader = csv.reader(etfile)
-    #Loading all the data into variabes for analysis and plotting
-    skiplines(imoreader,1)
-    skiplines(simreader,1)
-    skiplines(etreader,1)
-    imodata = list(imoreader)
-    simdata = list(simreader)
-    etdata = list(etreader)
-    #Plotting imotions Data
-    time = [float(imodata[i][0]) for i in range(len(imodata))]
-    eventmarker = [float(imodata[i][2]) for i in range(len(imodata))]
-    steer = [float(imodata[i][3]) for i in range(len(imodata))]
-    throttle = [float(imodata[i][4]) for i in range(len(imodata))]
-    brake = [float(imodata[i][5]) for i in range(len(imodata))]
-    PPG = [float(imodata[i][6]) for i in range(len(imodata))]
-    speed = [float(imodata[i][7]) for i in range(len(imodata))]
-    GSR = [float(imodata[i][8]) for i in range(len(imodata))]
-    #Locating indices of vertical marker
-    xc = [eventmarker.index(1)]
-    xc.append(eventmarker.index(21))
-    xc.append(eventmarker.index(5))
-    xc.append(eventmarker.index(10))
-    #Starting the iMotions Figure here.
-    imofig1 = plt.figure(1)
-    imofig1.tight_layout()
-    plt.subplot(411)
-    plt.title('Driving Data Plot (Steer/Throttle/Brake)')
-    plt.plot(time, steer, 'r-', label = 'Steer')
-    plt.xlabel('Time (sec)')
-    plt.ylabel('Steer')
-    plt.legend(loc = 'upper right')
-    plt.subplot(412)
-    plt.plot(time, throttle, 'b-', label = 'Throttle')
-    plt.xlabel('Time (sec)')
-    plt.ylabel('Throttle')
-    plt.legend(loc = 'upper right')
-    plt.subplot(413)
-    plt.plot(time, brake, 'g-', label = 'Brake')
-    plt.xlabel('Time (sec)')
-    plt.ylabel('Brake')
-    plt.legend(loc = 'upper right')
-    plt.subplot(414)
-    plt.plot(time, speed, 'b-', label = 'Speed')
-    plt.xlabel('Time (sec)')
-    plt.ylabel('Speed')
-    plt.legend(loc = 'upper right')
-    imofig1.savefig("iMotionsDrivingData.pdf",bbox_inches = 'tight')
-    imofig2 = plt.figure(1)
-    imofig2.tight_layout()
-    plt.subplot(211)
-    plt.title('Physiological Data Plot (PPG/GSR)')
-    plt.plot(time, PPG , 'r-', label = 'PPG')
-    plt.legend(loc = 'upper right')
-    plt.xlabel('Time (sec)')
-    plt.ylabel('PPG/HR')
-    plt.subplot(212)
-    plt.plot(time, GSR, 'g-', label = 'GSR')
-    plt.xlabel('Time (sec)')
-    plt.ylabel('GSR')
-    plt.legend(loc = 'upper right')
-    imofig2.savefig("iMotionsPhysioData.pdf", bbox_inches = 'tight')
-    os.chdir('../../')#Navigating back to the main folder now.
+    #chosenfolder = raw_input("\n\nPlease enter the name of the participant whose data we need to plot (e.g. P006/P010/P027...)\n\n")
+    for chosenfolder in listoffolders:
+        #chosenfolder = raw_input("\n\nPlease enter an acceptable folder name!\n\n")
+        os.chdir(chosenfolder+'/ClippedData/')#Navigating in to the participant subfolder.
+        print "\n ****** Plotting for participant:", chosenfolder, " Opening all stripped files *******\n"
+        #Wondering if I should sim data. There is nothing there that we need now for now.
+        #simfile = open('StrippedSimData.csv','r')
+        #simreader = csv.reader(simfile)
+        #skiplines(simreader,1)
+        #simdata = list(simreader)
+        try:
+            #Plotting imotions Data
+            imofile = open('StrippediMotionsData.csv','r')
+            imoreader = csv.reader(imofile)
+            skiplines(imoreader,1)
+            imodata = list(imoreader)
+            time = [float(imodata[i][0]) for i in range(len(imodata))]
+            eventmarker = [float(imodata[i][2]) for i in range(len(imodata))]
+            steer = [float(imodata[i][3]) for i in range(len(imodata))]
+            throttle = [float(imodata[i][4]) for i in range(len(imodata))]
+            brake = [float(imodata[i][5]) for i in range(len(imodata))]
+            PPG = [float(imodata[i][6]) for i in range(len(imodata))]
+            speed = [float(imodata[i][7]) for i in range(len(imodata))]
+            GSR = [float(imodata[i][8]) for i in range(len(imodata))]
+            #Locating indices and respective times for vertical marker placement
+            xi = [eventmarker.index(1)]
+            xi.append(eventmarker.index(21))
+            xi.append(eventmarker.index(5))
+            xi.append(eventmarker.index(10))
+            xc = [time[xi[0]]]
+            for i in xi:
+                xc.append(time[i])
+            #Starting the iMotions Figure here.
+            imofig1 = plt.figure(1)
+            imofig1.tight_layout()
+            plt.subplot(411)
+            plt.title('Driving Data Plot (Steer/Throttle/Brake)')
+            plt.plot(time, steer, 'r-', label = 'Steer')
+            plt.xlabel('Time (sec)')
+            plt.ylabel('Steer')
+            plt.legend(loc = 'upper right')
+            for j in xc:
+                plt.axvline(x = j, linewidth = 0.25)
+            plt.subplot(412)
+            plt.plot(time, throttle, 'b-', label = 'Throttle')
+            plt.xlabel('Time (sec)')
+            plt.ylabel('Throttle')
+            plt.legend(loc = 'upper right')
+            for j in xc:
+                plt.axvline(x = j , linewidth = 0.25)
+            plt.subplot(413)
+            plt.plot(time, brake, 'g-', label = 'Brake')
+            plt.xlabel('Time (sec)')
+            plt.ylabel('Brake')
+            plt.legend(loc = 'upper right')
+            for j in xc:
+                plt.axvline(x = j , linewidth = 0.25)
+            plt.subplot(414)
+            plt.plot(time, speed, 'b-', label = 'Speed')
+            plt.xlabel('Time (sec)')
+            plt.ylabel('Speed')
+            plt.legend(loc = 'upper right')
+            for j in xc:
+                plt.axvline(x = j , linewidth = 0.25)
+            imofig1.savefig("iMotionsDrivingData.pdf",bbox_inches = 'tight')
+            imofig2 = plt.figure(1)
+            imofig2.tight_layout()
+            plt.subplot(211)
+            plt.title('Physiological Data Plot (PPG/GSR)')
+            plt.plot(time, PPG , 'r-', label = 'PPG')
+            plt.legend(loc = 'upper right')
+            plt.xlabel('Time (sec)')
+            plt.ylabel('PPG/HR')
+            for j in xc:
+                plt.axvline(x = j , linewidth = 0.25)
+            plt.subplot(212)
+            plt.plot(time, GSR, 'g-', label = 'GSR')
+            plt.xlabel('Time (sec)')
+            plt.ylabel('GSR')
+            plt.legend(loc = 'upper right')
+            for j in xc:
+                plt.axvline(x = j , linewidth = 0.25)
+            imofig2.savefig("iMotionsPhysioData.pdf", bbox_inches = 'tight')
+        except:
+            print "This participant has bad data. Please exclude from analysis."
+            pass
+        #Plotting Eye Tracker Data
+        try:
+            etfile = open('StrippedEyeTrackingFile.csv','r')
+            etreader = csv.reader(etfile)
+            skiplines(etreader,1)
+            etdata = list(etreader)
+        except IOError:
+            pass
+        os.chdir('../../')#Navigating back to the main folder now.
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
 def StripAndMoveData():
     #print "In all folder common actions. This is a function to strip the iMotions, Eyetracking and the Sim Data. \
