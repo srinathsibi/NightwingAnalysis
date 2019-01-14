@@ -42,6 +42,7 @@ def PlotParticipantData():
             xc = [time[xi[0]]]
             for i in xi:
                 xc.append(time[i])
+            #print "x coordinates: ", xc ,'\n'
             #Starting the iMotions Figure here.
             imofig1 = plt.figure(1)
             imofig1.tight_layout()
@@ -102,7 +103,37 @@ def PlotParticipantData():
             etreader = csv.reader(etfile)
             skiplines(etreader,1)
             etdata = list(etreader)
+            # Plotting the marker using counter in the indexbinocular column.
+            time = [float(etdata[i][0]) for i in range(len(etdata))]
+            catbin =  [etdata[i][3] for i in range(len(etdata))]
+            pupdia =[];indexbin = []#initializing to populate them later
+            for i in range(len(etdata)):
+                try:
+                    pupdia.append(float(etdata[i][2]))
+                except ValueError:
+                    pupdia.append(0)
+                try:
+                    indexbin.append(etdata[i][15])
+                except ValueError:
+                    indexbin.append('-')
+            # Function to calculate PERCLOS stats from catbin variable and time variable
+            PERCLOS(time, catbin)
+            #x = [ time[i] for i in range(len(etdata)) if catbin[i] == 'User Event']# This produces the same results as xc from above
+            #Starting the eyetracker Figure here.
+            '''etfig = plt.figure(1)
+            etfig.tight_layout()
+            plt.subplot(311)
+            plt.title('Eye Tracking Data Plot (Pupil Diameter/Blinks)')
+            plt.plot(time, pupdia, 'r-', label = 'Pupil Diameter')
+            plt.xlabel('Time (sec)')
+            plt.ylabel('Pupil Diameter (mm)')
+            plt.legend(loc = 'upper right')
+            for j in xc:
+                plt.axvline(x = j, linewidth = 0.25)
+            # Need to calculate PERCLOS here. Dont know that I want to
+            etfig.savefig("EyeTrackerData.pdf",bbox_inches = 'tight')'''
         except IOError:
+            print "Eye tracker data for this participant is not available to plot. This participant has an error with markers or the eye tracker data wasn't recorded."
             pass
         os.chdir('../../')#Navigating back to the main folder now.
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
@@ -118,6 +149,9 @@ def StripAndMoveData():
         strip_eyetracking_data(folder)
         MoveFiles(folder)
         os.chdir('../../')
+#PERCLOS CALCULATION function
+def PERCLOS( t , CategoryBinocular):
+    print "Calculating PERCLOS"
 #iMOTIONS DATA STRIPPING FUNCTION
 def strip_imotions_data(foldername):
     print "\niMotions Stripping begun.\n"
