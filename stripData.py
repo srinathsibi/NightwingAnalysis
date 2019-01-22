@@ -117,12 +117,14 @@ def PlotParticipantData():
                 except ValueError:
                     indexbin.append('-')
             # Function to calculate PERCLOS stats from catbin variable and time variable
-            PERCLOS(time, catbin)
+            perclos_array = PERCLOS(time, catbin)
+            #perclos = []
+            print "PERCLOS: \n\n\n\n", perclos_array
             #x = [ time[i] for i in range(len(etdata)) if catbin[i] == 'User Event']# This produces the same results as xc from above
             #Starting the eyetracker Figure here.
-            '''etfig = plt.figure(1)
+            etfig = plt.figure(1)
             etfig.tight_layout()
-            plt.subplot(311)
+            plt.subplot(211)
             plt.title('Eye Tracking Data Plot (Pupil Diameter/Blinks)')
             plt.plot(time, pupdia, 'r-', label = 'Pupil Diameter')
             plt.xlabel('Time (sec)')
@@ -130,8 +132,9 @@ def PlotParticipantData():
             plt.legend(loc = 'upper right')
             for j in xc:
                 plt.axvline(x = j, linewidth = 0.25)
-            # Need to calculate PERCLOS here. Dont know that I want to
-            etfig.savefig("EyeTrackerData.pdf",bbox_inches = 'tight')'''
+            plt.subplot(212)
+            plt.plot()
+            etfig.savefig("EyeTrackerData.pdf",bbox_inches = 'tight')
         except IOError:
             print "Eye tracker data for this participant is not available to plot. This participant has an error with markers or the eye tracker data wasn't recorded."
             pass
@@ -141,7 +144,7 @@ def StripAndMoveData():
     #print "In all folder common actions. This is a function to strip the iMotions, Eyetracking and the Sim Data. \
 #The stripped files will be stored in the ClippedData Folder as well."
     for folder in listoffolders:
-        os.chdir(folder+'/ClippedData/')
+        os.chdir(folder+'/ClippedData/')w
         print "################# In folder : " , folder , " ####################"
         #Stripping the files in individual functions
         strip_imotions_data(folder)
@@ -152,6 +155,28 @@ def StripAndMoveData():
 #PERCLOS CALCULATION function
 def PERCLOS( t , CategoryBinocular):
     print "Calculating PERCLOS"
+    #PARAMETERS FOR
+    WINDOWSIZE = 60# 60 second window size
+    STEPSIZE = 10# 10 second step size
+    windowstart = t[0]# Initialized to the start of the time variable
+    perclos = []# Perclos array to be sent back to the
+    # we proceed till the windowstart variable reaches the end of the CategoryBinocular length
+    while windowstart < t[len(t) - 10]:
+        windowstop = min(t, key =lambda x:abs(x-(windowstart + 60)))
+        startindex = t.index(windowstart)
+        stopindex = t.index(windowstop)
+        t_ = t[startindex:stopindex]
+        cbwindow = CategoryBinocular[startindex:stopindex]
+        #We are going to change the 'Blink' and '-' values to 1 and setting the rest to 0. Easier to calculate PERCLOS this way
+        eyeclosure = [ 1 if cbwindow[i] in ['Blink', '-'] else 0 for i in range(len(cbwindow))]
+        #PERCLOS is calculated as time(t_ variable) weighted average of the eyeclosure variable.
+        sum =0# To calculate average
+        for i in range(len(t_)-1):
+            sum = sum + (eyeclosure[i]*abs(t_[i+1]-t_[i]))
+        perclos_result = sum / abs(t_[len(t_)-1] - t_[0])
+        perclos.append([perclos_result, (t_[len(t_)-1] - t_[0]) ])
+        windowstart = windowstart + 10;# 10 sec time step.
+    return perclos
 #iMOTIONS DATA STRIPPING FUNCTION
 def strip_imotions_data(foldername):
     print "\niMotions Stripping begun.\n"
