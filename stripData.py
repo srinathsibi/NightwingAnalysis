@@ -76,6 +76,8 @@ def PlotParticipantData():
             for j in xc:
                 plt.axvline(x = j , linewidth = 0.25)
             imofig1.savefig("iMotionsDrivingData.pdf",bbox_inches = 'tight')
+            plt.close()
+            #END OF FIGURE 1
             imofig2 = plt.figure(1)
             imofig2.tight_layout()
             plt.subplot(211)
@@ -94,6 +96,8 @@ def PlotParticipantData():
             for j in xc:
                 plt.axvline(x = j , linewidth = 0.25)
             imofig2.savefig("iMotionsPhysioData.pdf", bbox_inches = 'tight')
+            plt.close()
+            #END OF FIGURE 2
         except:
             print "This participant has bad data. Please exclude from analysis."
             pass
@@ -118,8 +122,13 @@ def PlotParticipantData():
                     indexbin.append('-')
             # Function to calculate PERCLOS stats from catbin variable and time variable
             perclos_array = PERCLOS(time, catbin)
-            #perclos = []
-            print "PERCLOS: \n\n\n\n", perclos_array
+            #print "PERCLOS: \n", len(perclos_array)," \n\n\n", perclos_array
+            if perclos_array[0][0] != 0:
+                perclos_file = open('PERCLOS.csv', 'wb')
+                percloswriter = csv.writer(perclos_file)
+                percloswriter.writerow(['Time','PERCLOS'])
+                percloswriter.writerows([ perclos_array[i][1], perclos_array[i][0] ] for i in range(len(perclos_array)))
+                perclos_file.close()
             #x = [ time[i] for i in range(len(etdata)) if catbin[i] == 'User Event']# This produces the same results as xc from above
             #Starting the eyetracker Figure here.
             etfig = plt.figure(1)
@@ -133,8 +142,15 @@ def PlotParticipantData():
             for j in xc:
                 plt.axvline(x = j, linewidth = 0.25)
             plt.subplot(212)
-            plt.plot()
+            plt.plot([perclos_array[i][1]for i in range(len(perclos_array))] , [perclos_array[i][0] for i in range(len(perclos_array))] , 'b--', label = 'PERCLOS')
+            plt.xlabel('Time (sec)')
+            plt.ylabel('PERCLOS ( 0 - 1 )')
+            plt.legend(loc = 'upper right')
+            for j in xc:
+                plt.axvline(x = j, linewidth = 0.25)
             etfig.savefig("EyeTrackerData.pdf",bbox_inches = 'tight')
+            plt.close()
+            #END OF FIGURE 3
         except IOError:
             print "Eye tracker data for this participant is not available to plot. This participant has an error with markers or the eye tracker data wasn't recorded."
             pass
@@ -144,7 +160,7 @@ def StripAndMoveData():
     #print "In all folder common actions. This is a function to strip the iMotions, Eyetracking and the Sim Data. \
 #The stripped files will be stored in the ClippedData Folder as well."
     for folder in listoffolders:
-        os.chdir(folder+'/ClippedData/')w
+        os.chdir(folder+'/ClippedData/')
         print "################# In folder : " , folder , " ####################"
         #Stripping the files in individual functions
         strip_imotions_data(folder)
@@ -154,29 +170,34 @@ def StripAndMoveData():
         os.chdir('../../')
 #PERCLOS CALCULATION function
 def PERCLOS( t , CategoryBinocular):
-    print "Calculating PERCLOS"
-    #PARAMETERS FOR
-    WINDOWSIZE = 60# 60 second window size
-    STEPSIZE = 10# 10 second step size
-    windowstart = t[0]# Initialized to the start of the time variable
-    perclos = []# Perclos array to be sent back to the
-    # we proceed till the windowstart variable reaches the end of the CategoryBinocular length
-    while windowstart < t[len(t) - 10]:
-        windowstop = min(t, key =lambda x:abs(x-(windowstart + 60)))
-        startindex = t.index(windowstart)
-        stopindex = t.index(windowstop)
-        t_ = t[startindex:stopindex]
-        cbwindow = CategoryBinocular[startindex:stopindex]
-        #We are going to change the 'Blink' and '-' values to 1 and setting the rest to 0. Easier to calculate PERCLOS this way
-        eyeclosure = [ 1 if cbwindow[i] in ['Blink', '-'] else 0 for i in range(len(cbwindow))]
-        #PERCLOS is calculated as time(t_ variable) weighted average of the eyeclosure variable.
-        sum =0# To calculate average
-        for i in range(len(t_)-1):
-            sum = sum + (eyeclosure[i]*abs(t_[i+1]-t_[i]))
-        perclos_result = sum / abs(t_[len(t_)-1] - t_[0])
-        perclos.append([perclos_result, (t_[len(t_)-1] - t_[0]) ])
-        windowstart = windowstart + 10;# 10 sec time step.
-    return perclos
+    try:
+        print "Calculating PERCLOS"
+        #PARAMETERS FOR
+        WINDOWSIZE = 60# 60 second window size
+        STEPSIZE = 10# 10 second step size
+        windowstart = t[0]# Initialized to the start of the time variable
+        perclos = []# Perclos array to be sent back to the
+        # we proceed till the windowstart variable reaches the end of the CategoryBinocular length
+        while windowstart < t[len(t) - 10]:
+            windowstop = min(t, key =lambda x:abs(x-(windowstart + 60)))
+            #print " Window start : ", windowstart, " Window stop: ", windowstop, "\n\n"
+            startindex = t.index(windowstart)
+            stopindex = t.index(windowstop)
+            t_ = t[startindex:stopindex]
+            cbwindow = CategoryBinocular[startindex:stopindex]
+            #We are going to change the 'Blink' and '-' values to 1 and setting the rest to 0. Easier to calculate PERCLOS this way
+            eyeclosure = [ 1 if cbwindow[i] in ['Blink', '-'] else 0 for i in range(len(cbwindow))]
+            #PERCLOS is calculated as time(t_ variable) weighted average of the eyeclosure variable.
+            sum =0# To calculate average
+            for i in range(len(t_)-1):
+                sum = sum + (eyeclosure[i]*abs(t_[i+1]-t_[i]))
+            perclos_result = sum / abs(t_[len(t_)-1] - t_[0])
+            perclos.append([perclos_result, (t_[len(t_)-1] + t_[0])/2 ])
+            windowstart = min(t, key =lambda x:abs(x-(windowstart + 10))) #windowstart + 10;# 10 sec time step.
+        return perclos
+    except IndexError:
+        print " Empty array for eye tracking => Empty eye tracking file. Consider fixing."
+        return [[0,0]]
 #iMOTIONS DATA STRIPPING FUNCTION
 def strip_imotions_data(foldername):
     print "\niMotions Stripping begun.\n"
@@ -320,25 +341,7 @@ if __name__ == '__main__':
     os.chdir('Data/')#Moving to the data folder6
     listoffolders = os.listdir('.')
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
-    endflag = False
-    options = {1: PlotParticipantData, 2: StripAndMoveData}
-    while not endflag:
-        input = raw_input("\n\n\n\nChoose an option from here : \n\n1. Plot Participant Data (Enter 'Plot') \
-\n\n2. Strip and Move all participant folders (Type 'Strip') \n\n3.Exit (Type 'exit')\n\n")
-        if input == 'Exit' or input =='exit':
-            endflag = True
-            print "Ending Now! Goodbye!"
-        elif input == 'Plot' or input =='plot':
-            print "Plotting function chosen"
-            choice  = 1
-            options[choice]()
-            pass
-        elif input == 'Strip' or input == 'strip':
-            print "Stripping and Moving participants all participant data"
-            choice = 2
-            options[choice]()
-            pass
-        else:
-            print "Enter a valid participant folder name or option in the list provided!"
-            pass
+    options = {2: PlotParticipantData, 1: StripAndMoveData}
+    #options[1]()
+    options[2]()
     os.chdir('../')#Moving out of the Data folder
