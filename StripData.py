@@ -7,7 +7,7 @@ import numpy as np
 import csv
 import matplotlib.pyplot as plt
 plt.rcParams.update({'font.size': 3.5})
-# The sigle participant folder actions have only plotting options for individual participant data. Make sure to run the StripAndMoveData()
+# The sigle participant folder actions have only plotting options for individual participant data.
 # at least once before you run the plot functions in this function
 def PlotParticipantData():
     #chosenfolder = raw_input("\n\nPlease enter the name of the participant whose data we need to plot (e.g. P006/P010/P027...)\n\n")
@@ -156,9 +156,7 @@ def PlotParticipantData():
             pass
         os.chdir('../../')#Navigating back to the main folder now.
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
-def StripAndMoveData():
-    #print "In all folder common actions. This is a function to strip the iMotions, Eyetracking and the Sim Data. \
-#The stripped files will be stored in the ClippedData Folder as well."
+def StripData():
     for folder in listoffolders:
         os.chdir(folder+'/ClippedData/')
         print "################# In folder : " , folder , " ####################"
@@ -166,12 +164,11 @@ def StripAndMoveData():
         strip_imotions_data(folder)
         strip_sim_data(folder)
         strip_eyetracking_data(folder)
-        MoveFiles(folder)
         os.chdir('../../')
 #PERCLOS CALCULATION function
 def PERCLOS( t , CategoryBinocular):
     try:
-        print "Calculating PERCLOS"
+        #print "Calculating PERCLOS"
         #PARAMETERS FOR
         WINDOWSIZE = 60# 60 second window size
         STEPSIZE = 10# 10 second step size
@@ -283,7 +280,7 @@ def strip_eyetracking_data(foldername):
         #print "************** Participant " , foldername , " eye tracking file stripped to essential data!**************"
     except IOError:
         print ' There are no clipped eye tracking files for this participant. Ingoring this participant\
-        and moving on.'
+and moving on.'
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
     #fp is file reader and lines is the number of lines to skip
@@ -291,6 +288,12 @@ def skiplines(fr, lines):
     while i<=lines:
         i = i+1
         row = next(fr)
+#This function is to only move data after stripping and plotting them
+def MoveData():
+    for folder in listoffolders:
+        os.chdir(folder+'/ClippedData/')
+        MoveFiles(folder)
+        os.chdir('../../')
 #Function to move the files to the ProcessedData Folder
 def MoveFiles(foldername):
     print "\nMoving Files to ProcessedData folder\n"
@@ -336,12 +339,33 @@ def MoveFiles(foldername):
     except IOError:
         print " iMotions Info File is not here for ", foldername
         pass
+    try:
+        shutil.copy('PERCLOS.csv', path+'PERCLOS.csv')
+    except IOError:
+        print " PERCLOS File is not here for ", foldername
+        pass
+    try:#plot 1
+        shutil.copy('EyeTrackerData.pdf', path+'EyeTrackerDataPlot.pdf')
+    except IOError:
+        print " EyeTracker Plot File is not here for ", foldername
+        pass
+    try:#plot 2
+        shutil.copy('iMotionsPhysioData.pdf', path+'iMotionsDataPlot.pdf')
+    except IOError:
+        print " iMotions Plot File is not here for ", foldername
+        pass
+    try:#plot 3
+        shutil.copy('iMotionsDrivingData.pdf', path+'DrivingDataPlot.pdf')
+    except IOError:
+        print " Diving Data Plot File is not here for ", foldername
+        pass
 #Start of main function
 if __name__ == '__main__':
     os.chdir('Data/')#Moving to the data folder6
     listoffolders = os.listdir('.')
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
-    options = {2: PlotParticipantData, 1: StripAndMoveData}
+    options = {2: PlotParticipantData, 1: StripData, 3: MoveData}
     #options[1]()
-    options[2]()
+    #options[2]()
+    options[3]()
     os.chdir('../')#Moving out of the Data folder
