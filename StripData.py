@@ -1,20 +1,18 @@
-#New file to strip the sim data into individual components based on the excel file given by dave
-# We are going to try and build a plot function to plot and extract the specific columns of data as needed.
-# NOTE: We are going to build it to be recursive with reagrds to the choice of
+# Author: Srinath Sibi ssibi@stanford.edu
+#Purpose: The goal is to strip the relevant columns of data from the existing files and plot the relevant streams of data.
 import glob, os, sys, shutil
 import matplotlib as plt
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
 plt.rcParams.update({'font.size': 3.5})
-# The sigle participant folder actions have only plotting options for individual participant data.
-# at least once before you run the plot functions in this function
+#Create and save plots of relevant data to peruse and make sure that there are no problems before analysis.
 def PlotParticipantData():
     #chosenfolder = raw_input("\n\nPlease enter the name of the participant whose data we need to plot (e.g. P006/P010/P027...)\n\n")
     for chosenfolder in listoffolders:
         #chosenfolder = raw_input("\n\nPlease enter an acceptable folder name!\n\n")
         os.chdir(chosenfolder+'/ClippedData/')#Navigating in to the participant subfolder.
-        print "\n ****** Plotting for participant:", chosenfolder, " Opening all stripped files *******\n"
+        #print "\n ****** Plotting for participant:", chosenfolder, " Opening all stripped files *******\n"
         #Wondering if I should sim data. There is nothing there that we need now for now.
         #simfile = open('StrippedSimData.csv','r')
         #simreader = csv.reader(simfile)
@@ -99,7 +97,7 @@ def PlotParticipantData():
             plt.close()
             #END OF FIGURE 2
         except:
-            print "This participant has bad data. Please exclude from analysis."
+            print "Participant : ", chosenfolder ," has bad data. Please exclude from analysis."
             pass
         #Plotting Eye Tracker Data
         try:
@@ -152,14 +150,14 @@ def PlotParticipantData():
             plt.close()
             #END OF FIGURE 3
         except IOError:
-            print "Eye tracker data for this participant is not available to plot. This participant has an error with markers or the eye tracker data wasn't recorded."
+            print "Eye tracker data for: ", chosenfolder ,"is not available to plot. This participant has an error with markers or the eye tracker data wasn't recorded."
             pass
         os.chdir('../../')#Navigating back to the main folder now.
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
 def StripData():
     for folder in listoffolders:
         os.chdir(folder+'/ClippedData/')
-        print "################# In folder : " , folder , " ####################"
+        #print "################# In folder : " , folder , " ####################"
         #Stripping the files in individual functions
         strip_imotions_data(folder)
         strip_sim_data(folder)
@@ -197,7 +195,7 @@ def PERCLOS( t , CategoryBinocular):
         return [[0,0]]
 #iMOTIONS DATA STRIPPING FUNCTION
 def strip_imotions_data(foldername):
-    print "\niMotions Stripping begun.\n"
+    #print "\niMotions Stripping begun.\n"
     infofile = open('iMotionsInfo.csv', 'r')
     file = open('iMotionsClipped.csv','r')
     inforeader = csv.reader(infofile)
@@ -226,7 +224,7 @@ def strip_imotions_data(foldername):
 # As a result the row structure is weird; the first columsn is comma separateed and the rest are space separated. A row looks like this
 # ['-179.9928 ', '832.716689999436 1 0 0 -0.29072093963623 -0.94616311788559 0 0.801034569740295 3 87.3806454483458 0.00137846119818993 10000 685.723448583853 -1 -0.630452023804135 -1.16954792851215 0.131464287638664 10000 685.723448583853 14.5829992294312 -0.0311381593346596 -0.0566742084920406 -3900.9013671875 526.386901855469 -0.533323347568512 0.424907571862279 -0.229437248585732 87.3191455874348 1432.11218261719 0.00977549608796835 0.00960742868483067 0.00513751804828644 0.00514872372150421 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1487556507 0 -1 0 1 8 8']
 def strip_sim_data(foldername):
-    print "\nSim Stripping begun.\n"
+    #print "\nSim Stripping begun.\n"
     headerkey = { 'RelativeTime': 0, 'SimTime': 1, 'EndAutonomousMode':2 , 'SitAwOnTab':3 , 'TakeOverOnTab':4, 'LonAccel':5 , 'LatAccel':6 , 'ThrottlePedal':7 ,'BrakePedal':8 ,\
 'Gear':9 ,'Heading':10 , 'HeadingError':11, 'HeadwayDistance':12, 'HeadwayTime':13 ,'LaneNumber':14 , 'LaneOffset':15 , 'RoadOffset':16, 'SteeringWheelPos':17 ,\
 'TailwayDistance':18 , 'TailwayTime':19 , 'Velocity':20, 'LateralVelocity':21 , 'verticalvel':22 , 'xpos':23 , 'ypos':24 , 'zpos':25, 'Roll':26 , 'Pitch':27 ,\
@@ -253,7 +251,7 @@ def strip_sim_data(foldername):
     #print "************** Participant " , foldername , " sim file stripped to essential data!**************"
 #Eyetracking data stripper function
 def strip_eyetracking_data(foldername):
-    print "\nEyetracking Stripping begun.\n"
+    #print "\nEyetracking Stripping begun.\n"
     try:
         infofile = open('EyeTrackingInfo.csv','r')
         inforeader = csv.reader(infofile)
@@ -279,8 +277,7 @@ def strip_eyetracking_data(foldername):
         strippedETfile.close()
         #print "************** Participant " , foldername , " eye tracking file stripped to essential data!**************"
     except IOError:
-        print ' There are no clipped eye tracking files for this participant. Ingoring this participant\
-and moving on.'
+        print ' There are no clipped eye tracking files for participant : ', foldername, '\n'
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
     #fp is file reader and lines is the number of lines to skip
@@ -296,7 +293,7 @@ def MoveData():
         os.chdir('../../')
 #Function to move the files to the ProcessedData Folder
 def MoveFiles(foldername):
-    print "\nMoving Files to ProcessedData folder\n"
+    #print "\nMoving Files to ProcessedData folder\n"
     path = '../../../IgnoreThisFolder/ProcessedData/'
     if not os.path.exists(path+foldername):
         os.mkdir(path+foldername)
@@ -364,8 +361,8 @@ if __name__ == '__main__':
     os.chdir('Data/')#Moving to the data folder6
     listoffolders = os.listdir('.')
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
-    options = {2: PlotParticipantData, 1: StripData, 3: MoveData}
-    #options[1]()
-    #options[2]()
+    options = {1: StripData, 2: PlotParticipantData, 3: MoveData}
+    options[1]()
+    options[2]()
     options[3]()
     os.chdir('../')#Moving out of the Data folder
