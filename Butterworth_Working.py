@@ -1,5 +1,4 @@
 #Author : David Mengyun
-from urllib.request import urlopen
 from io import StringIO
 import csv
 import numpy as np
@@ -7,7 +6,7 @@ import pandas as pd
 from datetime import datetime
 import scipy.signal as signal
 import matplotlib.pyplot as plt
-df = pd.read_csv("iMotionsData.CSV")
+df = pd.read_csv("IgnoreThisFolder/ProcessedData/P008/iMotionsData.csv")
 hr = df['Cal InternalAdc13 (Shimmer Sensor)']
 time = df['RelativeTime']
 #To convert a pandas dataframe (df) to a numpy ndarray, use this code:
@@ -20,9 +19,8 @@ def skiplines(fr, lines):
     while i<=lines:
         i = i+1
         row = next(fr)
-
 #Plotting imotions Data
-imofile = open('iMotionsData.csv','r')
+imofile = open('IgnoreThisFolder/ProcessedData/P008/iMotionsData.csv','r')
 imoreader = csv.reader(imofile)
 skiplines(imoreader,1)
 imodata = list(imoreader)
@@ -62,5 +60,5 @@ plt.title("Physiological Data Plot (PPG)")
 ax1.axes.get_xaxis().set_visible(True)
 
 
-fig.savefig("iMotionsDrivingData1.pdf",bbox_inches = 'tight')
+fig.savefig("FilteredPhysioData1.pdf",bbox_inches = 'tight')
 plt.close()
