@@ -73,3 +73,7 @@ I can't seem to reconcile the time stamps and the clock times.
 < For more on the relevant columns please go through the python script comments >
 
 15. In order to run the StripData.py , just run the ./CleanAndMoveData.sh bash script.
+
+16. I attempted to perform fourier transform to understand the frequency of signal changes to understand where the noise comes from and I discovered that the sampling rate and the frequency don't match. For a frequency of 1024 Hz, the number of samples don;t match, so we have to employ linear interpolation to resolve this issue.
+
+16. For linear interpolation for time step use 0.001 (Downsample from 1024 HZ to 1000 Hz). We cannot use cubic interpolation since the time steps are not always monotonically increasing. it doesn't matter, we should be alright with linear interpolation considering the time intervals are small.
