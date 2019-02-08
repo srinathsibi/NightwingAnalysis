@@ -1,4 +1,5 @@
-#Author : David Mengyun
+#Author : David Mengyun ms2979@cornell.edu
+#Source: https://oceanpython.org/2013/03/11/signal-filtering-butterworth-filter/
 from io import StringIO
 import csv
 import numpy as np
