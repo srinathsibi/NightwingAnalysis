@@ -39,7 +39,7 @@ for i in xi:
 #print "x coordinates: ", xc ,'\n'
 # First, design the Buterworth filter
 N  = 1    # Filter order
-Wn = 0.00006#0.00005 # Cutoff frequency
+Wn = 0.00005 # Cutoff frequency
 B, A = signal.butter(N, Wn, output='ba')
 
 # Second, apply the filter to HR
