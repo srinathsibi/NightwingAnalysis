@@ -98,6 +98,12 @@ def PlotParticipantData():
             #END OF FIGURE 2
         except:
             print "Participant : ", chosenfolder ," has bad data. Please exclude from analysis."
+            if os.path.isfile('BadData.txt'):
+                pass
+            else:
+                markerfile = open('BadData.csv','wb')
+                markerwriter = csv.writer(markerfile)
+                markerfile.close()
             pass
         #Plotting Eye Tracker Data
         try:
@@ -151,6 +157,12 @@ def PlotParticipantData():
             #END OF FIGURE 3
         except IOError:
             print "Eye tracker data for: ", chosenfolder ,"is not available to plot. This participant has an error with markers or the eye tracker data wasn't recorded."
+            if os.path.isfile('BadData.txt'):
+                pass
+            else:
+                markerfile = open('BadData.csv','wb')
+                markerwriter = csv.writer(markerfile)
+                markerfile.close()
             pass
         os.chdir('../../')#Navigating back to the main folder now.
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
@@ -192,6 +204,12 @@ def PERCLOS( t , CategoryBinocular):
         return perclos
     except IndexError:
         print " Empty array for eye tracking => Empty eye tracking file. Consider fixing."
+        if os.path.isfile('BadData.txt'):
+            pass
+        else:
+            markerfile = open('BadData.csv','wb')
+            markerwriter = csv.writer(markerfile)
+            markerfile.close()
         return [[0,0]]
 #iMOTIONS DATA STRIPPING FUNCTION
 def strip_imotions_data(foldername):
@@ -278,6 +296,12 @@ def strip_eyetracking_data(foldername):
         #print "************** Participant " , foldername , " eye tracking file stripped to essential data!**************"
     except IOError:
         print ' There are no clipped eye tracking files for participant : ', foldername, '\n'
+        if os.path.isfile('BadData.txt'):
+            pass
+        else:
+            markerfile = open('BadData.csv','wb')
+            markerwriter = csv.writer(markerfile)
+            markerfile.close()
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
     #fp is file reader and lines is the number of lines to skip
