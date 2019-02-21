@@ -19,27 +19,33 @@ def ExtractData(foldername):
         FirstLineArray.append(next(iMotionsfilereader))
         iMotionsdata = list(iMotionsfilereader)
         IOErrorFlag.append(1)
+        iMotionsFile.close()
     except IOError:
         print "No iMotions file here"
         IOErrorFlag.append(0)
+        pass
     try:
         EyetrackingFile = open('StrippedEyeTrackingFile.csv','r')
         Eyetrackingreader = csv.reader(EyetrackingFile)
         FirstLineArray.append(next(Eyetrackingreader))
         Eyetrackingdata = list(Eyetrackingreader)
         IOErrorFlag.append(1)
+        EyetrackingFile.close()
     except IOError:
         print "No EyeTracker file here"
         IOErrorFlag.append(0)
+        pass
     try:
         Simfile = open('StrippedSimData.csv','r')
         Simreader = csv.reader(Simfile)
         FirstLineArray.append(next(Simreader))
         SimData = list(Simreader)
         IOErrorFlag.append(1)
+        Simfile.close()
     except IOError:
         print "No Sim Data here"
         IOErrorFlag.append(0)
+        pass
     if os.path.exists("EndSectionData"):
         print "\n"
         #print " End Section data folder already exists."
@@ -64,6 +70,7 @@ def ExtractData(foldername):
     except UnboundLocalError:
         print " Unable to locate Marker 3, We need to ignore this participant data ", foldername
         return None
+        pass
     #We have to create the Outputfilelist and the data list on the basis of whether eye tracking data
     #exists for this participant.
     if IOErrorFlag[1] == 0:
@@ -85,9 +92,9 @@ def WriteOutputFile(filename,Marker3time,Data,FirstLine):
     outfile = open(filename,'wb')
     outwriter = csv.writer(outfile)
     outwriter.writerow(FirstLine)
-    """for i in range(len(Data)):
+    for i in range(len(Data)):
         if float(Data[i][0])>=Marker3time:
-            outwriter.writerow(Data[i])"""
+            outwriter.writerow(Data[i])
     outfile.close()
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
