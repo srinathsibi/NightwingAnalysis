@@ -95,11 +95,12 @@ def ETTimeConverter(inputtime):
     pieces_ = [float(i) for i in pieces]
     time = pieces_[0] * 3600 + pieces_[1]*60 + pieces_[2] + pieces_[3]/1000
     return time
-#Function to move files to some path relative to the current directory. Moves all files in the filelist
-def MoveFileToClippedData(filelist, target_relativepath):
+def CreateClippedDatafolder():
     if not os.path.exists('ClippedData'):
         os.makedirs('ClippedData/')
         print "clippedData folder created inside participant folder!"
+#Function to move files to some path relative to the current directory. Moves all files in the filelist
+def MoveFileToClippedData(filelist, target_relativepath):
     for file in filelist:
         shutil.move(file, target_relativepath+file)
 #Function to process Eye Tracker Files
@@ -211,9 +212,9 @@ def ProcessSimData():
     os.chdir('../')
 def ProcessiMoVideos():
     print "\n\nNow clipping the movies to same length as the other clipped files.\n\n"
-    iMotionsinfofile = open('ClippedData/iMotionsInfo.csv','r')
+    iMotionsinfofile = open('iMotionsInfo.csv','r')
     infofilereader = csv.reader(iMotionsinfofile)
-    iMotionsClippedFile = open('ClippedData/iMotionsClipped.csv', 'r')
+    iMotionsClippedFile = open('iMotionsClipped.csv', 'r')
     iMotionsfilereader = csv.reader(iMotionsClippedFile)
     skiplines(infofilereader,3)
     studystarttime_ = next(infofilereader)[0].split(' ')[3].split(':')
@@ -252,6 +253,7 @@ if __name__=='__main__':
 for foldername in listoffolders:
     os.chdir(foldername+'/')#Navigating into each folder
     print "\n\n\nInside the participant data folder : ",foldername,'\n'
+    CreateClippedDatafolder()#Create the clipped data storage folder
     ProcessiMoData()#Function to process the iMotions Data
     EyeTrackingDataProcessing(foldername)
     ProcessSimData()

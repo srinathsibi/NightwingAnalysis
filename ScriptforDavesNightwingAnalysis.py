@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy import interpolate
 import numpy as np
 def ExtractData(foldername):
-    print "In Clipped data folder for:",foldername,"\n"
+    print "\n\nIn Clipped data folder for:",foldername
     FirstLineArray =[]#First Line Array contains the three first lines from the iMotions, eye tracking and Sim file
     IOErrorFlag = []#Flag for whether the files are present or not.
     try:
@@ -41,7 +41,8 @@ def ExtractData(foldername):
         print "No Sim Data here"
         IOErrorFlag.append(0)
     if os.path.exists("EndSectionData"):
-        print " End Section data folder already exists."
+        print "\n"
+        #print " End Section data folder already exists."
     else:
         print "Creating new directory for End Section data"
         os.makedirs("EndSectionData")
@@ -50,19 +51,44 @@ def ExtractData(foldername):
             for i in range(len(iMotionsdata)):
                 if float(iMotionsdata[i][2])==5:
                     Marker3Index = i
-                    Marker3time = iMotionsdata[i][0]
+                    Marker3time = float(iMotionsdata[i][0])
                     break
             print "\n Marker from iMotions ", Marker3time
         elif IOErrorFlag[2]:
             for i in range(len(SimData)):
                 if float(SimData[i][21])==5:
                     Marker3Index = i
-                    Marker3time = SimData[i][0]
+                    Marker3time = float(SimData[i][0])
                     break
             print "\n Marker 3 time is : ", Marker3time
     except UnboundLocalError:
         print " Unable to locate Marker 3, We need to ignore this participant data ", foldername
         return None
+    #We have to create the Outputfilelist and the data list on the basis of whether eye tracking data
+    #exists for this participant.
+    if IOErrorFlag[1] == 0:
+        Outputfilelist = [ 'iMotionsFile.csv','SimFile.csv' ]
+        Datalist = [iMotionsdata, SimData]
+    elif IOErrorFlag[1]==1:
+        Outputfilelist = [ 'iMotionsFile.csv','EyetrackingFile.csv', 'SimFile.csv' ]
+        Datalist = [iMotionsdata, Eyetrackingdata, SimData]
+    #Writing a function to automate the process of extracting the relevant information and
+    # move to EndSectionData folder
+    for i,filename in enumerate(Outputfilelist):
+        os.chdir('EndSectionData/')
+        WriteOutputFile(filename,Marker3time,Datalist[i],FirstLineArray[i])
+        os.chdir('../')
+#Function to write the files from the arrays. This function uses the output file name and the
+#the data from the csv readers.
+def WriteOutputFile(filename,Marker3time,Data,FirstLine):
+    print "Printing File : ", filename
+    outfile = open(filename,'wb')
+    outwriter = csv.writer(outfile)
+    outwriter.writerow(FirstLine)
+    """for i in range(len(Data)):
+        if float(Data[i][0])>=Marker3time:
+            outwriter.writerow(Data[i])"""
+    outfile.close()
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
     #fp is file reader and lines is the number of lines to skip
