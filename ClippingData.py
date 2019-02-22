@@ -44,7 +44,7 @@ def ProcessiMoData():
                 break
         except ValueError:
             pass
-    print "\n\nMarker 1 Time Stamp : " , iMotionsMarker1Time ,"\n\n"
+    print "Marker 1 Time Stamp : " , iMotionsMarker1Time
     iMotionsfile.seek(0)#Get back to top of the file again
     skiplines(iMotionsReader,6)
     #Writing the rows with markers from 1 onwards
@@ -135,12 +135,12 @@ def EyeTrackingDataProcessing(participantfolder):
             i = i +1
         eyetrackinginfofile.close()
         for row in eyetrackingreader:
-            if row[12] == 'User Event' and float(row[13]) == 1:
-                #print "Eye tracker marker 1 time : " , row[1] , "\n Converted: " , ETTimeConverter(row[1])
+            #print row, "\n"
+            if 'User Event' in row:
+                print "Eye tracker marker 1 time : " , row[1] , "\n Converted: " , ETTimeConverter(row[1])
                 eyetracker1stmarkertime = row[1]
                 MARKER_PRESENT = True
-            elif row[12] == 'User Event':
-                MARKER_PRESENT = True # This value is serving as a marker for now
+                break
         if not MARKER_PRESENT:
             print " !!!!!! THIS PARTICIPANT EYE TRACKER INFO HAS NO MARKER 1 : ", foldername
         # The clipped data writing can be done only for those with the MARKER_PRESENT = True, others have no eyetracker1stmarkertime to reference
@@ -159,7 +159,7 @@ def EyeTrackingDataProcessing(participantfolder):
                         row.pop(0)#Removing the first value and replacing it with Time in seconds from ETTimeConverter
                         row.insert(0, str(ETTimeConverter(row[0])- ETTimeConverter(eyetracker1stmarkertime)) )
                         etoutwriter.writerow(row)
-                except ValueError:
+                except (ValueError, IndexError) as err:
                     print "********This participant data has a weird row at the marker row, so we skip those rows.\n"
                     pass
             etoutfile.close()
@@ -211,7 +211,7 @@ def ProcessSimData():
     simfile.close()
     os.chdir('../')
 def ProcessiMoVideos():
-    print "\n\nNow clipping the movies to same length as the other clipped files.\n\n"
+    print "\nNow clipping the movies to same length as the other clipped files."
     iMotionsinfofile = open('iMotionsInfo.csv','r')
     infofilereader = csv.reader(iMotionsinfofile)
     iMotionsClippedFile = open('iMotionsClipped.csv', 'r')
@@ -225,9 +225,13 @@ def ProcessiMoVideos():
     #print "Clip Start Time: " , clipfilestarttime , "\n"
     timediff = clipfilestarttime - studystarttime_sec# Time difference to be taken off the front of the videos for syncing
     print " Time Difference to be taken off at the start of the videos for syncing is : " , timediff
+    timedifffile = open('ClippedData/TimeDifference.csv','wb')
+    tdwriter = csv.writer(timedifffile)
+    tdwriter.writerow([timediff])
+    timedifffile.close()
     #Get the eye tracker and the quad files with the same glob command. The same process is used for both to clip
     videofilelist = glob.glob('*.wmv')
-    print " The video files to be clipped are : ", videofilelist , "\n"
+    print "\n The video files to be clipped are : ", videofilelist
     #Normally I would use a try/except statement here. This time around, I don't want to do that. If there is a video file missing
     #I want the module to exit and throw an error.
     for i,file in enumerate(videofilelist):
@@ -236,7 +240,7 @@ def ProcessiMoVideos():
             clip = clip_.subclip(timediff, clip_.duration)
             clip.write_videofile('ClippedData/File' + str(i) + '.mp4', fps = clip_.fps , audio_bitrate="1000k")
         except IndexError:
-            print "***************************************************************\n\n\
+            print "***************************************************************\n\
  Participant : ", foldername, " has problematic video files in iMotions. Please verify or clip them by hand! \n\
 ***************************************************************"
             pass
@@ -252,7 +256,7 @@ if __name__=='__main__':
     #The os.listdir() returns a list of strings. each folder name is convenienetly a string
 for foldername in listoffolders:
     os.chdir(foldername+'/')#Navigating into each folder
-    print "\n\n\nInside the participant data folder : ",foldername,'\n'
+    print "\n\n\n\nInside the participant data folder : ",foldername
     CreateClippedDatafolder()#Create the clipped data storage folder
     ProcessiMoData()#Function to process the iMotions Data
     EyeTrackingDataProcessing(foldername)

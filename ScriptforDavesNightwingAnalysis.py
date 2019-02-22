@@ -9,6 +9,7 @@ import csv
 import matplotlib.pyplot as plt
 from scipy import interpolate
 import numpy as np
+from moviepy.editor import *
 def ExtractData(foldername):
     print "\n\nIn Clipped data folder for:",foldername
     FirstLineArray =[]#First Line Array contains the three first lines from the iMotions, eye tracking and Sim file
@@ -66,13 +67,13 @@ def ExtractData(foldername):
                     Marker3Index = i
                     Marker3time = float(SimData[i][0])
                     break
-            print "\n Marker 3 time is : ", Marker3time
+            print "\n Marker from Sim data : ", Marker3time
     except UnboundLocalError:
         print " Unable to locate Marker 3, We need to ignore this participant data ", foldername
         return None
         pass
     #We have to create the Outputfilelist and the data list on the basis of whether eye tracking data
-    #exists for this participant.
+    #exists for this participant. Titrate here if needed.
     if IOErrorFlag[1] == 0:
         Outputfilelist = [ 'iMotionsFile.csv','SimFile.csv' ]
         Datalist = [iMotionsdata, SimData]
@@ -83,17 +84,23 @@ def ExtractData(foldername):
     # move to EndSectionData folder
     for i,filename in enumerate(Outputfilelist):
         os.chdir('EndSectionData/')
-        WriteOutputFile(filename,Marker3time,Datalist[i],FirstLineArray[i])
+        WriteOutputFile(filename,(Marker3time-40),(Marker3time+80),Datalist[i],FirstLineArray[i])
+        #An interval of 80 seconds around marker 3 was chosen to clip the interval when the trucks
+        #appear to after the accident
         os.chdir('../')
+    for i,video in enumerate(glob.glob('*.mp4')):
+        print "Writing :" , video
+        clip = VideoFileClip(video).subclip((Marker3time-40+180), (Marker3time+80+180))
+        clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
 #Function to write the files from the arrays. This function uses the output file name and the
 #the data from the csv readers.
-def WriteOutputFile(filename,Marker3time,Data,FirstLine):
+def WriteOutputFile(filename,StartTime,StopTime,Data,FirstLine):
     print "Printing File : ", filename
     outfile = open(filename,'wb')
     outwriter = csv.writer(outfile)
     outwriter.writerow(FirstLine)
     for i in range(len(Data)):
-        if float(Data[i][0])>=Marker3time:
+        if float(Data[i][0])>=StartTime and float(Data[i][0]<=StopTime):
             outwriter.writerow(Data[i])
     outfile.close()
 #Function to skip lines in the csv files
