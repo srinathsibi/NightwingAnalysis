@@ -84,24 +84,26 @@ def ExtractData(foldername):
     # move to EndSectionData folder
     for i,filename in enumerate(Outputfilelist):
         os.chdir('EndSectionData/')
-        WriteOutputFile(filename,(Marker3time-40),(Marker3time+80),Datalist[i],FirstLineArray[i])
+        WriteOutputFile(filename,(Marker3time-40.0),(Marker3time+80.0),Datalist[i],FirstLineArray[i])
         #An interval of 80 seconds around marker 3 was chosen to clip the interval when the trucks
         #appear to after the accident
         os.chdir('../')
     for i,video in enumerate(glob.glob('*.mp4')):
-        print "Writing :" , video
-        clip = VideoFileClip(video).subclip((Marker3time-40+180), (Marker3time+80+180))
+        print "Processing :" , video , "\n"
+        clip = VideoFileClip(video).subclip((Marker3time-40+180), (Marker3time+60+180))
         clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
 #Function to write the files from the arrays. This function uses the output file name and the
 #the data from the csv readers.
 def WriteOutputFile(filename,StartTime,StopTime,Data,FirstLine):
-    print "Printing File : ", filename
+    print "Printing File : ", filename ," From : ", StartTime, " To : ", StopTime
     outfile = open(filename,'wb')
     outwriter = csv.writer(outfile)
     outwriter.writerow(FirstLine)
     for i in range(len(Data)):
-        if float(Data[i][0])>=StartTime and float(Data[i][0]<=StopTime):
-            outwriter.writerow(Data[i])
+        if float(Data[i][0]) >= StartTime:
+            if float(Data[i][0]) <= StopTime:
+                #print Data[i] , "\n"
+                outwriter.writerow(Data[i])
     outfile.close()
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
@@ -120,4 +122,4 @@ if __name__=='__main__':
         #print "List of Contents in ClippedData Folder : \n", os.listdir('.')
         ExtractData(folder)
         os.chdir('../../')
-    print "\n\n################# END OF SIGNAL PROCESSING! #################\n\n"
+    print "\n\n################# END OF END SECTION DATA PROCESSING! #################\n\n"
