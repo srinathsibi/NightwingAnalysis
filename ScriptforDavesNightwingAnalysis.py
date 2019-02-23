@@ -122,4 +122,4 @@ if __name__=='__main__':
         #print "List of Contents in ClippedData Folder : \n", os.listdir('.')
         ExtractData(folder)
         os.chdir('../../')
-    print "\n\n################# END OF END SECTION DATA PROCESSING! #################\n\n"
+    print "\n\n################# END OF END-SECTION DATA PROCESSING! #################\n\n"
