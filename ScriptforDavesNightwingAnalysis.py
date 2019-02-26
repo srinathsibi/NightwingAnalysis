@@ -48,7 +48,7 @@ def ExtractData(foldername):
         IOErrorFlag.append(0)
         pass
     if os.path.exists("EndSectionData"):
-        print "\n"
+        print " "
         #print " End Section data folder already exists."
     else:
         print "Creating new directory for End Section data"
@@ -92,6 +92,25 @@ def ExtractData(foldername):
         print "Processing :" , video , "\n"
         clip = VideoFileClip(video).subclip((Marker3time-40+180), (Marker3time+60+180))
         clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
+    print ""
+    Movedatatoendsection(foldername)
+# This function is to move all requisite data to the end section folder for Dave's analysis of nightwing
+def Movedatatoendsection(foldername):
+    print "Moving other files."
+    try:
+        shutil.copy('EyeTrackingInfo.csv','EndSectionData/EyeTrackingInfo.csv')
+    except:
+        pass
+    try:
+        shutil.copy('iMotionsInfo.csv','EndSectionData/iMotionsInfo.csv')
+    except:
+        pass
+    path = '../../../IgnoreThisFolder/ProcessedData/'+foldername+'/'
+    try:
+        shutil.copytree('EndSectionData',path+'EndSectionData')
+    except:
+        print 'End Section Data NOT Copied for :', foldername
+        pass
 #Function to write the files from the arrays. This function uses the output file name and the
 #the data from the csv readers.
 def WriteOutputFile(filename,StartTime,StopTime,Data,FirstLine):
