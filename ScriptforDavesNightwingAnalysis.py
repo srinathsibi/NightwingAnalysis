@@ -92,7 +92,6 @@ def ExtractData(foldername):
         print "Processing :" , video , "\n"
         clip = VideoFileClip(video).subclip((Marker3time-40+180), (Marker3time+60+180))
         clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
-    print ""
     Movedatatoendsection(foldername)
 # This function is to move all requisite data to the end section folder for Dave's analysis of nightwing
 def Movedatatoendsection(foldername):
