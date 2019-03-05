@@ -1,5 +1,7 @@
 # Author: Srinath Sibi ssibi@stanford.edu
 #Purpose: The goal is to strip the relevant columns of data from the existing files and plot the relevant streams of data.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import glob, os, sys, shutil
 import matplotlib as plt
 import numpy as np
@@ -98,12 +100,12 @@ def PlotParticipantData():
             #END OF FIGURE 2
         except:
             print "Participant : ", chosenfolder ," has bad data. Please exclude from analysis."
-            if os.path.isfile('BadData.txt'):
+            '''if os.path.isfile('BadData.txt'):
                 pass
             else:
                 markerfile = open('BadData.csv','wb')
                 markerwriter = csv.writer(markerfile)
-                markerfile.close()
+                markerfile.close()'''
             pass
         #Plotting Eye Tracker Data
         try:
@@ -157,12 +159,12 @@ def PlotParticipantData():
             #END OF FIGURE 3
         except IOError:
             print "Eye tracker data for: ", chosenfolder ,"is not available to plot. This participant has an error with markers or the eye tracker data wasn't recorded."
-            if os.path.isfile('BadData.txt'):
+            '''if os.path.isfile('BadData.txt'):
                 pass
             else:
                 markerfile = open('BadData.csv','wb')
                 markerwriter = csv.writer(markerfile)
-                markerfile.close()
+                markerfile.close()'''
             pass
         os.chdir('../../')#Navigating back to the main folder now.
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
@@ -204,12 +206,12 @@ def PERCLOS( t , CategoryBinocular):
         return perclos
     except IndexError:
         print " Empty array for eye tracking => Empty eye tracking file. Consider fixing."
-        if os.path.isfile('BadData.txt'):
+        '''if os.path.isfile('BadData.txt'):
             pass
         else:
             markerfile = open('BadData.csv','wb')
             markerwriter = csv.writer(markerfile)
-            markerfile.close()
+            markerfile.close()'''
         return [[0,0]]
 #iMOTIONS DATA STRIPPING FUNCTION
 def strip_imotions_data(foldername):
@@ -224,8 +226,12 @@ def strip_imotions_data(foldername):
     del headerrow[0]
     headerrow.insert(0,'RelativeTime')
     headerkey = {headerrow[i]:i for i in range((len(headerrow)))}
-    relevantcols = ['RelativeTime', 'UTCTimestamp', 'SimulatorEvent (0.0)', 'Steer (0.0)', 'Throttle (0.0)', 'Brake (0.0)', 'Cal InternalAdc13 (Shimmer Sensor)', \
+    if int(foldername[1:4])<=61:
+        relevantcols = ['RelativeTime', 'UTCTimestamp', 'SimulatorEvent (0.0)', 'Steer (0.0)', 'Throttle (0.0)', 'Brake (0.0)', 'Cal InternalAdc13 (Shimmer Sensor)', \
 'Speed (0.0)', 'Cal GSR (Shimmer Sensor)', 'Raw InternalAdc13 (Shimmer Sensor)', 'Raw GSR (Shimmer Sensor)']
+    if int(foldername[1:4])>=62:
+        relevantcols = ['RelativeTime', 'UTCTimestamp', 'SimulatorEvent (0.0)', 'Steer (0.0)', 'Throttle (0.0)', 'Brake (0.0)', 'Heart Rate PPG  (Beats/min) (2)', \
+'Speed (0.0)', 'GSR CAL (\xc2\xb5Siemens) (2)', 'Internal ADC A13 PPG CAL (mVolts) (2)', 'GSR CAL (kOhms) (2)']
     #print headerkey, '\n'
     strippediMotionsfile = open('StrippediMotionsData.csv' , 'wb')
     strippediMotionswriter = csv.writer(strippediMotionsfile)
@@ -243,16 +249,28 @@ def strip_imotions_data(foldername):
 # ['-179.9928 ', '832.716689999436 1 0 0 -0.29072093963623 -0.94616311788559 0 0.801034569740295 3 87.3806454483458 0.00137846119818993 10000 685.723448583853 -1 -0.630452023804135 -1.16954792851215 0.131464287638664 10000 685.723448583853 14.5829992294312 -0.0311381593346596 -0.0566742084920406 -3900.9013671875 526.386901855469 -0.533323347568512 0.424907571862279 -0.229437248585732 87.3191455874348 1432.11218261719 0.00977549608796835 0.00960742868483067 0.00513751804828644 0.00514872372150421 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1487556507 0 -1 0 1 8 8']
 def strip_sim_data(foldername):
     #print "\nSim Stripping begun.\n"
-    headerkey = { 'RelativeTime': 0, 'SimTime': 1, 'EndAutonomousMode':2 , 'SitAwOnTab':3 , 'TakeOverOnTab':4, 'LonAccel':5 , 'LatAccel':6 , 'ThrottlePedal':7 ,'BrakePedal':8 ,\
-'Gear':9 ,'Heading':10 , 'HeadingError':11, 'HeadwayDistance':12, 'HeadwayTime':13 ,'LaneNumber':14 , 'LaneOffset':15 , 'RoadOffset':16, 'SteeringWheelPos':17 ,\
-'TailwayDistance':18 , 'TailwayTime':19 , 'Velocity':20, 'LateralVelocity':21 , 'verticalvel':22 , 'xpos':23 , 'ypos':24 , 'zpos':25, 'Roll':26 , 'Pitch':27 ,\
-'Yaw':28, 'enginerpm':29 , 'slip1':30 , 'slip2':31 , 'slip3':33, 'slip4':34,'SubId' :54, 'DriveID' : 53, 'AutomationType':52 , 'ModeSwitch': 51 , 'EventMarker': 50 , \
-'SteerTouch': 49 , 'UnixTime':48 }#Total of 55 columns in the row [index 0 - 54]. The first three columns after SimTime are SitAw options
-# that were left behind a long time ago. Ignore them.
-    #relevantcols is meant to contain the relevant columns for stripping data. I might add functionality to choose the columns as needed.
-    relevantcols = ['RelativeTime' , 'SimTime' , 'LonAccel' , 'LatAccel' , 'ThrottlePedal','BrakePedal'\
-,'Heading' , 'HeadingError', 'HeadwayDistance', 'HeadwayTime' ,'LaneNumber' ,'LaneOffset' , 'RoadOffset', 'SteeringWheelPos',\
-'TailwayDistance' , 'TailwayTime' , 'Velocity', 'LateralVelocity','Roll' , 'Pitch' , 'Yaw', 'EventMarker' , 'UnixTime']
+    if int(foldername[1:4])<=61:
+        headerkey = { 'RelativeTime': 0, 'SimTime': 1, 'EndAutonomousMode':2 , 'SitAwOnTab':3 , 'TakeOverOnTab':4, 'LonAccel':5 , 'LatAccel':6 , 'ThrottlePedal':7 ,'BrakePedal':8 ,\
+    'Gear':9 ,'Heading':10 , 'HeadingError':11, 'HeadwayDistance':12, 'HeadwayTime':13 ,'LaneNumber':14 , 'LaneOffset':15 , 'RoadOffset':16, 'SteeringWheelPos':17 ,\
+    'TailwayDistance':18 , 'TailwayTime':19 , 'Velocity':20, 'LateralVelocity':21 , 'verticalvel':22 , 'xpos':23 , 'ypos':24 , 'zpos':25, 'Roll':26 , 'Pitch':27 ,\
+    'Yaw':28, 'enginerpm':29 , 'slip1':30 , 'slip2':31 , 'slip3':33, 'slip4':34,'SubId' :54, 'DriveID' : 53, 'AutomationType':52 , 'ModeSwitch': 51 , 'EventMarker': 50 , \
+    'SteerTouch': 49 , 'UnixTime':48 }#Total of 55 columns in the row [index 0 - 54]. The first three columns after SimTime are SitAw options
+    # that were left behind a long time ago. Ignore them.
+        #relevantcols is meant to contain the relevant columns for stripping data. I might add functionality to choose the columns as needed.
+        relevantcols = ['RelativeTime' , 'SimTime' , 'LonAccel' , 'LatAccel' , 'ThrottlePedal','BrakePedal'\
+    ,'Heading' , 'HeadingError', 'HeadwayDistance', 'HeadwayTime' ,'LaneNumber' ,'LaneOffset' , 'RoadOffset', 'SteeringWheelPos',\
+    'TailwayDistance' , 'TailwayTime' , 'Velocity', 'LateralVelocity','Roll' , 'Pitch' , 'Yaw', 'EventMarker' , 'UnixTime']
+    #The columns are different for participants over 62 (control case)
+    if int(foldername[1:4])>=62:
+        headerkey = { 'RelativeTime': 0, 'SimTime': 1, 'LonAccel':2 , 'LatAccel':3 , 'ThrottlePedal':4 ,'BrakePedal':5 ,\
+    'Gear':6 ,'Heading':7 , 'HeadingError':8, 'HeadwayDistance':9, 'HeadwayTime':10 ,'LaneNumber':11 , 'LaneOffset':12 , 'RoadOffset':13, 'SteeringWheelPos':14 ,\
+    'TailwayDistance':15 , 'TailwayTime':16 , 'Velocity':17, 'LateralVelocity':18 , 'verticalvel':19 , 'xpos':20 , 'ypos':21 , 'zpos':22, 'Roll':23 , 'Pitch':24 ,\
+    'Yaw':25, 'enginerpm':26 , 'slip1':27 , 'slip2':28 , 'slip3':30, 'slip4':31,'SubId' :51, 'DriveID' : 50, 'AutomationType':49 , 'ModeSwitch': 48 , 'EventMarker': 47 , \
+    'SteerTouch': 46 , 'UnixTime':45 }# The first three columns after SimTime are SitAw options that were removed from the automation condition(Participants 006-061). Hence the number of columns is different.
+        #relevantcols is meant to contain the relevant columns for stripping data. I might add functionality to choose the columns as needed.
+        relevantcols = ['RelativeTime' , 'SimTime' , 'LonAccel' , 'LatAccel' , 'ThrottlePedal','BrakePedal'\
+    ,'Heading' , 'HeadingError', 'HeadwayDistance', 'HeadwayTime' ,'LaneNumber' ,'LaneOffset' , 'RoadOffset', 'SteeringWheelPos',\
+    'TailwayDistance' , 'TailwayTime' , 'Velocity', 'LateralVelocity','Roll' , 'Pitch' , 'Yaw', 'EventMarker' , 'UnixTime']
     simfile = open('ClippedSimData.csv','r')
     simreader = csv.reader(simfile)
     strippedsimfile = open('StrippedSimData.csv' , 'wb')
@@ -296,12 +314,12 @@ def strip_eyetracking_data(foldername):
         #print "************** Participant " , foldername , " eye tracking file stripped to essential data!**************"
     except IOError:
         print ' There are no clipped eye tracking files for participant : ', foldername, '\n'
-        if os.path.isfile('BadData.txt'):
+        '''if os.path.isfile('BadData.txt'):
             pass
         else:
             markerfile = open('BadData.csv','wb')
             markerwriter = csv.writer(markerfile)
-            markerfile.close()
+            markerfile.close()'''
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
     #fp is file reader and lines is the number of lines to skip
@@ -383,10 +401,10 @@ def MoveFiles(foldername):
 #Start of main function
 if __name__ == '__main__':
     os.chdir('Data/')#Moving to the data folder6
-    listoffolders = os.listdir('.')
+    listoffolders = ['P062','P063','P064','P065','P066','P067','P068','P069','P070','P071','P072','P073','P074','P075','P076','P077','P078','P079','P080','P081','P082','P083','P084','P085']#os.listdir('.')
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
     options = {1: StripData, 2: PlotParticipantData, 3: MoveData}
     options[1]()
-    options[2]()
+    #options[2]()
     options[3]()
     os.chdir('../')#Moving out of the Data folder

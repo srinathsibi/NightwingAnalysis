@@ -19,7 +19,7 @@ echo
 echo
 echo
 echo Now extracting the End section Data for daves analysis
-python ScriptforDavesNightwingAnalysis.py
+#python ScriptforDavesNightwingAnalysis.py
 wait
 echo 
 echo

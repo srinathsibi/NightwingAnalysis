@@ -195,11 +195,20 @@ def ProcessSimData():
             except IndexError:
                 print "***************All three syntaxes for sim file recognition failed! Error!********************"
                 pass
-    for i, row in enumerate(simfilereader):
-        if row[0].split(' ')[49] == '1':
-            print "Time at marker 1 for participant " , foldername , " is :" , row[0].split(' ')[0]
-            simtimeatmarker1 = float(row[0].split(' ')[0])
-            break
+    #Column 50 (index 49) has the event data has the event markers for the first 61 participants.
+    #For participants >=62, column 47 (index 46) has the marker. There are fewer columns for the control condition, maybe because of manual driving.
+    if int(foldername[1:4])<=61:
+        for i, row in enumerate(simfilereader):
+            if row[0].split(' ')[49] == '1':
+                print "Time at marker 1 for participant " , foldername , " is :" , row[0].split(' ')[0]
+                simtimeatmarker1 = float(row[0].split(' ')[0])
+                break
+    if int(foldername[1:4])>=62:
+        for i, row in enumerate(simfilereader):
+            if row[0].split(' ')[46] == '1':
+                print "Time at marker 1 for participant " , foldername , " is :" , row[0].split(' ')[0]
+                simtimeatmarker1 = float(row[0].split(' ')[0])
+                break
     simfile.seek(0)#Resetting to the top of the file again
     #To create the file in the ClippedData file, we will use the path in the open command instead. os.chdir() might be unnecessary
     simclipfile = open('../ClippedData/ClippedSimData.csv' , 'wb')
@@ -251,7 +260,7 @@ def ProcessiMoVideos():
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6
     #Now to query all the files that exist in the data folder
-    listoffolders = os.listdir('.')
+    listoffolders = ['P062']#['P062','P063','P064','P065','P066','P067','P068','P069','P070','P071','P072','P073','P074','P075','P076','P077','P078','P079','P080','P081','P082','P083','P084','P085']#os.listdir('.')
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
     #The os.listdir() returns a list of strings. each folder name is convenienetly a string
 for foldername in listoffolders:
