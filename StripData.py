@@ -35,14 +35,25 @@ def PlotParticipantData():
             speed = [float(imodata[i][7]) for i in range(len(imodata))]
             GSR = [float(imodata[i][8]) for i in range(len(imodata))]
             #Locating indices and respective times for vertical marker placement
-            xi = [eventmarker.index(1)]
-            xi.append(eventmarker.index(21))
-            xi.append(eventmarker.index(5))
-            xi.append(eventmarker.index(10))
-            xc = [time[xi[0]]]
-            for i in xi:
-                xc.append(time[i])
-            #print "x coordinates: ", xc ,'\n'
+            # Markers for participants under 61
+            if int(chosenfolder[1:4])<=61:
+                xi = [eventmarker.index(1)]
+                xi.append(eventmarker.index(21))
+                xi.append(eventmarker.index(5))
+                xi.append(eventmarker.index(10))
+                xc = [time[xi[0]]]
+                for i in xi:
+                    xc.append(time[i])
+                print "x coordinates: ", xc ,'\n'
+            # Markers for participants over 62
+            if int(chosenfolder[1:4])>=61:
+                xi = [eventmarker.index(1)]
+                xi.append(eventmarker.index(5))
+                xi.append(eventmarker.index(10))
+                xc = [time[xi[0]]]
+                for i in xi:
+                    xc.append(time[i])
+                print "x coordinates: ", xc ,'\n'
             #Starting the iMotions Figure here.
             imofig1 = plt.figure(1)
             imofig1.tight_layout()
@@ -405,6 +416,6 @@ if __name__ == '__main__':
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
     options = {1: StripData, 2: PlotParticipantData, 3: MoveData}
     options[1]()
-    #options[2]()
+    options[2]()
     options[3]()
     os.chdir('../')#Moving out of the Data folder

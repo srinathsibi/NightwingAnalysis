@@ -53,6 +53,7 @@ def ExtractData(foldername):
     else:
         print "Creating new directory for End Section data"
         os.makedirs("EndSectionData")
+    #Note : All participants in the automation and control case have marker 5 to denote the start of the end event
     try:
         if IOErrorFlag[0]:
             for i in range(len(iMotionsdata)):
