@@ -90,10 +90,10 @@ def ExtractData(foldername):
         #An interval of 80 seconds around marker 3 was chosen to clip the interval when the trucks
         #appear to after the accident
         os.chdir('../')
-    '''for i,video in enumerate(glob.glob('*.mp4')):
+    for i,video in enumerate(glob.glob('*.mp4')):
         print "Processing :" , video , "\n"
         clip = VideoFileClip(video).subclip((Marker3time-240+180), (Marker3time+80+180))
-        clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")'''
+        clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
     #Opening the eye tracking file that was just saved
     try:
         file = open('EndSectionData/EyetrackingFile.csv','r')
@@ -161,7 +161,7 @@ def skiplines(fr, lines):
 #Main Function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the folder containing the data
-    listoffolders = os.listdir('.')#Getting the list of folders
+    listoffolders =['P062','P063','P064','P065','P066','P067','P068','P069','P070','P071','P072','P073','P074','P075','P076','P077','P078','P079','P080','P081','P082','P083','P084','P085']# os.listdir('.')#Getting the list of folders
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'
     for folder in listoffolders:
         os.chdir(folder + '/ClippedData/')
