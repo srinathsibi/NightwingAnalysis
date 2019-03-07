@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from scipy import interpolate
 import numpy as np
 from moviepy.editor import *
+from StripData import PERCLOS
 def ExtractData(foldername):
     print "\n\nIn Clipped data folder for:",foldername
     FirstLineArray =[]#First Line Array contains the three first lines from the iMotions, eye tracking and Sim file
@@ -85,14 +86,35 @@ def ExtractData(foldername):
     # move to EndSectionData folder
     for i,filename in enumerate(Outputfilelist):
         os.chdir('EndSectionData/')
-        WriteOutputFile(filename,(Marker3time-40.0),(Marker3time+80.0),Datalist[i],FirstLineArray[i])
+        WriteOutputFile(filename,(Marker3time-240.0),(Marker3time+80.0),Datalist[i],FirstLineArray[i])
         #An interval of 80 seconds around marker 3 was chosen to clip the interval when the trucks
         #appear to after the accident
         os.chdir('../')
-    for i,video in enumerate(glob.glob('*.mp4')):
+    '''for i,video in enumerate(glob.glob('*.mp4')):
         print "Processing :" , video , "\n"
-        clip = VideoFileClip(video).subclip((Marker3time-40+180), (Marker3time+60+180))
-        clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
+        clip = VideoFileClip(video).subclip((Marker3time-240+180), (Marker3time+80+180))
+        clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")'''
+    #Opening the eye tracking file that was just saved
+    try:
+        file = open('EndSectionData/EyetrackingFile.csv','r')
+        reader = csv.reader(file)
+        skiplines(reader,1)
+        ETData = list(reader)
+        file.close()
+        time = [float(ETData[i][0]) for i in range(len(ETData))]
+        catbin =  [ETData[i][3] for i in range(len(ETData))]
+        perclos_array = PERCLOS(time, catbin)
+        print ' PERCLOS example : ', perclos_array[0]
+        if perclos_array[0][0] != 0:
+            perclos_file = open('EndSectionData/EndSectionPERCLOS.csv', 'wb')
+            percloswriter = csv.writer(perclos_file)
+            percloswriter.writerow(['Time','PERCLOS'])
+            percloswriter.writerows([ perclos_array[i][1], perclos_array[i][0] ] for i in range(len(perclos_array)))
+            perclos_file.close()
+        #print " Eye Tracker Data example: \n\n" , ETData[1]
+    except:
+        print 'No Eye tracker file here.\n'
+        pass
     Movedatatoendsection(foldername)
 # This function is to move all requisite data to the end section folder for Dave's analysis of nightwing
 def Movedatatoendsection(foldername):
@@ -108,8 +130,13 @@ def Movedatatoendsection(foldername):
     path = '../../../IgnoreThisFolder/ProcessedData/'+foldername+'/'
     try:
         shutil.copytree('EndSectionData',path+'EndSectionData')
-    except:
-        print 'End Section Data NOT Copied for :', foldername
+    except OSError:
+        try:
+            shutil.rmtree(path+'EndSectionData/')
+            shutil.copytree('EndSectionData',path+'EndSectionData')
+            print 'End Section Data Removed and Copied for :', foldername
+        except Exception as e:
+            print "Error copying :", foldername
         pass
 #Function to write the files from the arrays. This function uses the output file name and the
 #the data from the csv readers.
