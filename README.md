@@ -79,3 +79,5 @@ I can't seem to reconcile the time stamps and the clock times.
 17. For linear interpolation for time step use 0.001 (Resample to 1000 Hz for all signals). We cannot use cubic interpolation since the time steps are not always monotonically increasing (again because of the iMotions export method) . We will employ linear interpolation for all the signals. I have added an image in this repository to show that the resampling to a 1000 Hz doesn't alter the overall HR signal.
 
 18. Participant 013 has some problems, there are 21 markers before 1 , these are shown in pictures in the Affiliated Images folder.
+
+19. The pictures for the separation of the data in the automation and the control condition is in the RelevantFigures Folder.
