@@ -11,6 +11,7 @@ from scipy import interpolate
 import numpy as np
 from moviepy.editor import *
 from StripData import PERCLOS
+VIDEO_PROCESSING = 0#this value needs to be set to 1 if the videos needs to be cut along with the other streams of data
 def ExtractData(foldername):
     print "\n\nIn Clipped data folder for:",foldername
     FirstLineArray =[]#First Line Array contains the three first lines from the iMotions, eye tracking and Sim file
@@ -90,10 +91,12 @@ def ExtractData(foldername):
         #An interval of 80 seconds around marker 3 was chosen to clip the interval when the trucks
         #appear to after the accident
         os.chdir('../')
-    for i,video in enumerate(glob.glob('*.mp4')):
-        print "Processing :" , video , "\n"
-        clip = VideoFileClip(video).subclip((Marker3time-240+180), (Marker3time+80+180))
-        clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
+    #Processing End Section Videos here.
+    if VIDEO_PROCESSING == 1:
+        for i,video in enumerate(glob.glob('*.mp4')):
+            print "Processing :" , video , "\n"
+            clip = VideoFileClip(video).subclip((Marker3time-240+180), (Marker3time+80+180))
+            clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
     #Opening the eye tracking file that was just saved
     try:
         file = open('EndSectionData/EyetrackingFile.csv','r')

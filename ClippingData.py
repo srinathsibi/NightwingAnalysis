@@ -220,42 +220,46 @@ def ProcessSimData():
     simfile.close()
     os.chdir('../')
 def ProcessiMoVideos():
-    print "\nNow clipping the movies to same length as the other clipped files."
-    iMotionsinfofile = open('iMotionsInfo.csv','r')
-    infofilereader = csv.reader(iMotionsinfofile)
-    iMotionsClippedFile = open('iMotionsClipped.csv', 'r')
-    iMotionsfilereader = csv.reader(iMotionsClippedFile)
-    skiplines(infofilereader,3)
-    studystarttime_ = next(infofilereader)[0].split(' ')[3].split(':')
-    studystarttime = [float(x) for x in studystarttime_]
-    studystarttime_sec = studystarttime[0]*3600 + studystarttime[1]*60 + studystarttime[2]
-    #print "Study Start Time : " , studystarttime_sec , "\n"
-    clipfilestarttime = iMotionsTimeConverter(float(next(iMotionsfilereader)[10].split('_')[1]))
-    #print "Clip Start Time: " , clipfilestarttime , "\n"
-    timediff = clipfilestarttime - studystarttime_sec# Time difference to be taken off the front of the videos for syncing
-    print " Time Difference to be taken off at the start of the videos for syncing is : " , timediff
-    timedifffile = open('ClippedData/TimeDifference.csv','wb')
-    tdwriter = csv.writer(timedifffile)
-    tdwriter.writerow([timediff])
-    timedifffile.close()
-    #Get the eye tracker and the quad files with the same glob command. The same process is used for both to clip
-    videofilelist = glob.glob('*.wmv')
-    print "\n The video files to be clipped are : ", videofilelist
-    #Normally I would use a try/except statement here. This time around, I don't want to do that. If there is a video file missing
-    #I want the module to exit and throw an error.
-    for i,file in enumerate(videofilelist):
-        try:
-            clip_ = VideoFileClip(file)
-            clip = clip_.subclip(timediff, clip_.duration)
-            clip.write_videofile('ClippedData/File' + str(i) + '.mp4', fps = clip_.fps , audio_bitrate="1000k")
-        except IndexError:
-            print "***************************************************************\n\
- Participant : ", foldername, " has problematic video files in iMotions. Please verify or clip them by hand! \n\
-***************************************************************"
-            pass
-    iMotionsinfofile.close()
-    iMotionsClippedFile.close()
-    print " The video files for " , foldername , " have been clipped!"
+    try:
+        print "\nNow clipping the movies to same length as the other clipped files."
+        iMotionsinfofile = open('iMotionsInfo.csv','r')
+        infofilereader = csv.reader(iMotionsinfofile)
+        iMotionsClippedFile = open('iMotionsClipped.csv', 'r')
+        iMotionsfilereader = csv.reader(iMotionsClippedFile)
+        skiplines(infofilereader,3)
+        studystarttime_ = next(infofilereader)[0].split(' ')[3].split(':')
+        studystarttime = [float(x) for x in studystarttime_]
+        studystarttime_sec = studystarttime[0]*3600 + studystarttime[1]*60 + studystarttime[2]
+        #print "Study Start Time : " , studystarttime_sec , "\n"
+        clipfilestarttime = iMotionsTimeConverter(float(next(iMotionsfilereader)[10].split('_')[1]))
+        #print "Clip Start Time: " , clipfilestarttime , "\n"
+        timediff = clipfilestarttime - studystarttime_sec# Time difference to be taken off the front of the videos for syncing
+        print " Time Difference to be taken off at the start of the videos for syncing is : " , timediff
+        timedifffile = open('ClippedData/TimeDifference.csv','wb')
+        tdwriter = csv.writer(timedifffile)
+        tdwriter.writerow([timediff])
+        timedifffile.close()
+        #Get the eye tracker and the quad files with the same glob command. The same process is used for both to clip
+        videofilelist = glob.glob('*.wmv')
+        print "\n The video files to be clipped are : ", videofilelist
+        #Normally I would use a try/except statement here. This time around, I don't want to do that. If there is a video file missing
+        #I want the module to exit and throw an error.
+        for i,file in enumerate(videofilelist):
+            try:
+                clip_ = VideoFileClip(file)
+                clip = clip_.subclip(timediff, clip_.duration)
+                clip.write_videofile('ClippedData/File' + str(i) + '.mp4', fps = clip_.fps , audio_bitrate="1000k")
+            except IndexError:
+                print "***************************************************************\n\
+     Participant : ", foldername, " has problematic video files in iMotions. Please verify or clip them by hand! \n\
+    ***************************************************************"
+                pass
+        iMotionsinfofile.close()
+        iMotionsClippedFile.close()
+        print " The video files for " , foldername , " have been clipped!"
+    except Exception as e:
+        print "Problem with processing video for participant : ", foldername, "\n Exception: ", e
+        pass
 #in the main function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the data folder6

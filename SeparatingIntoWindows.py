@@ -14,6 +14,7 @@ from ScriptforDavesNightwingAnalysis import WriteOutputFile
 #Function to load the data from the Stripped Data List
 WINDOWSIZE = 60;#Width of the windows
 WINDOWSTEP = 60;#Difference between the start points of the windows
+VIDEO_PROCESSING = 0; # This value needs to be set to 1 if we need the videos sliced along with the other data streams.
 def LoadData(folder):
     print "\n\n\n\nIn Clipped data folder for:",folder
     FirstLineArray =[]#First Line Array contains the three first lines from the iMotions, eye tracking and Sim file
@@ -114,10 +115,12 @@ def LoadData(folder):
         #Using the same iterative mechanism from the Script fro Dave's Analysis
         for i,filename in enumerate(Outputfilelist):
             WriteOutputFile('Baseline/'+filename,(-180.00),(0.00),Datalist[i],FirstLineArray[i])
-        '''for i,video in enumerate(glob.glob('*.mp4')):
-            print "Processing :" , video , "\n"
-            clip = VideoFileClip(video).subclip(0.00, 180.00)
-            clip.write_videofile('Baseline/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")'''
+        #Processing Baseline Video here.
+        if VIDEO_PROCESSING == 1:
+            for i,video in enumerate(glob.glob('*.mp4')):
+                print "Processing :" , video , "\n"
+                clip = VideoFileClip(video).subclip(0.00, 180.00)
+                clip.write_videofile('Baseline/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
         #Moving auxillary files
         try:
             shutil.copy('EyeTrackingInfo.csv','Baseline/EyeTrackingInfo.csv')
@@ -148,13 +151,15 @@ def LoadData(folder):
             if not os.path.exists('SECTION'+str(windex)):
                 os.makedirs('SECTION'+str(windex))
             filepath = 'SECTION'+str(windex)+'/'
-            print "\n\nIn Folder Section"+str(windex) 
+            print "\n\nIn Folder Section"+str(windex)
             for i,filename in enumerate(Outputfilelist):
                 WriteOutputFile(filepath+filename,wstart,wstop,Datalist[i],FirstLineArray[i])
-            for i,video in enumerate(glob.glob('*.mp4')):
-                print "Processing :" , video , "\n"
-                clip = VideoFileClip(video).subclip(wstart+180,wstop+180)
-                clip.write_videofile(filepath + 'File' + str(i) + '.mp4' , fps = clip.fps , audio_bitrate="1000k")
+            #Processing Section Videos here.
+            if VIDEO_PROCESSING == 1:
+                for i,video in enumerate(glob.glob('*.mp4')):
+                    print "Processing :" , video , "\n"
+                    clip = VideoFileClip(video).subclip(wstart+180,wstop+180)
+                    clip.write_videofile(filepath + 'File' + str(i) + '.mp4' , fps = clip.fps , audio_bitrate="1000k")
             #Moving auxillary files
             try:
                 shutil.copy('EyeTrackingInfo.csv',filepath+'EyeTrackingInfo.csv')
