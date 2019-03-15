@@ -81,3 +81,5 @@ I can't seem to reconcile the time stamps and the clock times.
 18. Participant 013 has some problems, there are 21 markers before 1 , these are shown in pictures in the Affiliated Images folder.
 
 19. The pictures for the separation of the data in the automation and the control condition is in the RelevantFigures Folder.
+
+20. Participant 27 (P027) has some weird video problems. Take a look after you are done with analysis.

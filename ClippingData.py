@@ -268,22 +268,27 @@ if __name__=='__main__':
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
     #The os.listdir() returns a list of strings. each folder name is convenienetly a string
 for foldername in listoffolders:
-    os.chdir(foldername+'/')#Navigating into each folder
-    print "\n\n\n\nInside the participant data folder : ",foldername
-    CreateClippedDatafolder()#Create the clipped data storage folder
-    ProcessiMoData()#Function to process the iMotions Data
-    EyeTrackingDataProcessing(foldername)
-    ProcessSimData()
-    ProcessiMoVideos()
-    try:
-        MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
-    except IOError:
-        print "There were no iMotions files here to move to Clipped Data Folder"
-        pass
-    try:
-        MoveFileToClippedData(['EyetrackingClipped.csv','EyeTrackingInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
-    except IOError:
-        print "There were no Eyetracking files here to move to Clipped Data Folder"
-        pass
-    #CompareAndRecordEndTimeDifferences()
-    os.chdir('../')#Navigating back into the Data folder
+    if int(foldername[1:4])>=6 and int(foldername[1:4])<=85:
+        try:
+            os.chdir(foldername+'/')#Navigating into each folder
+            print "\n\n\n\nInside the participant data folder : ",foldername
+            CreateClippedDatafolder()#Create the clipped data storage folder
+            ProcessiMoData()#Function to process the iMotions Data
+            EyeTrackingDataProcessing(foldername)
+            ProcessSimData()
+            ProcessiMoVideos()
+            try:
+                MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
+            except IOError:
+                print "There were no iMotions files here to move to Clipped Data Folder"
+                pass
+            try:
+                MoveFileToClippedData(['EyetrackingClipped.csv','EyeTrackingInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
+            except IOError:
+                print "There were no Eyetracking files here to move to Clipped Data Folder"
+                pass
+            #CompareAndRecordEndTimeDifferences()
+            os.chdir('../')#Navigating back into the Data folder
+        except Exception as e:
+            print "General Exception catcher\n\nException : ", # -*- coding: utf-8 -*-
+            pass

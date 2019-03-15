@@ -14,7 +14,7 @@ from ScriptforDavesNightwingAnalysis import WriteOutputFile
 #Function to load the data from the Stripped Data List
 WINDOWSIZE = 60;#Width of the windows
 WINDOWSTEP = 60;#Difference between the start points of the windows
-VIDEO_PROCESSING = 0; # This value needs to be set to 1 if we need the videos sliced along with the other data streams.
+VIDEO_PROCESSING = 1; # This value needs to be set to 1 if we need the videos sliced along with the other data streams.
 def LoadData(folder):
     print "\n\n\n\nIn Clipped data folder for:",folder
     FirstLineArray =[]#First Line Array contains the three first lines from the iMotions, eye tracking and Sim file
@@ -180,8 +180,11 @@ def LoadData(folder):
 #Main Function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the folder containing the data
-    listoffolders = ['P062']#os.listdir('.')
+    listoffolders = [ 'P069','P063','P070','P071' , 'P026', 'P025', 'P024','P023', 'P022']#os.listdir('.')
     for folder in listoffolders:
         os.chdir(folder+'/ClippedData/')
-        LoadData(folder)# The windowing algorithms are called inside the Load Data to avoid the troubles with creating global variables
+        try:
+            LoadData(folder)# The windowing algorithms are called inside the Load Data to avoid the troubles with creating global variables
+        except Exception as e:
+            print " Cover exception catcher in Main Function. \n\n Exception: ", e
         os.chdir('../../')

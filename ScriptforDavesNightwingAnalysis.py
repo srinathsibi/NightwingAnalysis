@@ -11,7 +11,7 @@ from scipy import interpolate
 import numpy as np
 from moviepy.editor import *
 from StripData import PERCLOS
-VIDEO_PROCESSING = 0#this value needs to be set to 1 if the videos needs to be cut along with the other streams of data
+VIDEO_PROCESSING = 1#this value needs to be set to 1 if the videos needs to be cut along with the other streams of data
 def ExtractData(foldername):
     print "\n\nIn Clipped data folder for:",foldername
     FirstLineArray =[]#First Line Array contains the three first lines from the iMotions, eye tracking and Sim file
@@ -164,7 +164,7 @@ def skiplines(fr, lines):
 #Main Function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the folder containing the data
-    listoffolders =['P062','P063','P064','P065','P066','P067','P068','P069','P070','P071','P072','P073','P074','P075','P076','P077','P078','P079','P080','P081','P082','P083','P084','P085']# os.listdir('.')#Getting the list of folders
+    listoffolders =os.listdir('.')#Getting the list of folders#['P062','P063','P064','P065','P066','P067','P068','P069','P070','P071','P072','P073','P074','P075','P076','P077','P078','P079','P080','P081','P082','P083','P084','P085']#
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'
     for folder in listoffolders:
         os.chdir(folder + '/ClippedData/')
