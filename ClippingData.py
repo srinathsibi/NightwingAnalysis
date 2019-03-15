@@ -258,28 +258,41 @@ def ProcessiMoVideos():
     print " The video files for " , foldername , " have been clipped!"
 #in the main function
 if __name__=='__main__':
+    #Initializing the main output text file that contains the error messages in the ClippingData.py process
+    GenOutput = open('ClippingProcessOutput.txt', wb)
+    GenOutputWriter = csv.writer(GenOutput)
+    GenOutputWriter.writerow(['This is the output file for the Clipping Process. File contains the errors and exceptions from the main function in last run of the ClippingData.py '])
+    GenOutputWriter.close()
     os.chdir('Data/')#Moving to the data folder6
     #Now to query all the files that exist in the data folder
     listoffolders = os.listdir('.')#['P062']#['P062','P063','P064','P065','P066','P067','P068','P069','P070','P071','P072','P073','P074','P075','P076','P077','P078','P079','P080','P081','P082','P083','P084','P085']#
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
     #The os.listdir() returns a list of strings. each folder name is convenienetly a string
 for foldername in listoffolders:
-    os.chdir(foldername+'/')#Navigating into each folder
-    print "\n\n\n\nInside the participant data folder : ",foldername
-    CreateClippedDatafolder()#Create the clipped data storage folder
-    ProcessiMoData()#Function to process the iMotions Data
-    EyeTrackingDataProcessing(foldername)
-    ProcessSimData()
-    ProcessiMoVideos()
-    try:
-        MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
-    except IOError:
-        print "There were no iMotions files here to move to Clipped Data Folder"
-        pass
-    try:
-        MoveFileToClippedData(['EyetrackingClipped.csv','EyeTrackingInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
-    except IOError:
-        print "There were no Eyetracking files here to move to Clipped Data Folder"
-        pass
-    #CompareAndRecordEndTimeDifferences()
-    os.chdir('../')#Navigating back into the Data folder
+    if int(foldername[1:4])>=36 and int(foldername[1:4])<=61 :#Control which folders to analyze#P027 has weird videos#P035 also has an error (unboundlocal reference erro)
+        try:
+            os.chdir(foldername+'/')#Navigating into each folder
+            print "\n\n\n\nInside the participant data folder : ",foldername
+            CreateClippedDatafolder()#Create the clipped data storage folder
+            ProcessiMoData()#Function to process the iMotions Data
+            EyeTrackingDataProcessing(foldername)
+            ProcessSimData()
+            ProcessiMoVideos()
+            try:
+                MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
+            except IOError:
+                print "There were no iMotions files here to move to Clipped Data Folder"
+                pass
+            try:
+                MoveFileToClippedData(['EyetrackingClipped.csv','EyeTrackingInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
+            except IOError:
+                print "There were no Eyetracking files here to move to Clipped Data Folder"
+                pass
+            #CompareAndRecordEndTimeDifferences()
+            os.chdir('../')#Navigating back into the Data folder
+        except Exception as e:
+            print " General Exception Catcher \n\n Exception: ", e
+            file = open('ClippingProcessOutput.txt', w+)
+            writer = csv.writer(file)
+            writer.writerows(['Participant ' + foldername + ' has an exception: ', e])
+            pass
