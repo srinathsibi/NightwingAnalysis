@@ -1,0 +1,1 @@
+This is the output file for the Windowing Process. File contains the errors and exceptions from the main function in last run of the SeparatingIntoWindows.py 

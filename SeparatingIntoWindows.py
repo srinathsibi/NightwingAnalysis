@@ -15,7 +15,7 @@ from ScriptforDavesNightwingAnalysis import WriteOutputFile
 WINDOWSIZE = 60;#Width of the windows
 WINDOWSTEP = 60;#Difference between the start points of the windows
 VIDEO_PROCESSING = 1; # This value needs to be set to 1 if we need the videos sliced along with the other data streams.
-def LoadData(folder):
+def CreateSegments(folder):
     print "\n\n\n\nIn Clipped data folder for:",folder
     FirstLineArray =[]#First Line Array contains the three first lines from the iMotions, eye tracking and Sim file
     IOErrorFlag = []#Flag for whether the files are present or not.
@@ -179,12 +179,22 @@ def LoadData(folder):
     print "\n Window Start Times : \n", wstartarray, "\n"
 #Main Function
 if __name__=='__main__':
+    #Initializing the main output text file that contains the error messages in the ClippingData.py process
+    GenOutput = open('WindowingProcessOutput.txt', 'wb')
+    GenOutputWriter = csv.writer(GenOutput)
+    GenOutputWriter.writerow(['This is the output file for the Windowing Process. File contains the errors and exceptions from the main function in last run of the SeparatingIntoWindows.py '])
+    GenOutput.close()
     os.chdir('Data/')#Moving to the folder containing the data
-    listoffolders = [ 'P069','P063','P070','P071' , 'P026', 'P025', 'P024','P023', 'P022']#os.listdir('.')
+    listoffolders = ['P021']#[ 'P069','P063','P070','P071' , 'P026', 'P025', 'P024','P023', 'P022']#os.listdir('.')
     for folder in listoffolders:
         os.chdir(folder+'/ClippedData/')
         try:
-            LoadData(folder)# The windowing algorithms are called inside the Load Data to avoid the troubles with creating global variables
+            CreateSegments(folder)# The windowing algorithms are called inside the Load Data to avoid the troubles with creating global variables
         except Exception as e:
-            print " Cover exception catcher in Main Function. \n\n Exception: ", e
+            print " Main Function Exception in SeparatingIntoWindows.\nException: ", e
+            file = open('WindowingProcessOutput.txt', 'a')
+            writer = csv.writer(file)
+            writer.writerows(['Participant ' + foldername + ' has an exception: ', e , "\n"])
+            file.close()
+            pass
         os.chdir('../../')

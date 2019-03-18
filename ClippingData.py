@@ -21,56 +21,64 @@ from moviepy.editor import *
 
 #Function to process iMotions data
 def ProcessiMoData():
-    iMotionsMarker1TimeAbs=0.00#Abs Marker 1 time for iMotionsData
-    iMotionsMarker1Time=0.00#Marker 1 time for iMotionsData
-    fileinfo =[]#Top level file information. To be written
-    time_abs = []#Calculating absolute time for iMotions Data
-    iMotionsfile = open(glob.glob('P0??.txt')[0])#There is no other discrening feature to the name of the iMotions file
-    iMotionsReader = csv.reader(iMotionsfile)
-    #Opening a new file for writing. I am labelling the file as "Clipped"
-    outfile = open('iMotionsClipped.csv','wb')
-    outwriter = csv.writer(outfile)# We need to read and store the first 4 line of the iMotions file in the clipped data folder, discard line 5, since it is empty and keep line 6, since it is the header line
-    i = 1
-    while i<=5:
-        fileinfo.append(next(iMotionsReader))
-        i=i+1
-    headerrow = next(iMotionsReader)
-    #Searching for the time at which simulator marker is 1
-    for i,row in enumerate(iMotionsReader):
-        iMotionsMarker1TimeAbs = iMotionsTimeConverter(float(row[0].split('\t')[9].split('_')[1]))
-        iMotionsMarker1Time = float(row[0].split('\t')[9].split('_')[1])
-        try:
-            if float(row[0].split('\t')[15]) == 1:
-                break
-        except ValueError:
-            pass
-    print "Marker 1 Time Stamp : " , iMotionsMarker1Time
-    iMotionsfile.seek(0)#Get back to top of the file again
-    skiplines(iMotionsReader,6)
-    #Writing the rows with markers from 1 onwards
-    for row in iMotionsReader:
-        try:
-            if float(row[0].split('\t')[9].split('_')[1]) > (iMotionsMarker1Time-300000):#We are starting the clipped file 4 min 30 seconds mins before the 1 Marker.
-            #To do this because of the structure of the iMotions Time data, we are going to be subtracting 430,000 from the time or 4 min and 30 seconds
-            #if float(row[0].split('\t')[15]) >= 1:
-                #print "Marker: ", float(row[0].split('\t')[15])
-                deltat = iMotionsTimeConverter(float(row[0].split('\t')[9].split('_')[1])) - iMotionsMarker1TimeAbs
-                newrow = [item for item in row[0].split('\t')]
-                newrow.insert(0,deltat)
-                outwriter.writerow(newrow)
-        except ValueError:
-            pass
-    #Writing the info file
-    iMotionsinfofile = open('iMotionsInfo.csv','wb')
-    iMotionsinfowriter = csv.writer(iMotionsinfofile)
-    for info in fileinfo:
-        iMotionsinfowriter.writerow(info)
-    newheader = headerrow[0].split('\t')
-    newheader.insert(0,'Time(in seconds)')
-    iMotionsinfowriter.writerow(newheader)
-    iMotionsinfofile.close()
-    iMotionsfile.close()
-    outfile.close()
+    try:
+        iMotionsMarker1TimeAbs=0.00#Abs Marker 1 time for iMotionsData
+        iMotionsMarker1Time=0.00#Marker 1 time for iMotionsData
+        fileinfo =[]#Top level file information. To be written
+        time_abs = []#Calculating absolute time for iMotions Data
+        iMotionsfile = open(glob.glob('P0??.txt')[0])#There is no other discrening feature to the name of the iMotions file
+        iMotionsReader = csv.reader(iMotionsfile)
+        #Opening a new file for writing. I am labelling the file as "Clipped"
+        outfile = open('iMotionsClipped.csv','wb')
+        outwriter = csv.writer(outfile)# We need to read and store the first 4 line of the iMotions file in the clipped data folder, discard line 5, since it is empty and keep line 6, since it is the header line
+        i = 1
+        while i<=5:
+            fileinfo.append(next(iMotionsReader))
+            i=i+1
+        headerrow = next(iMotionsReader)
+        #Searching for the time at which simulator marker is 1
+        for i,row in enumerate(iMotionsReader):
+            iMotionsMarker1TimeAbs = iMotionsTimeConverter(float(row[0].split('\t')[9].split('_')[1]))
+            iMotionsMarker1Time = float(row[0].split('\t')[9].split('_')[1])
+            try:
+                if float(row[0].split('\t')[15]) == 1:
+                    break
+            except ValueError:
+                pass
+        print "Marker 1 Time Stamp : " , iMotionsMarker1Time
+        iMotionsfile.seek(0)#Get back to top of the file again
+        skiplines(iMotionsReader,6)
+        #Writing the rows with markers from 1 onwards
+        for row in iMotionsReader:
+            try:
+                if float(row[0].split('\t')[9].split('_')[1]) > (iMotionsMarker1Time-300000):#We are starting the clipped file 4 min 30 seconds mins before the 1 Marker.
+                #To do this because of the structure of the iMotions Time data, we are going to be subtracting 430,000 from the time or 4 min and 30 seconds
+                #if float(row[0].split('\t')[15]) >= 1:
+                    #print "Marker: ", float(row[0].split('\t')[15])
+                    deltat = iMotionsTimeConverter(float(row[0].split('\t')[9].split('_')[1])) - iMotionsMarker1TimeAbs
+                    newrow = [item for item in row[0].split('\t')]
+                    newrow.insert(0,deltat)
+                    outwriter.writerow(newrow)
+            except ValueError:
+                pass
+        #Writing the info file
+        iMotionsinfofile = open('iMotionsInfo.csv','wb')
+        iMotionsinfowriter = csv.writer(iMotionsinfofile)
+        for info in fileinfo:
+            iMotionsinfowriter.writerow(info)
+        newheader = headerrow[0].split('\t')
+        newheader.insert(0,'Time(in seconds)')
+        iMotionsinfowriter.writerow(newheader)
+        iMotionsinfofile.close()
+        iMotionsfile.close()
+        outfile.close()
+    except Exception as e:
+        print "iMotions Processing Exception Catcher \n\n Exception: ", e
+        file = open('ClippingProcessOutput.txt', 'a')
+        writer = csv.writer(file)
+        writer.writerows(['Participant ' + foldername + ' has an exception in the iMotions Data Processing: ',"\n", e , "\n"])
+        file.close()
+        pass
 #Function to skip lines in the csv files
 def skiplines(fr, lines):
     #fp is file reader and lines is the number of lines to skip
@@ -111,58 +119,66 @@ def MoveFileToClippedData(filelist, target_relativepath):
 # 5. The first column of the Eye Tracking data called 'RecordingTime [ms]' is kinda useless. So we pop that data out in both the info and clipped file and then
 # replace it with our own ETTimeConverter data.
 def EyeTrackingDataProcessing(participantfolder):
-    FILE_PRESENT_ = None
-    MARKER_PRESENT = False
     try:
-        eyetrackingfile = open(glob.glob('Raw Data*.txt')[0])
-        eyetrackingreader = csv.reader(eyetrackingfile)
-        FILE_PRESENT_ = True
-    except IndexError:
-        print "!!!!! There is no eye tracker file for this participant: " + participantfolder
-        FILE_PRESENT_ = False
+        FILE_PRESENT_ = None
+        MARKER_PRESENT = False
+        try:
+            eyetrackingfile = open(glob.glob('Raw Data*.txt')[0])
+            eyetrackingreader = csv.reader(eyetrackingfile)
+            FILE_PRESENT_ = True
+        except IndexError:
+            print "!!!!! There is no eye tracker file for this participant: " + participantfolder
+            FILE_PRESENT_ = False
+            pass
+        if FILE_PRESENT_:
+            #First Read and Save top level information
+            i =1
+            eyetrackinginfofile = open('EyeTrackingInfo.csv', 'wb')
+            eyetrackinginfowriter = csv.writer(eyetrackinginfofile)
+            while i <=5:
+                row = next(eyetrackingreader)
+                if i ==5:
+                    row.pop(0)# Removing the First Value RecordingTime and replacing with
+                    row.insert(0,'Time (sec)')
+                eyetrackinginfowriter.writerow(row)
+                i = i +1
+            eyetrackinginfofile.close()
+            for row in eyetrackingreader:
+                #print row, "\n"
+                if 'User Event' in row:
+                    print "Eye tracker marker 1 time : " , row[1] , "\n Converted: " , ETTimeConverter(row[1])
+                    eyetracker1stmarkertime = row[1]
+                    MARKER_PRESENT = True
+                    break
+            if not MARKER_PRESENT:
+                print " !!!!!! THIS PARTICIPANT EYE TRACKER INFO HAS NO MARKER 1 : ", foldername
+            # The clipped data writing can be done only for those with the MARKER_PRESENT = True, others have no eyetracker1stmarkertime to reference
+            if MARKER_PRESENT:
+                #Resetting to the top again
+                eyetrackingfile.seek(0)
+                #Now process the rest of the data. We need to clip at 3 min before the first marker
+                #Keep in mind, we have to convert the data before comparison, Luckily ETTimeConverter returns float for string input
+                skiplines(eyetrackingreader, 5)
+                #Beginning clipping process
+                etoutfile = open('EyetrackingClipped.csv' , 'wb')
+                etoutwriter = csv.writer(etoutfile)
+                for i,row in enumerate(eyetrackingreader):
+                    try:
+                        if ETTimeConverter(row[1]) >= ETTimeConverter(eyetracker1stmarkertime) - ETTimeConverter('00:03:00:000'):
+                            row.pop(0)#Removing the first value and replacing it with Time in seconds from ETTimeConverter
+                            row.insert(0, str(ETTimeConverter(row[0])- ETTimeConverter(eyetracker1stmarkertime)) )
+                            etoutwriter.writerow(row)
+                    except (ValueError, IndexError) as err:
+                        print "********This participant data has a weird row at the marker row, so we skip those rows.\n"
+                        pass
+                etoutfile.close()
+    except Exception as e:
+        print "Eye Tracking Processing Exception Catcher \nException: ", e
+        file = open('ClippingProcessOutput.txt', 'a')
+        writer = csv.writer(file)
+        writer.writerows(['Participant ' + foldername + ' has an exception in the Eye Tracking Data Processing: ',"\n", e , "\n"])
+        file.close()
         pass
-    if FILE_PRESENT_:
-        #First Read and Save top level information
-        i =1
-        eyetrackinginfofile = open('EyeTrackingInfo.csv', 'wb')
-        eyetrackinginfowriter = csv.writer(eyetrackinginfofile)
-        while i <=5:
-            row = next(eyetrackingreader)
-            if i ==5:
-                row.pop(0)# Removing the First Value RecordingTime and replacing with
-                row.insert(0,'Time (sec)')
-            eyetrackinginfowriter.writerow(row)
-            i = i +1
-        eyetrackinginfofile.close()
-        for row in eyetrackingreader:
-            #print row, "\n"
-            if 'User Event' in row:
-                print "Eye tracker marker 1 time : " , row[1] , "\n Converted: " , ETTimeConverter(row[1])
-                eyetracker1stmarkertime = row[1]
-                MARKER_PRESENT = True
-                break
-        if not MARKER_PRESENT:
-            print " !!!!!! THIS PARTICIPANT EYE TRACKER INFO HAS NO MARKER 1 : ", foldername
-        # The clipped data writing can be done only for those with the MARKER_PRESENT = True, others have no eyetracker1stmarkertime to reference
-        if MARKER_PRESENT:
-            #Resetting to the top again
-            eyetrackingfile.seek(0)
-            #Now process the rest of the data. We need to clip at 3 min before the first marker
-            #Keep in mind, we have to convert the data before comparison, Luckily ETTimeConverter returns float for string input
-            skiplines(eyetrackingreader, 5)
-            #Beginning clipping process
-            etoutfile = open('EyetrackingClipped.csv' , 'wb')
-            etoutwriter = csv.writer(etoutfile)
-            for i,row in enumerate(eyetrackingreader):
-                try:
-                    if ETTimeConverter(row[1]) >= ETTimeConverter(eyetracker1stmarkertime) - ETTimeConverter('00:03:00:000'):
-                        row.pop(0)#Removing the first value and replacing it with Time in seconds from ETTimeConverter
-                        row.insert(0, str(ETTimeConverter(row[0])- ETTimeConverter(eyetracker1stmarkertime)) )
-                        etoutwriter.writerow(row)
-                except (ValueError, IndexError) as err:
-                    print "********This participant data has a weird row at the marker row, so we skip those rows.\n"
-                    pass
-            etoutfile.close()
 #Function to Compare the end times of the iMotions and Eye Trackers and clip the longer one.
 #The difference in time is recordings will be calculated and stored in a test file.
 #NOTE : We will have to add to this file the video file and sim data end times as well
@@ -176,49 +192,57 @@ def CompareAndRecordEndTimeDifferences():
 #As a result column of the marker is now moved to index 50 in the output cliiped file from 49.
 #The headers are not available here. We have to decipher them from simCreator.
 def ProcessSimData():
-    #print "Clipping Sim Data now."
     os.chdir('SimData/')# All sim data exists inside this folder
     try:
-        simfile = open (glob.glob('*Drive_[0-9][0-9].plt')[0],'r')
-        simfilereader = csv.reader(simfile)
-        #print "\n\nSim File opened!\n\n"
-    except IndexError:
+        #print "Clipping Sim Data now."
         try:
-            simfile = open (glob.glob('*Drive_[0-9].plt')[0],'r')
+            simfile = open (glob.glob('*Drive_[0-9][0-9].plt')[0],'r')
             simfilereader = csv.reader(simfile)
             #print "\n\nSim File opened!\n\n"
         except IndexError:
             try:
-                simfile = open (glob.glob('*Drive_[0-9][0-9][0-9].plt')[0],'r')
+                simfile = open (glob.glob('*Drive_[0-9].plt')[0],'r')
                 simfilereader = csv.reader(simfile)
                 #print "\n\nSim File opened!\n\n"
             except IndexError:
-                print "***************All three syntaxes for sim file recognition failed! Error!********************"
-                pass
-    #Column 50 (index 49) has the event data has the event markers for the first 61 participants.
-    #For participants >=62, column 47 (index 46) has the marker. There are fewer columns for the control condition, maybe because of manual driving.
-    if int(foldername[1:4])<=61:
-        for i, row in enumerate(simfilereader):
-            if row[0].split(' ')[49] == '1':
-                print "Time at marker 1 for participant " , foldername , " is :" , row[0].split(' ')[0]
-                simtimeatmarker1 = float(row[0].split(' ')[0])
-                break
-    if int(foldername[1:4])>=62:
-        for i, row in enumerate(simfilereader):
-            if row[0].split(' ')[46] == '1':
-                print "Time at marker 1 for participant " , foldername , " is :" , row[0].split(' ')[0]
-                simtimeatmarker1 = float(row[0].split(' ')[0])
-                break
-    simfile.seek(0)#Resetting to the top of the file again
-    #To create the file in the ClippedData file, we will use the path in the open command instead. os.chdir() might be unnecessary
-    simclipfile = open('../ClippedData/ClippedSimData.csv' , 'wb')
-    simclipwriter = csv.writer(simclipfile)#This should automatically create the file in the ClippedData folder and write it there
-    for i,row in enumerate(simfilereader):
-        if float(row[0].split(' ')[0]) >= (simtimeatmarker1 - 180):#We are subtracting 180 seconds or 3 minutes
-            simclipwriter.writerow([str(float(row[0].split(' ')[0]) - simtimeatmarker1) + ' '] + row)
-    simclipfile.close()
-    simfile.close()
-    os.chdir('../')
+                try:
+                    simfile = open (glob.glob('*Drive_[0-9][0-9][0-9].plt')[0],'r')
+                    simfilereader = csv.reader(simfile)
+                    #print "\n\nSim File opened!\n\n"
+                except IndexError:
+                    print "***************All three syntaxes for sim file recognition failed! Error!********************"
+                    pass
+        #Column 50 (index 49) has the event data has the event markers for the first 61 participants.
+        #For participants >=62, column 47 (index 46) has the marker. There are fewer columns for the control condition, maybe because of manual driving.
+        if int(foldername[1:4])<=61:
+            for i, row in enumerate(simfilereader):
+                if row[0].split(' ')[49] == '1':
+                    print "Time at marker 1 for participant " , foldername , " is :" , row[0].split(' ')[0]
+                    simtimeatmarker1 = float(row[0].split(' ')[0])
+                    break
+        if int(foldername[1:4])>=62:
+            for i, row in enumerate(simfilereader):
+                if row[0].split(' ')[46] == '1':
+                    print "Time at marker 1 for participant " , foldername , " is :" , row[0].split(' ')[0]
+                    simtimeatmarker1 = float(row[0].split(' ')[0])
+                    break
+        simfile.seek(0)#Resetting to the top of the file again
+        #To create the file in the ClippedData file, we will use the path in the open command instead. os.chdir() might be unnecessary
+        simclipfile = open('../ClippedData/ClippedSimData.csv' , 'wb')
+        simclipwriter = csv.writer(simclipfile)#This should automatically create the file in the ClippedData folder and write it there
+        for i,row in enumerate(simfilereader):
+            if float(row[0].split(' ')[0]) >= (simtimeatmarker1 - 180):#We are subtracting 180 seconds or 3 minutes
+                simclipwriter.writerow([str(float(row[0].split(' ')[0]) - simtimeatmarker1) + ' '] + row)
+        simclipfile.close()
+        simfile.close()
+    except Exception as e:
+        print "Sim Processing Exception Catcher \nException: ", e
+        file = open('ClippingProcessOutput.txt', 'a')
+        writer = csv.writer(file)
+        writer.writerows(['Participant ' + foldername + ' has an exception in the Sim Data ProcesSimsing: ',"\n", e , "\n"])
+        file.close()
+        pass
+    os.chdir('../')#Exiting the simdata folder
 def ProcessiMoVideos():
     try:
         print "\nNow clipping the movies to same length as the other clipped files."
@@ -295,9 +319,9 @@ for foldername in listoffolders:
             #CompareAndRecordEndTimeDifferences()
             os.chdir('../')#Navigating back into the Data folder
         except Exception as e:
-            print " General Exception Catcher \n\n Exception: ", e
+            print " General Exception Catcher \nException: ", e
             file = open('ClippingProcessOutput.txt', 'a')
             writer = csv.writer(file)
-            writer.writerows(['Participant ' + foldername + ' has an exception: ', e])
+            writer.writerows(['Participant ' + foldername + ' has an exception: ', e , "\n"])
             file.close()
             pass

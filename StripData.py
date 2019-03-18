@@ -181,13 +181,21 @@ def PlotParticipantData():
 #This function is to strip the relevant data from the three major participant data files (iMotions, Sim and Eye Tracking)
 def StripData():
     for folder in listoffolders:
-        os.chdir(folder+'/ClippedData/')
-        #print "################# In folder : " , folder , " ####################"
-        #Stripping the files in individual functions
-        strip_imotions_data(folder)
-        strip_sim_data(folder)
-        strip_eyetracking_data(folder)
-        os.chdir('../../')
+        try:
+            os.chdir(folder+'/ClippedData/')
+            #print "################# In folder : " , folder , " ####################"
+            #Stripping the files in individual functions
+            strip_imotions_data(folder)
+            strip_sim_data(folder)
+            strip_eyetracking_data(folder)
+            os.chdir('../../')
+        except Exception as e:
+            print " Data Stripping exception catcher.\nException : ", e
+            file = open('StripDataOutput.txt', 'a')
+            writer = csv.writer(file)
+            writer.writerows(['Participant:',folder,'\nException: ', e , "\n"])
+            file.close()
+            pass
 #PERCLOS CALCULATION function
 def PERCLOS(t , CategoryBinocular):
     try:
@@ -411,11 +419,25 @@ def MoveFiles(foldername):
         pass
 #Start of main function
 if __name__ == '__main__':
-    os.chdir('Data/')#Moving to the data folder6
-    listoffolders = os.listdir('.')#['P062','P063','P064','P065','P066','P067','P068','P069','P070','P071','P072','P073','P074','P075','P076','P077','P078','P079','P080','P081','P082','P083','P084','P085']#
-    print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
-    options = {1: StripData, 2: PlotParticipantData, 3: MoveData}
-    options[1]()
-    options[2]()
-    options[3]()
-    os.chdir('../')#Moving out of the Data folder
+    #Initializing the main output text file that contains the error messages in the StripData.py process
+    GenOutput = open('StripDataOutput.txt', 'wb')
+    GenOutputWriter = csv.writer(GenOutput)
+    GenOutputWriter.writerow(['This is the output file for the Data Stripping Process. File contains the errors and exceptions from the main function in last run of the StripData.py '])
+    GenOutput.close()
+    #General Exception Catcher
+    try:
+        os.chdir('Data/')#Moving to the data folder6
+        listoffolders = os.listdir('.')#['P062','P063','P064','P065','P066','P067','P068','P069','P070','P071','P072','P073','P074','P075','P076','P077','P078','P079','P080','P081','P082','P083','P084','P085']#
+        print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'#, "\ntype: ", type(listoffolders[0])
+        options = {1: StripData, 2: PlotParticipantData, 3: MoveData}
+        options[1]()
+        options[2]()
+        options[3]()
+        os.chdir('../')#Moving out of the Data folder
+    except Exception as e:
+        print " Main function exception catcher.\nException : ", e
+        file = open('StripDataOutput.txt', 'a')
+        writer = csv.writer(file)
+        writer.writerows(['Main Function Exception: ', e , "\n"])
+        file.close()
+        pass
