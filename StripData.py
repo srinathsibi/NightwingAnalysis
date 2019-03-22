@@ -432,7 +432,7 @@ if __name__ == '__main__':
         options = {1: StripData, 2: PlotParticipantData, 3: MoveData}
         options[1]()
         options[2]()
-        options[3]()
+        #options[3]()#Move Data is no longer needed. There is a Separate Script that does this now
         os.chdir('../')#Moving out of the Data folder
     except Exception as e:
         print " Main function exception catcher.\nException : ", e

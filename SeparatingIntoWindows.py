@@ -160,6 +160,32 @@ def CreateSegments(folder):
                     print "Processing :" , video , "\n"
                     clip = VideoFileClip(video).subclip(wstart+180,wstop+180)
                     clip.write_videofile(filepath + 'File' + str(i) + '.mp4' , fps = clip.fps , audio_bitrate="1000k")
+            #Calculating the PERCLOS file for each section.
+            #Opening the eye tracking file that was just saved
+            try:
+                file = open(filepath+'EyetrackingFile.csv','r')
+                reader = csv.reader(file)
+                skiplines(reader,1)
+                ETData = list(reader)
+                file.close()
+                time = [float(ETData[i][0]) for i in range(len(ETData))]
+                catbin =  [ETData[i][3] for i in range(len(ETData))]
+                perclos_array = PERCLOS(time, catbin)
+                print ' PERCLOS example : ', perclos_array[0]
+                if perclos_array[0][0] != 0:
+                    perclos_file = open(filepath+'PERCLOS.csv', 'wb')
+                    percloswriter = csv.writer(perclos_file)
+                    percloswriter.writerow(['Time','PERCLOS'])
+                    percloswriter.writerows([ perclos_array[i][1], perclos_array[i][0] ] for i in range(len(perclos_array)))
+                    perclos_file.close()
+                #print " Eye Tracker Data example: \n\n" , ETData[1]
+            except Exception as e:
+                #print 'Unable to write the PERCLOS file.\n'
+                file = open('../../../WindowingProcessOutput.txt', 'a')
+                writer = csv.writer(file)
+                writer.writerow(['Participant ' + folder + ' Section : ' + windex + ' has no PERCLOS data\n'])
+                file.close()
+                pass
             #Moving auxillary files
             try:
                 shutil.copy('EyeTrackingInfo.csv',filepath+'EyeTrackingInfo.csv')
@@ -177,6 +203,18 @@ def CreateSegments(folder):
         wstart = wstart + WINDOWSTEP
         wstop = wstart + WINDOWSIZE
     print "\n Window Start Times : \n", wstartarray, "\n"
+    file1 = open('WindowInformation.txt', 'wb')
+    writer1 = csv.writer(file1)
+    writer1.writerow(['Participant ' + folder + ' has ' + str(len(wstartarray)) + ' windows'])
+    writer1.writerow([' Window Start Times :\n' + str(wstartarray)])
+    file1.close()
+#Function to skip lines in the csv files
+def skiplines(fr, lines):
+    #fp is file reader and lines is the number of lines to skip
+    i = 1
+    while i<=lines:
+        i = i+1
+        row = next(fr)
 #Main Function
 if __name__=='__main__':
     #Initializing the main output text file that contains the error messages in the ClippingData.py process
