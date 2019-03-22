@@ -350,7 +350,7 @@ def skiplines(fr, lines):
 def MoveData():
     for folder in listoffolders:
         os.chdir(folder+'/ClippedData/')
-        MoveFiles(folder)
+        #MoveFiles(folder)#I am writing the function to move data in a different python script. This might be irrelevant in a little while.
         os.chdir('../../')
 #Function to move the files to the ProcessedData Folder
 def MoveFiles(foldername):
