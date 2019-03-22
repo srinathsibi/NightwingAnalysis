@@ -191,9 +191,9 @@ def StripData():
             os.chdir('../../')
         except Exception as e:
             print " Data Stripping exception catcher.\nException : ", e
-            file = open('StripDataOutput.txt', 'a')
+            file = open('../StripDataOutput.txt', 'a')
             writer = csv.writer(file)
-            writer.writerows(['Participant:',folder,'\nException: ', e , "\n"])
+            writer.writerow(['Participant:',folder,'\nException: ', e , "\n"])
             file.close()
             pass
 #PERCLOS CALCULATION function
@@ -438,6 +438,6 @@ if __name__ == '__main__':
         print " Main function exception catcher.\nException : ", e
         file = open('StripDataOutput.txt', 'a')
         writer = csv.writer(file)
-        writer.writerows(['Main Function Exception: ', e , "\n"])
+        writer.writerow(['Main Function Exception: ', e , "\n"])
         file.close()
         pass

@@ -174,7 +174,7 @@ def EyeTrackingDataProcessing(participantfolder):
                 etoutfile.close()
     except Exception as e:
         print "Eye Tracking Processing Exception Catcher \nException: ", e
-        file = open('ClippingProcessOutput.txt', 'a')
+        file = open('../../../ClippingProcessOutput.txt', 'a')
         writer = csv.writer(file)
         writer.writerows(['Participant ' + foldername + ' has an exception in the Eye Tracking Data Processing: ',"\n", e , "\n"])
         file.close()
@@ -237,7 +237,7 @@ def ProcessSimData():
         simfile.close()
     except Exception as e:
         print "Sim Processing Exception Catcher \nException: ", e
-        file = open('ClippingProcessOutput.txt', 'a')
+        file = open('../../../ClippingProcessOutput.txt', 'a')
         writer = csv.writer(file)
         writer.writerows(['Participant ' + foldername + ' has an exception in the Sim Data ProcesSimsing: ',"\n", e , "\n"])
         file.close()
@@ -320,8 +320,8 @@ for foldername in listoffolders:
             os.chdir('../')#Navigating back into the Data folder
         except Exception as e:
             print " General Exception Catcher \nException: ", e
-            file = open('ClippingProcessOutput.txt', 'a')
+            file = open('../ClippingProcessOutput.txt', 'a')
             writer = csv.writer(file)
-            writer.writerows(['Participant ' + foldername + ' has an exception: ', e , "\n"])
+            writer.writerows(['Participant ' + foldername + ' has an exception: ', e ])
             file.close()
             pass
