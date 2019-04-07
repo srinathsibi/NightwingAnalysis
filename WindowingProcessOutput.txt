@@ -5,3 +5,5 @@ This is the output file for the Windowing Process. File contains the errors and 
 "
 "Participant P013 has an exception
 "
+"Participant P069 has an exception
+"
