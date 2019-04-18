@@ -1,0 +1,25 @@
+Participant ID,Usable,End Condition,Activity Condition,Notes,Sleepy Behavior During Drive,Sleepy Behavior During Event Sequence,Endgame,Survival,Evasion Strategy,Paid,Experimenter,Number of 2+Sec Eye Closures,Total Ammount of Time Spent with 2+Sec Eye Closure,Sees Trucks Inititally,Checks Mirrors,When Does Check Occur
+62,No,alert,NA,"Car going same direction on opposite side of road, not clear if the participant noticed. no trucks",Some yawning and head bobbing ,,,,,,BM,,,,,
+63,No,no alert,NA,The participant found a way to enable automation.,,,"Drove into the trucks, tried to thread it",No,Right lane change,,BM,,,,,
+64,Yes,alert,NA,Nothing noteworthy,No,No,"Drove into the trucks, tried to thread it",No,Right lane change,,BM,0,0,Yes,Yes,On audio prompt
+65,Yes,no alert,NA,The participant went into the grass multiple times because of prolonged eye closure.,Lots of Eye Closure,No,Sped past trucks,Yes,Right lane change,,BM,0,0,Yes,Yes,Few seconds before event is visible
+66,Yes,alert,NA,The participant got passed first truck and then truck hit him from behind after crossing hazard.,No,No,Sped past trucks,No,Right lane change,,BM,,,Yes,Yes,On audio prompt; When event is visible 
+67,Yes,No Alert,NA,Nothing noteworthy,No,No,"Drove into the trucks, tried to thread it",No,Right lane change,,BM,,,Yes,Yes,When event is visible
+68,Yes,Alert,NA,"Stayed with the trucks and slowed down enough to go through the right. Eye tracker did not seem to turn off when I hit the button the first time, so it recorded an extra hour of it sitting on the passanger seat.",No,No,Slowed down too much for trucks to hit,Yes,Right lane change,,BM,,,Yes,Yes,On audio prompt
+69,No,No Alert,NA,The participant got motion sickness on straight away,No,,,,,,BM,,,,,
+70,Yes,Alert,NA,Nothing noteworthy,Yawning,No,"Drove into the trucks, tried to thread it",No,Right lane change,,BM,,,Yes,No,
+71,Yes,No Alert,NA,The participant weaved between the trucks twice and probably survived,No,No,"Drove into the trucks, tried to thread it",Possibly,Right lane change,,BM,,,Yes,Yes,Few seconds before event is visible
+72,Yes,Alert,NA,The participant did the correct action of going into emergency lane.,No,No,Went to emergency lane,Yes,Left lane change,,BM,,,Yes,Yes,Few seconds before event is visible; On audio prompt
+73,Yes,No Alert,NA,Nothing noteworthy,No,No,Sped past trucks,No,Right lane change,,BM,,,Yes,Yes,Few seconds before event is visible
+74,Yes,Alert,NA,The participant did the correct action of going into emergency lane.,No,No,Went to emergency lane,Yes,Left lane change,,BM,,,Yes,Yes,Few seconds before event is visible; On audio prompt
+75,Yes,No Alert,NA,"Right after the participant got on the highway, I had to inform her that she was in the emergency lane and she needed to go back to the left lane. Trucks did not spawn on right. Seemed to have kept recording",No,No,Stopped before truck,Yes,Stopping then Right Lane Change,,BM,,,Yes,No,
+76,Yes,Alert,NA,The participant did the correct action of going into emergency lane.,No,No,Went to emergency lane,Yes,Left lane change,,BM,,,Yes,Yes,On audio prompt
+77,Yes,No Alert,NA,Weaved between the trucks twice and probably survived,No,No,"Drove into the trucks, tried to thread it",Possibly,Right lane change,,BM,,,Yes,Yes,Few seconds before event is visible; When event is visibile
+78,Yes,Alert,NA,The participant did the correct action of going into emergency lane.,No,No,Went to emergency lane,Yes,Left lane change,,BM,,,Yes,Yes,Few seconds before event is visible; When event is visibile
+79,Yes,No Alert,NA,Nothing noteworthy,No,No,"Drove into the trucks, tried to thread it",No,Right lane change,,BM,,,Yes,Yes,When event is visible
+80,No,Alert,NA,The participant got motion sickness on straight away,No,,,,,,BM,,,,,
+81,Yes,No Alert,NA,Nothing noteworthy. Some road sounds appeared to be turned off,No,No,Stopped before truck,Yes,Right lane change,,BM,,,Yes,No,
+82,Yes,Alert,NA,Colossus blue screen during highway segment (nothing happened). Video from that part was not recorded on game capture. Is fine on iMotions,No,No,Hit flipped over truck trying to get past truck on right,No,Right lane change,,BM,,,Yes,Yes,On audio prompt; When event is visible 
+83,Yes,No Alert,NA,Game capture crashed in the beginning. The participant slowed down a bit but still slammed into truck at speed,No,No,Hit stationary truck,No,Stopping,,BM,,,Yes,Yes,Few seconds before event is visible
+84,Yes,No Alert,NA,The participant seemed to be humming or conducting music with right hand to keep engaged. He just hit the trucks,No,No,Hit stationary truck,No,Stopping,,BM,,,Yes,No,
+85,yes,Alert,NA,"game capture hung, restarted, imotions fine. and in to the blocker with hard braking.",No,No,Hit stationary truck,No,Stopping,,DM,,,Yes,Yes,Few seconds before event is visible; On audio prompt
