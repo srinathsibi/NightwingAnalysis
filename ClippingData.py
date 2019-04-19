@@ -18,7 +18,7 @@ import matplotlib as plt
 import numpy as np
 import csv
 from moviepy.editor import *
-
+VIDEO_PROCESSING = 1# Set Flag to include video clipping or not
 #Function to process iMotions data
 def ProcessiMoData():
     try:
@@ -305,7 +305,8 @@ for foldername in listoffolders:
             ProcessiMoData()#Function to process the iMotions Data
             EyeTrackingDataProcessing(foldername)
             ProcessSimData()
-            ProcessiMoVideos()
+            if VIDEO_PROCESSING==1:#Only process videos when Flag is set to 1
+                ProcessiMoVideos()
             try:
                 MoveFileToClippedData(['iMotionsClipped.csv','iMotionsInfo.csv'],'ClippedData/')#The two files created from the iMotions Processing File
             except IOError:
