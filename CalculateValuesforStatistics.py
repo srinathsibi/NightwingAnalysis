@@ -13,10 +13,39 @@ from scipy import interpolate
 import numpy as np
 LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'
 MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specification and file specifications
-def HRExtract(filename, infofilename, subfolder, folder):
+#iMotions data: Both HR and GSR extracted here.
+def iMotionsExtract(filename, infofilename, subfolder, folder):
     print " Extracting Heart Rate in Section :", subfolder, " for : ", folder
-def GSRExtract(filename, infofilename, subfolder, folder):
-    print " Extracting GSR in Section :", subfolder, " for : ", folder
+    try:
+        HRCOL = 6#7th column in file
+        GSRCOL = 8#9th column in file
+        file = open(subfolder+'/iMotionsFile.csv','r')
+        filereader = csv.reader(file)
+        headerrow_ = next(filereader)
+        #print " Header row in Imotions file is :", headerrow_ ,"\n"
+        data = list(filereader)
+        file.close()
+        #print "First row : \n", data[0]
+        #Writing the heart rate file #############################
+        hrfile = open(subfolder+'/HeartRate.csv','wb')
+        hrwriter = csv.writer(hrfile)
+        hrwriter.writerow([headerrow_[0],headerrow_[HRCOL]])#Writing the header column for the heart rate file
+        for row in data:
+            hrwriter.writerow([row[0],row[HRCOL]])
+        hrfile.close()
+        #Writing the GSR file ####################################
+        gsrfile = open(subfolder+'/GSR.csv','wb')
+        gsrwriter = csv.writer(gsrfile)
+        gsrwriter.writerow([headerrow_[0],headerrow_[GSRCOL]])#Writing the header column for the GSR file
+        for row in data:
+            gsrwriter.writerow([row[0],row[GSRCOL]])
+        gsrfile.close()
+    except Exception as e:
+        print " Exception discovered at the the iMotions Processing : ", e
+        file = open(LOGFILE,'a')
+        writer = csv.writer(file)
+        writer.writerow([' iMotions Data Extraction Exception Catcher ', e, ' ' ,subfolder , ' ' , folder])
+        file.close()
 def PupilDiaExtract(filename, infofilename, subfolder, folder):
     print " Extracting PupilDiameter in Section :", subfolder, " for : ", folder
 def PERCLOSExtract(filename, subfolder, folder):
@@ -46,8 +75,7 @@ if __name__ == '__main__':
             print "End result of filtering the Folder names is : \n", listofsubfolders, "\n\n\n"
             for subfolder in listofsubfolders:
                 #For each subfolder we now have one function per data column of interest. Passing the appropriate
-                HRExtract('iMotionsFile.csv', 'iMotionsinfo.csv', subfolder, folder)
-                GSRExtract('iMotionsFile.csv', 'iMotionsinfo.csv', subfolder, folder)
+                iMotionsExtract('iMotionsFile.csv', 'iMotionsinfo.csv', subfolder, folder)
                 PERCLOSExtract(glob.glob('PERCLOS*'), subfolder, folder)
                 PupilDiaExtract('EyetrackingFile.csv', 'EyeTrackingInfo.csv', subfolder, folder)
                 print "End of Section :", subfolder,  "\n"
@@ -55,5 +83,5 @@ if __name__ == '__main__':
             print "Main Exception Catcher"
             file = open(LOGFILE,'a')
             writer = csv.writer(file)
-            writer.writerow([' Main Function Exception Catcher '])
+            writer.writerow([' Main Function Exception Catcher ', folder , e])
             file.close()
