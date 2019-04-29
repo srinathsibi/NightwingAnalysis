@@ -12,7 +12,15 @@ import matplotlib.pyplot as plt
 from scipy import interpolate
 import numpy as np
 LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'
-MAINPATH = os.path.abspath('.')
+MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specification and file specifications
+def HRExtract(filename, infofilename, subfolder, folder):
+    print " Extracting Heart Rate in Section :", subfolder, " for : ", folder
+def GSRExtract(filename, infofilename, subfolder, folder):
+    print " Extracting GSR in Section :", subfolder, " for : ", folder
+def PupilDiaExtract(filename, infofilename, subfolder, folder):
+    print " Extracting PupilDiameter in Section :", subfolder, " for : ", folder
+def PERCLOSExtract(filename, subfolder, folder):
+    print  " Estimating PERCLOS in Section :", subfolder, " for : ", folder
 #Main Function
 if __name__ == '__main__':
     outputfile = open(LOGFILE,'wb')
@@ -25,7 +33,24 @@ if __name__ == '__main__':
     for folder in listoffolders:
         try:
             print " Analyzing Clipped Data Folder for :", folder
-            os.chdir()
+            #navigate to the Clipped Data Folder and locate all the subfolders that contain "SECTION??", "EndSectionData", "Baseline" in their name
+            os.chdir(MAINPATH+'/Data/'+folder+'/ClippedData/')
+            listofsubfolders = os.listdir('.')
+            result = []
+            print " List of elements in the ClippedData Folder\n" ,listofsubfolders
+            for item in listofsubfolders:
+                if 'SECTION' in item or 'Baseline' in item or 'EndSectionData' in item:
+                    result.append(item)
+            result.sort()#Doesn't sort the list the way we want, but it works for now and so we will keep it
+            listofsubfolders = result
+            print "End result of filtering the Folder names is : \n", listofsubfolders, "\n\n\n"
+            for subfolder in listofsubfolders:
+                #For each subfolder we now have one function per data column of interest. Passing the appropriate
+                HRExtract('iMotionsFile.csv', 'iMotionsinfo.csv', subfolder, folder)
+                GSRExtract('iMotionsFile.csv', 'iMotionsinfo.csv', subfolder, folder)
+                PERCLOSExtract(glob.glob('PERCLOS*'), subfolder, folder)
+                PupilDiaExtract('EyetrackingFile.csv', 'EyeTrackingInfo.csv', subfolder, folder)
+                print "End of Section :", subfolder,  "\n"
         except Exception as e:
             print "Main Exception Catcher"
             file = open(LOGFILE,'a')
