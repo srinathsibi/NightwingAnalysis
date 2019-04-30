@@ -41,13 +41,41 @@ def iMotionsExtract(filename, infofilename, subfolder, folder):
             gsrwriter.writerow([row[0],row[GSRCOL]])
         gsrfile.close()
     except Exception as e:
-        print " Exception discovered at the the iMotions Processing : ", e
+        print " Exception discovered at the iMotions Processing : ", e
         file = open(LOGFILE,'a')
         writer = csv.writer(file)
         writer.writerow([' iMotions Data Extraction Exception Catcher ', e, ' ' ,subfolder , ' ' , folder])
         file.close()
 def PupilDiaExtract(filename, infofilename, subfolder, folder):
     print " Extracting PupilDiameter in Section :", subfolder, " for : ", folder
+    try:
+        CATBINCOL = 3#4th column in file
+        PUPDIACOL = 2#3rd column in file
+        file = open(subfolder+'/EyetrackingFile.csv','r')
+        filereader = csv.reader(file)
+        headerrow_ = next(filereader)
+        data = list(filereader)
+        file.close()
+        #Writing the Pupil Diameter file ######################
+        Pupdiafile = open(subfolder+'/PupilDiameter.csv','wb')
+        Pupdiawriter = csv.writer(Pupdiafile)
+        Pupdiawriter.writerow([headerrow_[0],headerrow_[PUPDIACOL]])
+        for row in data:
+            Pupdiawriter.writerow([row[0],row[PUPDIACOL]])
+        Pupdiafile.close()
+        #Writing the CategoryBinocular file ##################
+        catbinfile = open(subfolder+'/CategoryBinocular.csv','wb')
+        catbinwriter = csv.writer(catbinfile)
+        catbinwriter.writerow([headerrow_[0], headerrow_[CATBINCOL]])
+        for row in data:
+            catbinwriter.writerow([row[0], row[CATBINCOL]])
+        catbinfile.close()
+    except Exception as e:
+        print "Exception discovered at the Eye tracking Processing : ", e
+        file = open(LOGFILE,'a')
+        writer = csv.writer(file)
+        writer.writerow([' Eyetracking Data extraction exception catcher ', e ,' ', subfolder , ' ' , folder])
+        file.close()
 def PERCLOSExtract(filename, subfolder, folder):
     print  " Estimating PERCLOS in Section :", subfolder, " for : ", folder
 #Main Function
