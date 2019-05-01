@@ -19,6 +19,8 @@ def iMotionsExtract(filename, infofilename, subfolder, folder):
     try:
         HRCOL = 6#7th column in file
         GSRCOL = 8#9th column in file
+        HRPlotData = []#this is an empty list that contains the plot data temporarily
+        GSRPlotData = []#this is an empty list
         file = open(subfolder+'/iMotionsFile.csv','r')
         filereader = csv.reader(file)
         headerrow_ = next(filereader)
@@ -32,6 +34,7 @@ def iMotionsExtract(filename, infofilename, subfolder, folder):
         hrwriter.writerow([headerrow_[0],headerrow_[HRCOL]])#Writing the header column for the heart rate file
         for row in data:
             hrwriter.writerow([row[0],row[HRCOL]])
+            HRPlotData.append([row[0],row[HRCOL]])
         hrfile.close()
         #Writing the GSR file ####################################
         gsrfile = open(subfolder+'/GSR.csv','wb')
@@ -39,7 +42,9 @@ def iMotionsExtract(filename, infofilename, subfolder, folder):
         gsrwriter.writerow([headerrow_[0],headerrow_[GSRCOL]])#Writing the header column for the GSR file
         for row in data:
             gsrwriter.writerow([row[0],row[GSRCOL]])
+            GSRPlotData.append([row[0],row[GSRCOL]])
         gsrfile.close()
+        #Plot and save the data in the individual section folders
     except Exception as e:
         print " Exception discovered at the iMotions Processing : ", e
         file = open(LOGFILE,'a')
@@ -51,6 +56,8 @@ def PupilDiaExtract(filename, infofilename, subfolder, folder):
     try:
         CATBINCOL = 3#4th column in file
         PUPDIACOL = 2#3rd column in file
+        CATBINPlotData = []#Data storage for plotting
+        PUPDIAPlotData = []#Data storage for plotting
         file = open(subfolder+'/EyetrackingFile.csv','r')
         filereader = csv.reader(file)
         headerrow_ = next(filereader)
@@ -62,6 +69,7 @@ def PupilDiaExtract(filename, infofilename, subfolder, folder):
         Pupdiawriter.writerow([headerrow_[0],headerrow_[PUPDIACOL]])
         for row in data:
             Pupdiawriter.writerow([row[0],row[PUPDIACOL]])
+            PUPDIAPlotData.append([row[0],row[PUPDIACOL]])
         Pupdiafile.close()
         #Writing the CategoryBinocular file ##################
         catbinfile = open(subfolder+'/CategoryBinocular.csv','wb')
@@ -69,15 +77,33 @@ def PupilDiaExtract(filename, infofilename, subfolder, folder):
         catbinwriter.writerow([headerrow_[0], headerrow_[CATBINCOL]])
         for row in data:
             catbinwriter.writerow([row[0], row[CATBINCOL]])
+            CATBINPlotData.append([row[0], row[CATBINCOL]])
         catbinfile.close()
+        #plot and save data in the individual section folder
     except Exception as e:
         print "Exception discovered at the Eye tracking Processing : ", e
         file = open(LOGFILE,'a')
         writer = csv.writer(file)
         writer.writerow([' Eyetracking Data extraction exception catcher ', e ,' ', subfolder , ' ' , folder])
         file.close()
-def PERCLOSExtract(filename, subfolder, folder):
-    print  " Estimating PERCLOS in Section :", subfolder, " for : ", folder
+def PERCLOSplot(filename, subfolder, folder):
+    print  " Plotting PERCLOS in Section :", subfolder, " for : ", folder
+    try:
+        file = open(subfolder+'/PERCLOS.csv', 'r')
+        filereader = csv.reader(file)
+        PERCLOSPlotData = []#Perclos Plot Data
+        headerrow_ = next(filereader)
+        data = list(filereader)
+        for row in data:
+            PERCLOSPlotData.append([row[0], row[1]])
+        file.close()
+        #Plot PERCLOS data in the individual section folder
+    except Exception as e:
+        print "Exception recorded at the PERCLOS plotting function : ", e
+        file = open(LOGFILE, 'a')
+        writer = csv.writer(file)
+        writer.writerow([' PERCLOS Data plotting exception catcher', e , ' ', subfolder, ' ', folder])
+        file.close()
 #Main Function
 if __name__ == '__main__':
     outputfile = open(LOGFILE,'wb')
@@ -104,7 +130,7 @@ if __name__ == '__main__':
             for subfolder in listofsubfolders:
                 #For each subfolder we now have one function per data column of interest. Passing the appropriate
                 iMotionsExtract('iMotionsFile.csv', 'iMotionsinfo.csv', subfolder, folder)
-                PERCLOSExtract(glob.glob('PERCLOS*'), subfolder, folder)
+                PERCLOSplot(glob.glob('PERCLOS*'), subfolder, folder)
                 PupilDiaExtract('EyetrackingFile.csv', 'EyeTrackingInfo.csv', subfolder, folder)
                 print "End of Section :", subfolder,  "\n"
         except Exception as e:
