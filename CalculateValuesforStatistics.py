@@ -10,6 +10,7 @@ import numpy as np
 import csv
 import matplotlib.pyplot as plt
 from scipy import interpolate
+from PERCLOSCalculator import PERCLOSCal
 import numpy as np
 LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'
 MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specification and file specifications
@@ -89,7 +90,17 @@ def PupilDiaExtract(filename, infofilename, subfolder, folder):
 def PERCLOSplot(filename, subfolder, folder):
     print  " Plotting PERCLOS in Section :", subfolder, " for : ", folder
     try:
-        file = open(subfolder+'/PERCLOS.csv', 'r')
+        # I want to rewrite the PERCLOS files for all section for all participants based on the catbin values
+        # in the section folder. The PERCLOS function in the strip data might not be the best option`
+        # Iteration 2 of the PERCLOS function rests in the PERCLOSCalculator.py file and it might be better
+        #open the cat bin data from the file
+
+
+
+
+
+        #Opening the PERCLOS file for reading puposes and to plot
+        file = open(subfolder+'/PERCLOS.csv','r')
         filereader = csv.reader(file)
         PERCLOSPlotData = []#Perclos Plot Data
         headerrow_ = next(filereader)
@@ -104,6 +115,9 @@ def PERCLOSplot(filename, subfolder, folder):
         writer = csv.writer(file)
         writer.writerow([' PERCLOS Data plotting exception catcher', e , ' ', subfolder, ' ', folder])
         file.close()
+#Function to plot and save data in the folder location specified
+def PlotData(plotdata, folder, subfolder):
+    print "Function to plot data as passed through arguments"
 #Main Function
 if __name__ == '__main__':
     outputfile = open(LOGFILE,'wb')
@@ -130,7 +144,7 @@ if __name__ == '__main__':
             for subfolder in listofsubfolders:
                 #For each subfolder we now have one function per data column of interest. Passing the appropriate
                 iMotionsExtract('iMotionsFile.csv', 'iMotionsinfo.csv', subfolder, folder)
-                PERCLOSplot(glob.glob('PERCLOS*'), subfolder, folder)
+                PERCLOSplot(glob.glob('PERCLOS*')[0], subfolder, folder)
                 PupilDiaExtract('EyetrackingFile.csv', 'EyeTrackingInfo.csv', subfolder, folder)
                 print "End of Section :", subfolder,  "\n"
         except Exception as e:

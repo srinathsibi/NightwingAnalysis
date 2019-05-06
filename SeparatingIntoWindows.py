@@ -132,7 +132,7 @@ def CreateSegments(folder):
             pass
     except Exception as e:
         print "\n Exception at Baseline : ", e
-    ######## NOTE: We can ognore processing the end section data and use the data from Dave's analysis since it already has the relevant data we need
+    ######## NOTE: We can ignore processing the end section data and use the data from Dave's analysis since it already has the relevant data we need
     ######## NOTE: We need only clip the data in the middle.
     if int(folder[1:4]) <= 61:
         if Marker21time >=0:

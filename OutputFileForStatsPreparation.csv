@@ -1,135 +1,41 @@
 Output file and exception recorder for Python Script to 
+ PERCLOS Data plotting exception catcher,list index out of range, ,Baseline, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,EndSectionData, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION0, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION1, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION10, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION11, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION12, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION13, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION14, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION15, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION16, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION17, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION18, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION19, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION2, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION20, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION21, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION3, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION4, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION5, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION6, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION7, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION8, ,P006
+ PERCLOS Data plotting exception catcher,list index out of range, ,SECTION9, ,P006
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P029
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P029
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P083
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P083
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P074
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P074
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P080
  iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P080
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P080
  Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P080
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'Baseline/EyetrackingFile.csv', ,Baseline, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION0/EyetrackingFile.csv', ,SECTION0, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION1/EyetrackingFile.csv', ,SECTION1, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION10/EyetrackingFile.csv', ,SECTION10, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION11/EyetrackingFile.csv', ,SECTION11, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION12/EyetrackingFile.csv', ,SECTION12, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION13/EyetrackingFile.csv', ,SECTION13, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION14/EyetrackingFile.csv', ,SECTION14, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION15/EyetrackingFile.csv', ,SECTION15, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION16/EyetrackingFile.csv', ,SECTION16, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION17/EyetrackingFile.csv', ,SECTION17, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION18/EyetrackingFile.csv', ,SECTION18, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION19/EyetrackingFile.csv', ,SECTION19, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION2/EyetrackingFile.csv', ,SECTION2, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION20/EyetrackingFile.csv', ,SECTION20, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION3/EyetrackingFile.csv', ,SECTION3, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION4/EyetrackingFile.csv', ,SECTION4, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION5/EyetrackingFile.csv', ,SECTION5, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION6/EyetrackingFile.csv', ,SECTION6, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION7/EyetrackingFile.csv', ,SECTION7, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION8/EyetrackingFile.csv', ,SECTION8, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION9/EyetrackingFile.csv', ,SECTION9, ,P014
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'Baseline/EyetrackingFile.csv', ,Baseline, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION0/EyetrackingFile.csv', ,SECTION0, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION1/EyetrackingFile.csv', ,SECTION1, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION10/EyetrackingFile.csv', ,SECTION10, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION11/EyetrackingFile.csv', ,SECTION11, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION12/EyetrackingFile.csv', ,SECTION12, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION13/EyetrackingFile.csv', ,SECTION13, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION14/EyetrackingFile.csv', ,SECTION14, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION15/EyetrackingFile.csv', ,SECTION15, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION16/EyetrackingFile.csv', ,SECTION16, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION17/EyetrackingFile.csv', ,SECTION17, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION18/EyetrackingFile.csv', ,SECTION18, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION19/EyetrackingFile.csv', ,SECTION19, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION2/EyetrackingFile.csv', ,SECTION2, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION20/EyetrackingFile.csv', ,SECTION20, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION21/EyetrackingFile.csv', ,SECTION21, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION3/EyetrackingFile.csv', ,SECTION3, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION4/EyetrackingFile.csv', ,SECTION4, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION5/EyetrackingFile.csv', ,SECTION5, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION6/EyetrackingFile.csv', ,SECTION6, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION7/EyetrackingFile.csv', ,SECTION7, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION8/EyetrackingFile.csv', ,SECTION8, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION9/EyetrackingFile.csv', ,SECTION9, ,P010
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'Baseline/EyetrackingFile.csv', ,Baseline, ,P012
- iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P012
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P012
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'Baseline/EyetrackingFile.csv', ,Baseline, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION0/EyetrackingFile.csv', ,SECTION0, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION1/EyetrackingFile.csv', ,SECTION1, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION10/EyetrackingFile.csv', ,SECTION10, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION11/EyetrackingFile.csv', ,SECTION11, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION12/EyetrackingFile.csv', ,SECTION12, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION13/EyetrackingFile.csv', ,SECTION13, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION14/EyetrackingFile.csv', ,SECTION14, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION15/EyetrackingFile.csv', ,SECTION15, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION16/EyetrackingFile.csv', ,SECTION16, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION17/EyetrackingFile.csv', ,SECTION17, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION18/EyetrackingFile.csv', ,SECTION18, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION19/EyetrackingFile.csv', ,SECTION19, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION2/EyetrackingFile.csv', ,SECTION2, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION20/EyetrackingFile.csv', ,SECTION20, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION21/EyetrackingFile.csv', ,SECTION21, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION3/EyetrackingFile.csv', ,SECTION3, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION4/EyetrackingFile.csv', ,SECTION4, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION5/EyetrackingFile.csv', ,SECTION5, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION6/EyetrackingFile.csv', ,SECTION6, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION7/EyetrackingFile.csv', ,SECTION7, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION8/EyetrackingFile.csv', ,SECTION8, ,P017
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION9/EyetrackingFile.csv', ,SECTION9, ,P017
- iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P027
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P027
- iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P035
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P035
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'Baseline/EyetrackingFile.csv', ,Baseline, ,P013
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P013
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'Baseline/EyetrackingFile.csv', ,Baseline, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION0/EyetrackingFile.csv', ,SECTION0, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION1/EyetrackingFile.csv', ,SECTION1, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION10/EyetrackingFile.csv', ,SECTION10, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION11/EyetrackingFile.csv', ,SECTION11, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION12/EyetrackingFile.csv', ,SECTION12, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION13/EyetrackingFile.csv', ,SECTION13, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION14/EyetrackingFile.csv', ,SECTION14, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION15/EyetrackingFile.csv', ,SECTION15, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION16/EyetrackingFile.csv', ,SECTION16, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION17/EyetrackingFile.csv', ,SECTION17, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION18/EyetrackingFile.csv', ,SECTION18, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION19/EyetrackingFile.csv', ,SECTION19, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION2/EyetrackingFile.csv', ,SECTION2, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION20/EyetrackingFile.csv', ,SECTION20, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION21/EyetrackingFile.csv', ,SECTION21, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION3/EyetrackingFile.csv', ,SECTION3, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION4/EyetrackingFile.csv', ,SECTION4, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION5/EyetrackingFile.csv', ,SECTION5, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION6/EyetrackingFile.csv', ,SECTION6, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION7/EyetrackingFile.csv', ,SECTION7, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION8/EyetrackingFile.csv', ,SECTION8, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION9/EyetrackingFile.csv', ,SECTION9, ,P016
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'Baseline/EyetrackingFile.csv', ,Baseline, ,P031
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P031
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'Baseline/EyetrackingFile.csv', ,Baseline, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION0/EyetrackingFile.csv', ,SECTION0, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION1/EyetrackingFile.csv', ,SECTION1, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION10/EyetrackingFile.csv', ,SECTION10, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION11/EyetrackingFile.csv', ,SECTION11, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION12/EyetrackingFile.csv', ,SECTION12, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION13/EyetrackingFile.csv', ,SECTION13, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION14/EyetrackingFile.csv', ,SECTION14, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION15/EyetrackingFile.csv', ,SECTION15, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION16/EyetrackingFile.csv', ,SECTION16, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION17/EyetrackingFile.csv', ,SECTION17, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION18/EyetrackingFile.csv', ,SECTION18, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION19/EyetrackingFile.csv', ,SECTION19, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION2/EyetrackingFile.csv', ,SECTION2, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION20/EyetrackingFile.csv', ,SECTION20, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION21/EyetrackingFile.csv', ,SECTION21, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION3/EyetrackingFile.csv', ,SECTION3, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION4/EyetrackingFile.csv', ,SECTION4, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION5/EyetrackingFile.csv', ,SECTION5, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION6/EyetrackingFile.csv', ,SECTION6, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION7/EyetrackingFile.csv', ,SECTION7, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION8/EyetrackingFile.csv', ,SECTION8, ,P049
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'SECTION9/EyetrackingFile.csv', ,SECTION9, ,P049
- iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P069
- Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P069
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P045
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P045
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P067
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P067
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P064
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P064
