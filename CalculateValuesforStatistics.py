@@ -106,16 +106,16 @@ def PERCLOSplot(filename, subfolder, folder):
         catbin = [catbindata[i][1] for i in range(len(catbindata))]
         #PERCLOSCal( t , catbin , LOGFILE, participant, section, savepath, WINDOWSIZE = 30, WINDOWSTEP =10)
         PERCLOSCal(time, catbin, LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/'+'ClippedData/'+subfolder+'/'),30,10)#Function call to calculate and save PERCLOS data to the SECTION folder
-        '''#Opening the PERCLOS file for reading puposes and to plot
+        #Opening the PERCLOS file for reading puposes and to plot
         file = open(subfolder+'/PERCLOS.csv','r')
         filereader = csv.reader(file)
         PERCLOSPlotData = []#Perclos Plot Data
         headerrow_ = next(filereader)
         data = list(filereader)
-        for row in data:
-            PERCLOSPlotData.append([row[0], row[1]])
+        PERCLOSPlotData = [ [ float(data[i][0]),float(data[i][1]) ] for i in range(len(data)) ]#Trying to use one array of data instead of two separate columns
+        #time = [ float(data[i][0]) for i in range(len(data))]
+        #perclos = [ float(data[i][1]) for i in range(len(data))]
         file.close()
-        #Plot PERCLOS data in the individual section folder'''
     except Exception as e:
         print "Exception recorded at the PERCLOS plotting function : ", e
         file = open(LOGFILE, 'a')

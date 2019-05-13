@@ -18,7 +18,7 @@ import csv
 import matplotlib.pyplot as plt
 from scipy import interpolate
 import numpy as np
-DEBUG = 1#Variable to identify what if anything is wrong with the PERCLOS calcuator
+DEBUG = 0#Variable to identify what if anything is wrong with the PERCLOS calcuator
 def PERCLOSCal( t , catbin , LOGFILE, participant, section, savepath, WINDOWSIZE = 30, WINDOWSTEP =10):
     try:
         print "PERCLOS calcuator called."
