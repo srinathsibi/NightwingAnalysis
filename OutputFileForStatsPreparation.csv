@@ -1,41 +1,15 @@
 Output file and exception recorder for Python Script to 
- PERCLOS Data plotting exception catcher,list index out of range, ,Baseline, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,EndSectionData, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION0, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION1, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION10, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION11, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION12, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION13, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION14, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION15, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION16, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION17, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION18, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION19, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION2, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION20, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION21, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION3, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION4, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION5, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION6, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION7, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION8, ,P006
- PERCLOS Data plotting exception catcher,list index out of range, ,SECTION9, ,P006
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P029
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P029
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P083
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P083
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P074
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P074
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P080
+ Main Function Exception Catcher ,P006,list index out of range
  iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P080
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P080
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/CategoryBinocular.csv', ,EndSectionData, ,P080
  Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P080
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P045
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P045
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P067
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P067
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'Baseline/PERCLOS.csv', ,Baseline, ,P064
- PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/PERCLOS.csv', ,EndSectionData, ,P064
+ Main Function Exception Catcher ,P014,list index out of range
+ Main Function Exception Catcher ,P010,list index out of range
+ PERCLOS Data plotting exception catcher,global name 'folder' is not defined, ,EndSectionData, ,P025
+ PERCLOS Data plotting exception catcher,global name 'folder' is not defined, ,SECTION19, ,P025
+ PERCLOS Data plotting exception catcher,global name 'folder' is not defined, ,SECTION20, ,P025
+ PERCLOS Data plotting exception catcher,global name 'folder' is not defined, ,SECTION21, ,P025
+ Main Function Exception Catcher ,P012,list index out of range
+ Main Function Exception Catcher ,P017,list index out of range
+ iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P027
+ Main Function Exception Catcher ,P027,list index out of range

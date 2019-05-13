@@ -94,12 +94,19 @@ def PERCLOSplot(filename, subfolder, folder):
         # in the section folder. The PERCLOS function in the strip data might not be the best option`
         # Iteration 2 of the PERCLOS function rests in the PERCLOSCalculator.py file and it might be better
         #open the cat bin data from the file
-
-
-
-
-
-        #Opening the PERCLOS file for reading puposes and to plot
+        catbinfile = open(subfolder+'/CategoryBinocular.csv','r')
+        catbinreader = csv.reader(catbinfile)
+        catbinheader = next(catbinreader)
+        catbindata = list(catbinreader)
+        catbinfile.close()
+        #Print the first few lines to make sure
+        #print " Header row and first few rows of Catbin data to send to the new PERCLOS function:\n",catbinheader,'\n',catbindata[1:3],'\n'
+        #Now passing the data to the PERCLOSCalculator.py
+        time = [float(catbindata[i][0]) for i in range(len(catbindata))]
+        catbin = [catbindata[i][1] for i in range(len(catbindata))]
+        #PERCLOSCal( t , catbin , LOGFILE, participant, section, savepath, WINDOWSIZE = 30, WINDOWSTEP =10)
+        PERCLOSCal(time, catbin, LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/'+'ClippedData/'+subfolder+'/'),30,10)#Function call to calculate and save PERCLOS data to the SECTION folder
+        '''#Opening the PERCLOS file for reading puposes and to plot
         file = open(subfolder+'/PERCLOS.csv','r')
         filereader = csv.reader(file)
         PERCLOSPlotData = []#Perclos Plot Data
@@ -108,7 +115,7 @@ def PERCLOSplot(filename, subfolder, folder):
         for row in data:
             PERCLOSPlotData.append([row[0], row[1]])
         file.close()
-        #Plot PERCLOS data in the individual section folder
+        #Plot PERCLOS data in the individual section folder'''
     except Exception as e:
         print "Exception recorded at the PERCLOS plotting function : ", e
         file = open(LOGFILE, 'a')
