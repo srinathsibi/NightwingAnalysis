@@ -11,6 +11,7 @@ import csv
 import matplotlib.pyplot as plt
 from scipy import interpolate
 from PERCLOSCalculator import PERCLOSCal
+from PlottingFunctions import PlotAndSaveData
 import numpy as np
 LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'
 MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specification and file specifications
@@ -46,6 +47,8 @@ def iMotionsExtract(filename, infofilename, subfolder, folder):
             GSRPlotData.append([row[0],row[GSRCOL]])
         gsrfile.close()
         #Plot and save the data in the individual section folders
+        #Now plotting the iMotions GSR data
+        PlotAndSaveData( GSRPlotData , 'Time (seconds)' , 'GSR (uS)' , (' Galvanic Skin Response for '+folder+' in '+subfolder) , 'GalvanicSkinResponse.pdf' , LOGFILE , folder, subfolder , (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'))
     except Exception as e:
         print " Exception discovered at the iMotions Processing : ", e
         file = open(LOGFILE,'a')
