@@ -22,11 +22,15 @@ from scipy import interpolate
 import numpy as np
 plt.rcParams.update({'font.size': 3.5})
 DEBUG = 0#Variable to identify what if anything is wrong with the PERCLOS calcuator
-def PlotAndSaveData( plotdata, xlabel, ylabel, plottitle, savename, LOGFILE, participant, section, savepath ):
-    print "Plotting function called in PlottingFunctions.py"
+def PlotAndSaveData( plotdata, ylabel, plottitle, savename, LOGFILE, participant, section, savepath, xlabel = 'Time (in seconds)' ):
+    print "Plotting function called for : ", ylabel
     try:
-        x_data = [ float(plotdata[i][0]) for i in range(len(plotdata)) ]
-        y_data = [ float(plotdata[i][1]) for i in range(len(plotdata)) ]
+        try:
+            x_data = [ float(plotdata[i][0]) for i in range(len(plotdata)) ]
+            y_data = [ float(plotdata[i][1]) for i in range(len(plotdata)) ]
+        except:
+            x_data = [ float(plotdata[i][0]) for i in range(len(plotdata)) ]
+            y_data = [ str(plotdata[i][1]) for i in range(len(plotdata)) ]
         #starting the plot
         fig = plt.figure()
         fig.tight_layout()

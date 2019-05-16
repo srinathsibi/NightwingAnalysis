@@ -47,8 +47,10 @@ def iMotionsExtract(filename, infofilename, subfolder, folder):
             GSRPlotData.append([row[0],row[GSRCOL]])
         gsrfile.close()
         #Plot and save the data in the individual section folders
-        #Now plotting the iMotions GSR data
-        PlotAndSaveData( GSRPlotData , 'Time (seconds)' , 'GSR (uS)' , (' Galvanic Skin Response for '+folder+' in '+subfolder) , 'GalvanicSkinResponse.pdf' , LOGFILE , folder, subfolder , (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'))
+        #Plotting the iMotions GSR data
+        PlotAndSaveData( GSRPlotData , 'GSR (uS)' , (' Galvanic Skin Response for '+folder+' in '+subfolder) , 'GalvanicSkinResponse.pdf' , LOGFILE , folder, subfolder , (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
+        #Plotting the iMotions HR data
+        PlotAndSaveData( HRPlotData , 'Heart Rate(bpm)' , (' Heart Rate for '+folder+' in '+subfolder) , 'HeartRate.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
     except Exception as e:
         print " Exception discovered at the iMotions Processing : ", e
         file = open(LOGFILE,'a')
@@ -84,6 +86,10 @@ def PupilDiaExtract(filename, infofilename, subfolder, folder):
             CATBINPlotData.append([row[0], row[CATBINCOL]])
         catbinfile.close()
         #plot and save data in the individual section folder
+        #Plotting and saving the Pupil Diameter data
+        PlotAndSaveData( PUPDIAPlotData, 'Pupil Diameter (in mm)' , (' Pupil Diameter for '+folder+' in '+subfolder) , 'PupilDiameter.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
+        #Plotting and saving the Category Binocular data
+        PlotAndSaveData( CATBINPlotData, ' Category Binocular', (' Category Binocular for '+folder+' in '+subfolder) , 'CategoryBinocular.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
     except Exception as e:
         print "Exception discovered at the Eye tracking Processing : ", e
         file = open(LOGFILE,'a')
