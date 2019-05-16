@@ -6,3 +6,4 @@ StripDataOutput.txt
 ClippingProcessOutput.txt
 PERCLOSCalculator.pyc
 OutputFileForStatsPreparation.csv
+*.pyc
