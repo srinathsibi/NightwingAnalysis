@@ -96,7 +96,7 @@ def PupilDiaExtract(filename, infofilename, subfolder, folder):
         writer = csv.writer(file)
         writer.writerow([' Eyetracking Data extraction exception catcher ', e ,' ', subfolder , ' ' , folder])
         file.close()
-def PERCLOSplot(filename, subfolder, folder):
+def PERCLOSExtract(filename, subfolder, folder):
     print  " Plotting PERCLOS in Section :", subfolder, " for : ", folder
     try:
         # I want to rewrite the PERCLOS files for all section for all participants based on the catbin values
@@ -125,15 +125,14 @@ def PERCLOSplot(filename, subfolder, folder):
         #time = [ float(data[i][0]) for i in range(len(data))]
         #perclos = [ float(data[i][1]) for i in range(len(data))]
         file.close()
+        #Plotting and saving the PERCLOS data
+        PlotAndSaveData( PERCLOSPlotData , ' PERCLOS ', ('PERCLOS for '+folder+' in '+subfolder) , 'PERCLOS.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
     except Exception as e:
         print "Exception recorded at the PERCLOS plotting function : ", e
         file = open(LOGFILE, 'a')
         writer = csv.writer(file)
         writer.writerow([' PERCLOS Data plotting exception catcher', e , ' ', subfolder, ' ', folder])
         file.close()
-#Function to plot and save data in the folder location specified
-def PlotData(plotdata, folder, subfolder):
-    print "Function to plot data as passed through arguments"
 #Main Function
 if __name__ == '__main__':
     outputfile = open(LOGFILE,'wb')
@@ -160,7 +159,7 @@ if __name__ == '__main__':
             for subfolder in listofsubfolders:
                 #For each subfolder we now have one function per data column of interest. Passing the appropriate
                 iMotionsExtract('iMotionsFile.csv', 'iMotionsinfo.csv', subfolder, folder)
-                PERCLOSplot(glob.glob('PERCLOS*')[0], subfolder, folder)
+                PERCLOSExtract(glob.glob('PERCLOS*')[0], subfolder, folder)
                 PupilDiaExtract('EyetrackingFile.csv', 'EyeTrackingInfo.csv', subfolder, folder)
                 print "End of Section :", subfolder,  "\n"
         except Exception as e:
