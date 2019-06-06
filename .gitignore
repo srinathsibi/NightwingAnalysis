@@ -7,3 +7,4 @@ ClippingProcessOutput.txt
 PERCLOSCalculator.pyc
 OutputFileForStatsPreparation.csv
 *.pyc
+signalprocessingtest.py

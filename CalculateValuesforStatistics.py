@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from scipy import interpolate
 from PERCLOSCalculator import PERCLOSCal
 from PlottingFunctions import PlotAndSaveData
+from SignalProcessing import *
 import numpy as np
 LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'
 MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specification and file specifications
