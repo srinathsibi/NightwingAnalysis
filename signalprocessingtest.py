@@ -10,7 +10,19 @@ from scipy import interpolate
 import numpy as np
 from math import factorial
 from scipy.signal import butter, lfilter, freqz
+from statistics import mean
 import scipy.signal as signal
+#Function to eliminate the zero values in the HR data
+#The plan is to identify all the points where the HR goes to 0. These points will be substituted with previous non zero values
+def ZeroElimination(HR):
+    print "Eliminating zeros in the HR data"
+    HRone = HR
+    for i in range(len(HRone)):
+        if HRone[i] <= 40 and i!=0 :
+            HRone[i] = HRone[i-1]
+        elif HRone[i] <= 40 and i == 0 :
+            HRone[i] = mean(HRone)
+    return HRone
 #Writing a shorter version of the plot function from PlottingFunctions.py script for quicker testing
 def PlotData(x_data , y_data , z_data , ylabel , zlabel , plottitle , xlabel = 'Time (in Seconds)'):
     print "Plotting function called for : ", ylabel
@@ -24,6 +36,7 @@ def PlotData(x_data , y_data , z_data , ylabel , zlabel , plottitle , xlabel = '
         plt.xlabel(xlabel)
         plt.ylabel(str(ylabel) + ' and ' + str(zlabel))
         plt.legend(loc = 'upper right')
+        plt.grid()
         plt.show()
     except Exception as e:
         print "Exception at the plotting function in PlottingFunctions.py : ", e
@@ -64,7 +77,7 @@ if __name__ == '__main__':
     try:
         print "Testing the signal processing"
         #Set Working Directory
-        os.chdir(os.path.abspath('.') + '/Data/P028/ClippedData/SECTION2/')
+        os.chdir(os.path.abspath('.') + '/Data/P028/ClippedData/SECTION3/')
         #verify
         print 'Files here are ', os.listdir('.')
         #Loading GSR data
@@ -93,7 +106,7 @@ if __name__ == '__main__':
         #Using Savitzky-Golay filter on the GSR data
         gsr_sg = savitzky_golay( np.array(gsr_raw), int(1001) , int(3) ).tolist()
         print type(gsr_sg), len(gsr_sg), len(gsrdata)
-        PlotData(time_raw, gsr_raw, gsr_sg, 'Raw GSR', 'Savitzky-Golay GSR', 'GSR Data Processing')
+        #PlotData(time_raw, gsr_raw, gsr_sg, 'Raw GSR', 'Savitzky-Golay GSR', 'GSR Data Processing')
         #Using the simple low pass filter on the GSR data
         # First, design the Buterworth filter
         N  = 3    # Filter order
@@ -101,6 +114,13 @@ if __name__ == '__main__':
         B, A = signal.butter(N, Wn, output='ba')
         gsr_lp = signal.filtfilt(B, A, gsr_raw).tolist()
         print type(gsr_lp), len(gsr_raw), len(gsr_lp)
-        PlotData(time_raw, gsr_raw, gsr_lp, 'Raw GSR', 'Low Pass Filtered GSR' , 'GSR Data Processing')
+        #PlotData(time_raw, gsr_raw, gsr_lp, 'Raw GSR', 'Low Pass Filtered GSR' , 'GSR Data Processing')
+        #Move on to the HR data.
+        time_raw = [ float(hrdata[i][0]) for i in range(len(hrdata)) ]
+        hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]
+        print " HR values :", hr_raw[0:10],"\n"
+        hr_nz = ZeroElimination(hr_raw)
+        hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]
+        PlotData(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes')
     except Exception as e :
         print " Exception recorded here :", e
