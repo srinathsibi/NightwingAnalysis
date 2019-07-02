@@ -63,15 +63,13 @@ def savitzky_golay(y, window_size, order, deriv=0, rate=1):
     y = np.concatenate((firstvals, y, lastvals))
     return np.convolve( m[::-1], y, mode='valid')
 #Low pass filter functions
-"""def butter_lowpass(cutoff, fs, order=5):
-    nyq = 0.5 * fs
-    normal_cutoff = cutoff / nyq
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    return b, a
-def butter_lowpass_filter(data, cutoff, fs, order=5):
-    b, a = butter_lowpass(cutoff, fs, order=order)
-    y = filtfilt(b, a, data)
-    return y"""
+def LowPass(order , cutoff , input):
+    #Designing the filter first
+    N = 5 #Filter order
+    Wn = 0.002 #Cutoff frequency
+    B, A = signal.butter(N, Wn, output = 'ba')
+    output = signal.filtfilt(B,A,input).tolist()
+    return output
 #main function
 if __name__ == '__main__':
     try:
@@ -109,18 +107,18 @@ if __name__ == '__main__':
         #PlotData(time_raw, gsr_raw, gsr_sg, 'Raw GSR', 'Savitzky-Golay GSR', 'GSR Data Processing')
         #Using the simple low pass filter on the GSR data
         # First, design the Buterworth filter
-        N  = 3    # Filter order
-        Wn = 0.002 # Cutoff frequency
-        B, A = signal.butter(N, Wn, output='ba')
-        gsr_lp = signal.filtfilt(B, A, gsr_raw).tolist()
+        gsr_lp = LowPass(3, 0.002, gsr_raw)#signal.filtfilt(B, A, gsr_raw).tolist()
         print type(gsr_lp), len(gsr_raw), len(gsr_lp)
-        #PlotData(time_raw, gsr_raw, gsr_lp, 'Raw GSR', 'Low Pass Filtered GSR' , 'GSR Data Processing')
+        PlotData(time_raw, gsr_raw, gsr_lp, 'Raw GSR', 'Low Pass Filtered GSR' , 'GSR Data Processing')
         #Move on to the HR data.
         time_raw = [ float(hrdata[i][0]) for i in range(len(hrdata)) ]
         hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]
         print " HR values :", hr_raw[0:10],"\n"
         hr_nz = ZeroElimination(hr_raw)
-        hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]
-        PlotData(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes')
+        hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]# For some reason, the values in the main function get edited though I pass arguments by value and not reference#FIX LATER
+        #PlotData(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes')
+        hr_lp = LowPass(3, 0.002, hr_nz)#signal.filtfilt(B,A,hr_nz).tolist()
+        PlotData(time_raw, hr_nz, hr_lp ,'No zero HR', 'LP HR', 'Applying Low Pass Filter')
+        #Add a low pass filter to smooth out the data
     except Exception as e :
         print " Exception recorded here :", e
