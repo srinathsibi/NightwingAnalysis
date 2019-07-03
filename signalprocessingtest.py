@@ -24,7 +24,7 @@ def ZeroElimination(HR):
             HRone[i] = mean(HRone)
     return HRone
 #Writing a shorter version of the plot function from PlottingFunctions.py script for quicker testing
-def PlotData(x_data , y_data , z_data , ylabel , zlabel , plottitle , xlabel = 'Time (in Seconds)'):
+def PlotData(x_data , y_data , z_data , ylabel , zlabel , plottitle , verticallineindices=[0] , xlabel = 'Time (in Seconds)'):
     print "Plotting function called for : ", ylabel
     try:
         #starting the plot
@@ -33,10 +33,14 @@ def PlotData(x_data , y_data , z_data , ylabel , zlabel , plottitle , xlabel = '
         plt.title(plottitle)
         plt.plot(x_data, y_data, 'r-', label = ylabel)
         plt.plot(x_data, z_data, 'g--', label = zlabel)
+        if len(verticallineindices) > 1:#Meaning the verticallineindices array is not empty
+            for i in range(len(verticallineindices)):
+                if verticallineindices[i]==1:
+                    plt.axvline(x = x_data[i], linewidth = '1')
         plt.xlabel(xlabel)
         plt.ylabel(str(ylabel) + ' and ' + str(zlabel))
         plt.legend(loc = 'upper right')
-        plt.grid()
+        plt.grid(color = 'b' , linestyle = '-.', linewidth = 0.25 )
         plt.show()
     except Exception as e:
         print "Exception at the plotting function in PlottingFunctions.py : ", e
@@ -70,12 +74,21 @@ def LowPass(order , cutoff , input):
     B, A = signal.butter(N, Wn, output = 'ba')
     output = signal.filtfilt(B,A,input).tolist()
     return output
+# Sudden change detection function.
+# Purpose : To detect suddent changes in the HR data and generate a second array that has ones when there is a sudden change in the HR values
+def SuddenChangeDetection(Input):
+    #Create an index for recording the points at which there are sharp changes in the input data stream
+    changeindex = [0]*(len(Input)-1)
+    for i in range(len(Input)):
+        if i>1 and ( abs(Input[i] - Input[i-1]) >= 15 ):
+            changeindex[i] = 1
+    return changeindex
 #main function
 if __name__ == '__main__':
     try:
         print "Testing the signal processing"
         #Set Working Directory
-        os.chdir(os.path.abspath('.') + '/Data/P028/ClippedData/SECTION3/')
+        os.chdir(os.path.abspath('.') + '/Data/P028/ClippedData/SECTION5/')
         #verify
         print 'Files here are ', os.listdir('.')
         #Loading GSR data
@@ -109,16 +122,17 @@ if __name__ == '__main__':
         # First, design the Buterworth filter
         gsr_lp = LowPass(3, 0.002, gsr_raw)#signal.filtfilt(B, A, gsr_raw).tolist()
         print type(gsr_lp), len(gsr_raw), len(gsr_lp)
-        PlotData(time_raw, gsr_raw, gsr_lp, 'Raw GSR', 'Low Pass Filtered GSR' , 'GSR Data Processing')
+        #PlotData(time_raw, gsr_raw, gsr_lp, 'Raw GSR', 'Low Pass Filtered GSR' , 'GSR Data Processing')
         #Move on to the HR data.
         time_raw = [ float(hrdata[i][0]) for i in range(len(hrdata)) ]
         hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]
         print " HR values :", hr_raw[0:10],"\n"
         hr_nz = ZeroElimination(hr_raw)
         hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]# For some reason, the values in the main function get edited though I pass arguments by value and not reference#FIX LATER
-        #PlotData(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes')
+        #Detect the changes in the heart rate data
+        HRChangeIndex = SuddenChangeDetection(hr_raw)
+        PlotData(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes',HRChangeIndex)
         hr_lp = LowPass(3, 0.002, hr_nz)#signal.filtfilt(B,A,hr_nz).tolist()
-        PlotData(time_raw, hr_nz, hr_lp ,'No zero HR', 'LP HR', 'Applying Low Pass Filter')
-        #Add a low pass filter to smooth out the data
+        #PlotData(time_raw, hr_nz, hr_lp ,'No zero HR', 'LP HR', 'Applying Low Pass Filter')
     except Exception as e :
         print " Exception recorded here :", e
