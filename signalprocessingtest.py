@@ -14,7 +14,7 @@ from statistics import mean
 import scipy.signal as signal
 #Function to eliminate the zero values in the HR data
 #The plan is to identify all the points where the HR goes to 0. These points will be substituted with previous non zero values
-def ZeroElimination(HR):
+def ZeroEliminationHR(HR):
     print "Eliminating zeros in the HR data"
     HRone = HR
     for i in range(len(HRone)):
@@ -23,6 +23,15 @@ def ZeroElimination(HR):
         elif HRone[i] <= 40 and i == 0 :
             HRone[i] = mean(HRone)
     return HRone
+def ZeroElimination(raw_signal,lowestvalue =0):
+    print "Eliminating Zeros in signal"
+    temp = raw_signal
+    for i in range(len(temp)):
+        if temp[i] <= lowestvalue and i!=0 :
+            temp[i] = temp[i-1]
+        elif temp[i] <= lowestvalue  and i ==0 :
+            temp[i] = mean(temp)
+    return temp
 #Writing a shorter version of the plot function from PlottingFunctions.py script for quicker testing
 def PlotData(x_data , y_data , z_data , ylabel , zlabel , plottitle , verticallineindices=[0] , xlabel = 'Time (in Seconds)'):
     print "Plotting function called for : ", ylabel
@@ -88,7 +97,7 @@ if __name__ == '__main__':
     try:
         print "Testing the signal processing"
         #Set Working Directory
-        os.chdir(os.path.abspath('.') + '/Data/P028/ClippedData/SECTION5/')
+        os.chdir(os.path.abspath('.') + '/Data/P028/ClippedData/SECTION3/')
         #verify
         print 'Files here are ', os.listdir('.')
         #Loading GSR data
@@ -103,12 +112,18 @@ if __name__ == '__main__':
         hrheader = next(reader)
         hrdata = list(reader)
         file.close()
+        ETDATAFLAG = 1#ET data available
         #Loading the PupilDiameter data
-        file = open('PupilDiameter.csv','r')
-        reader = csv.reader(file)
-        pdheader = next(reader)
-        pddata = list(reader)
-        file.close()
+        try:
+            file = open('PupilDiameter.csv','r')
+            reader = csv.reader(file)
+            pdheader = next(reader)
+            pddata = list(reader)
+            file.close()
+        except Exception as e:
+            print "There is no eye tracker data here :", # -*- coding: utf-8 -*-
+            ETDATAFLAG = 0#ET data not available
+            pass
         #All the data is now loaded
         #Use the PlotData function to plot as needed
         gsr_raw = [ float(gsrdata[i][1]) for i in range(len(gsrdata)) ]
@@ -123,16 +138,25 @@ if __name__ == '__main__':
         gsr_lp = LowPass(3, 0.002, gsr_raw)#signal.filtfilt(B, A, gsr_raw).tolist()
         print type(gsr_lp), len(gsr_raw), len(gsr_lp)
         #PlotData(time_raw, gsr_raw, gsr_lp, 'Raw GSR', 'Low Pass Filtered GSR' , 'GSR Data Processing')
-        #Move on to the HR data.
+        #Processing the HR data.
         time_raw = [ float(hrdata[i][0]) for i in range(len(hrdata)) ]
         hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]
         print " HR values :", hr_raw[0:10],"\n"
-        hr_nz = ZeroElimination(hr_raw)
+        hr_nz = ZeroElimination(hr_raw,40)
         hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]# For some reason, the values in the main function get edited though I pass arguments by value and not reference#FIX LATER
         #Detect the changes in the heart rate data
-        HRChangeIndex = SuddenChangeDetection(hr_raw)
+        HRChangeIndex = SuddenChangeDetection(hr_nz)
         PlotData(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes',HRChangeIndex)
         hr_lp = LowPass(3, 0.002, hr_nz)#signal.filtfilt(B,A,hr_nz).tolist()
-        #PlotData(time_raw, hr_nz, hr_lp ,'No zero HR', 'LP HR', 'Applying Low Pass Filter')
+        PlotData(time_raw, hr_nz, hr_lp ,'No zero HR', 'LP HR', 'Applying Low Pass Filter')
+        #Processing eye tracking data. Depends on the availability of the Eye tracker data
+        if ETDATAFLAG==1:
+            pd_raw = [ float(pddata[i][1]) for i in range(len(pddata)) ]
+            time_raw = [ float(pddata[i][0]) for i in range(len(pddata)) ]
+            print " Pupil Diameter values : ", pd_raw[0:10], "\n"
+            pd_nz = ZeroElimination(pd_raw)
+            pd_raw = [ float(pddata[i][1]) for i in range(len(pddata)) ]
+            PlotData( time_raw , pd_raw , pd_nz, ' Pupil Diameter', 'Zero Eliminated PD' , 'Plotting Raw Pupil Diameter ')
+            #Based on observation, Pupil Diameter needs zero elimination and the low pass filter
     except Exception as e :
         print " Exception recorded here :", e
