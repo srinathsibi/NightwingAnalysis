@@ -1,6 +1,7 @@
 #Author: Srinath Sibi
 #Email : ssibi@stanford.edu
 #Purpose : Testing the GSR and HR data signal processing for a single participant section. Choice : P028, Section : SECTION2
+#Pipeline = Raw Signal -> Eliminate Zeros -> Mark Sudden Changes -> Eliminate data around sudden changes -> Low pass filter
 import glob, os, sys, shutil
 import matplotlib as plt
 import numpy as np
@@ -13,7 +14,7 @@ from scipy.signal import butter, lfilter, freqz
 from statistics import mean
 import scipy.signal as signal
 #Function to eliminate the zero values in the HR data
-#The plan is to identify all the points where the HR goes to 0. These points will be substituted with previous non zero values
+"""
 def ZeroEliminationHR(HR):
     print "Eliminating zeros in the HR data"
     HRone = HR
@@ -22,7 +23,8 @@ def ZeroEliminationHR(HR):
             HRone[i] = HRone[i-1]
         elif HRone[i] <= 40 and i == 0 :
             HRone[i] = mean(HRone)
-    return HRone
+    return HRone"""
+#The plan is to identify all the points where the HR goes to 0. These points will be substituted with previous non zero values
 def ZeroElimination(raw_signal,lowestvalue =0):
     print "Eliminating Zeros in signal"
     temp = raw_signal
@@ -33,7 +35,7 @@ def ZeroElimination(raw_signal,lowestvalue =0):
             temp[i] = mean(temp)
     return temp
 #Writing a shorter version of the plot function from PlottingFunctions.py script for quicker testing
-def PlotData(x_data , y_data , z_data , ylabel , zlabel , plottitle , verticallineindices=[0] , xlabel = 'Time (in Seconds)'):
+def PlotData(x_data , y_data , z_data , ylabel , zlabel , plottitle , verticallineindices=[0] , grid = 1, xlabel = 'Time (in Seconds)'):
     print "Plotting function called for : ", ylabel
     try:
         #starting the plot
@@ -49,7 +51,8 @@ def PlotData(x_data , y_data , z_data , ylabel , zlabel , plottitle , verticalli
         plt.xlabel(xlabel)
         plt.ylabel(str(ylabel) + ' and ' + str(zlabel))
         plt.legend(loc = 'upper right')
-        plt.grid(color = 'b' , linestyle = '-.', linewidth = 0.25 )
+        if grid == 1:
+            plt.grid(color = 'b' , linestyle = '-.', linewidth = 0.1 )
         plt.show()
     except Exception as e:
         print "Exception at the plotting function in PlottingFunctions.py : ", e
@@ -78,20 +81,51 @@ def savitzky_golay(y, window_size, order, deriv=0, rate=1):
 #Low pass filter functions
 def LowPass(order , cutoff , input):
     #Designing the filter first
-    N = 5 #Filter order
-    Wn = 0.002 #Cutoff frequency
+    N = order #Filter order
+    Wn = cutoff #Cutoff frequency
     B, A = signal.butter(N, Wn, output = 'ba')
     output = signal.filtfilt(B,A,input).tolist()
     return output
 # Sudden change detection function.
 # Purpose : To detect suddent changes in the HR data and generate a second array that has ones when there is a sudden change in the HR values
-def SuddenChangeDetection(Input):
+def SuddenChangeDetection(Input,change = 0):
     #Create an index for recording the points at which there are sharp changes in the input data stream
-    changeindex = [0]*(len(Input)-1)
+    changeindex = [0]*(len(Input))
     for i in range(len(Input)):
-        if i>1 and ( abs(Input[i] - Input[i-1]) >= 15 ):
+        if i>1 and ( abs(Input[i] - Input[i-1]) >= change ):
             changeindex[i] = 1
     return changeindex
+#Eliminate Data around the markers created by the SuddenChangeDetection Function
+#def EliminateData(time, input, markers, interval):
+#    print "Eliminate data around markers"
+#    for i in range(len(input)):
+#        if markers[i]==1:
+#Function to replace the spikes in the data further based on markers. I am replacing the erroneous data around the spikes with None
+#First we remove the band around the spikes as indicated by the markers and then remove the outliers by removing data 2*SDs away from mean
+def RemoveErrData(input, markers, bandsize):#bandsize is in indices not in time interval
+    print "In function to remove erroneous data."
+    output = input
+    try:
+        for i in range(len(output)):
+            if markers[i] == 1:
+                for j in range(i-bandsize,i+bandsize):
+                    output[j] = None
+        #Create a temporary list with no None values
+        temp = []
+        for k in range(len(output)):
+            if output[k]!=None:
+                temp.append(output[k])
+        #Remove data outside the 2*SD band
+        mean = np.mean(temp)
+        sd = np.std(temp)
+        print " Mean :", mean, " standadrd deviation: ", sd, "\n"
+        for i in range(len(output)):
+            if output[i]>= (mean+2*sd) or output[i]<=(mean-2*sd):
+                if output[i]!= None:
+                    output[i] = None
+    except Exception as e:
+        print "************** Exception ************** : ", e
+    return output
 #main function
 if __name__ == '__main__':
     try:
@@ -145,18 +179,23 @@ if __name__ == '__main__':
         hr_nz = ZeroElimination(hr_raw,40)
         hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]# For some reason, the values in the main function get edited though I pass arguments by value and not reference#FIX LATER
         #Detect the changes in the heart rate data
-        HRChangeIndex = SuddenChangeDetection(hr_nz)
-        PlotData(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes',HRChangeIndex)
+        HRChangeIndex = SuddenChangeDetection(hr_nz,15)
+        #PlotData(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes',HRChangeIndex)
         hr_lp = LowPass(3, 0.002, hr_nz)#signal.filtfilt(B,A,hr_nz).tolist()
-        PlotData(time_raw, hr_nz, hr_lp ,'No zero HR', 'LP HR', 'Applying Low Pass Filter')
+        #PlotData(time_raw, hr_nz, hr_lp ,'No zero HR', 'LP HR', 'Applying Low Pass Filter')
         #Processing eye tracking data. Depends on the availability of the Eye tracker data
         if ETDATAFLAG==1:
             pd_raw = [ float(pddata[i][1]) for i in range(len(pddata)) ]
             time_raw = [ float(pddata[i][0]) for i in range(len(pddata)) ]
             print " Pupil Diameter values : ", pd_raw[0:10], "\n"
             pd_nz = ZeroElimination(pd_raw)
-            pd_raw = [ float(pddata[i][1]) for i in range(len(pddata)) ]
-            PlotData( time_raw , pd_raw , pd_nz, ' Pupil Diameter', 'Zero Eliminated PD' , 'Plotting Raw Pupil Diameter ')
-            #Based on observation, Pupil Diameter needs zero elimination and the low pass filter
+            pd_raw = [ float(pddata[i][1]) for i in range(len(pddata)) ] # reload the data to make sure we can see the raw data on the
+            #PlotData( time_raw , pd_raw , pd_nz, ' Pupil Diameter', 'Zero Eliminated PD' , 'Plotting Raw Pupil Diameter ')
+            pdchangeindex = SuddenChangeDetection(pd_nz,1)
+            pd_erd=RemoveErrData(pd_nz, pdchangeindex, 10)
+            #pd_lp = LowPass(6, 0.01, pd_erd)#Can't apply a low pass with None Type in the list. Need to figure a workaround
+            #pd_lp = LowPass(6, 0.01 , pd_nz)# Can't apply a low pass with the
+            pd_nz = ZeroElimination(pd_raw)
+            PlotData( time_raw, pd_nz, pd_erd , 'Zero Eliminated PD' , ' Error Signals Removed ' , 'Plotting Low Pass Filter Pupil Diameter', [], 0)
     except Exception as e :
         print " Exception recorded here :", e
