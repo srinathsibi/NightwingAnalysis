@@ -9,21 +9,11 @@ import csv
 import matplotlib.pyplot as plt
 from scipy import interpolate
 import numpy as np
+import pandas as pd
 from math import factorial
 from scipy.signal import butter, lfilter, freqz
 from statistics import mean
 import scipy.signal as signal
-#Function to eliminate the zero values in the HR data
-"""
-def ZeroEliminationHR(HR):
-    print "Eliminating zeros in the HR data"
-    HRone = HR
-    for i in range(len(HRone)):
-        if HRone[i] <= 40 and i!=0 :
-            HRone[i] = HRone[i-1]
-        elif HRone[i] <= 40 and i == 0 :
-            HRone[i] = mean(HRone)
-    return HRone"""
 #The plan is to identify all the points where the HR goes to 0. These points will be substituted with previous non zero values
 def ZeroElimination(raw_signal,lowestvalue =0):
     print "Eliminating Zeros in signal"
@@ -95,11 +85,6 @@ def SuddenChangeDetection(Input,change = 0):
         if i>1 and ( abs(Input[i] - Input[i-1]) >= change ):
             changeindex[i] = 1
     return changeindex
-#Eliminate Data around the markers created by the SuddenChangeDetection Function
-#def EliminateData(time, input, markers, interval):
-#    print "Eliminate data around markers"
-#    for i in range(len(input)):
-#        if markers[i]==1:
 #Function to replace the spikes in the data further based on markers. I am replacing the erroneous data around the spikes with None
 #First we remove the band around the spikes as indicated by the markers and then remove the outliers by removing data 2*SDs away from mean
 def RemoveErrData(input, markers, bandsize):#bandsize is in indices not in time interval
@@ -123,8 +108,19 @@ def RemoveErrData(input, markers, bandsize):#bandsize is in indices not in time 
             if output[i]>= (mean+2*sd) or output[i]<=(mean-2*sd):
                 if output[i]!= None:
                     output[i] = None
+        #Now adding the interpolation function using the pandas interpolation using the interpolation function
+        #First replace the None with Nan
+        df = pd.DataFrame( output, index = range(len(output)) , columns=['PupilDiameter'] )
+        df.fillna(value=pd.np.nan, inplace=True)
+        #print check for dataframe creation
+        for col in df.columns:
+            print "Column :" , col
+        df['A'] = df.PupilDiameter.interpolate(method='spline', order = 5)
+        output = df.A.tolist()
+        print "Interpolated PD: ", output
     except Exception as e:
         print "************** Exception ************** : ", e
+        pass
     return output
 #main function
 if __name__ == '__main__':
@@ -159,6 +155,7 @@ if __name__ == '__main__':
             ETDATAFLAG = 0#ET data not available
             pass
         #All the data is now loaded
+        #################################################################################################################################################
         #Use the PlotData function to plot as needed
         gsr_raw = [ float(gsrdata[i][1]) for i in range(len(gsrdata)) ]
         time_raw = [ float(gsrdata[i][0]) for i in range(len(gsrdata)) ]
@@ -172,6 +169,7 @@ if __name__ == '__main__':
         gsr_lp = LowPass(3, 0.002, gsr_raw)#signal.filtfilt(B, A, gsr_raw).tolist()
         print type(gsr_lp), len(gsr_raw), len(gsr_lp)
         #PlotData(time_raw, gsr_raw, gsr_lp, 'Raw GSR', 'Low Pass Filtered GSR' , 'GSR Data Processing')
+        ################################################################################################################################################
         #Processing the HR data.
         time_raw = [ float(hrdata[i][0]) for i in range(len(hrdata)) ]
         hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]
@@ -183,6 +181,7 @@ if __name__ == '__main__':
         #PlotData(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes',HRChangeIndex)
         hr_lp = LowPass(3, 0.002, hr_nz)#signal.filtfilt(B,A,hr_nz).tolist()
         #PlotData(time_raw, hr_nz, hr_lp ,'No zero HR', 'LP HR', 'Applying Low Pass Filter')
+        #################################################################################################################################################
         #Processing eye tracking data. Depends on the availability of the Eye tracker data
         if ETDATAFLAG==1:
             pd_raw = [ float(pddata[i][1]) for i in range(len(pddata)) ]
@@ -193,9 +192,11 @@ if __name__ == '__main__':
             #PlotData( time_raw , pd_raw , pd_nz, ' Pupil Diameter', 'Zero Eliminated PD' , 'Plotting Raw Pupil Diameter ')
             pdchangeindex = SuddenChangeDetection(pd_nz,1)
             pd_erd=RemoveErrData(pd_nz, pdchangeindex, 10)
+            #Using Pandas Interpolate to solve the problem of the erroneous data that has been deleted
             #pd_lp = LowPass(6, 0.01, pd_erd)#Can't apply a low pass with None Type in the list. Need to figure a workaround
             #pd_lp = LowPass(6, 0.01 , pd_nz)# Can't apply a low pass with the
             pd_nz = ZeroElimination(pd_raw)
             PlotData( time_raw, pd_nz, pd_erd , 'Zero Eliminated PD' , ' Error Signals Removed ' , 'Plotting Low Pass Filter Pupil Diameter', [], 0)
+        #################################################################################################################################################
     except Exception as e :
         print " Exception recorded here :", e
