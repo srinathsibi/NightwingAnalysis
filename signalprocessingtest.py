@@ -25,7 +25,7 @@ def ZeroElimination(raw_signal,lowestvalue =0):
             temp[i] = mean(temp)
     return temp
 #Writing a shorter version of the plot function from PlottingFunctions.py script for quicker testing
-def PlotData(x_data , y_data , z_data , ylabel , zlabel , plottitle , verticallineindices=[0] , grid = 1, xlabel = 'Time (in Seconds)'):
+def Plot3Data(x_data , y_data , z_data , ylabel , zlabel , plottitle , verticallineindices=[0] , grid = 1, xlabel = 'Time (in Seconds)'):
     print "Plotting function called for : ", ylabel
     try:
         #starting the plot
@@ -113,11 +113,11 @@ def RemoveErrData(input, markers, bandsize):#bandsize is in indices not in time 
         df = pd.DataFrame( output, index = range(len(output)) , columns=['PupilDiameter'] )
         df.fillna(value=pd.np.nan, inplace=True)
         #print check for dataframe creation
-        for col in df.columns:
-            print "Column :" , col
+        #for col in df.columns:
+        #    print "Column :" , col
         df['A'] = df.PupilDiameter.interpolate(method='spline', order = 5)
         output = df.A.tolist()
-        print "Interpolated PD: ", output
+        #print "Interpolated PD: ", output
     except Exception as e:
         print "************** Exception ************** : ", e
         pass
@@ -156,19 +156,19 @@ if __name__ == '__main__':
             pass
         #All the data is now loaded
         #################################################################################################################################################
-        #Use the PlotData function to plot as needed
+        #Use the Plot3Data function to plot as needed
         gsr_raw = [ float(gsrdata[i][1]) for i in range(len(gsrdata)) ]
         time_raw = [ float(gsrdata[i][0]) for i in range(len(gsrdata)) ]
         print " GSR values : ",gsr_raw[0:5],"\n"
         #Using Savitzky-Golay filter on the GSR data
         gsr_sg = savitzky_golay( np.array(gsr_raw), int(1001) , int(3) ).tolist()
         print type(gsr_sg), len(gsr_sg), len(gsrdata)
-        #PlotData(time_raw, gsr_raw, gsr_sg, 'Raw GSR', 'Savitzky-Golay GSR', 'GSR Data Processing')
+        #Plot3Data(time_raw, gsr_raw, gsr_sg, 'Raw GSR', 'Savitzky-Golay GSR', 'GSR Data Processing')
         #Using the simple low pass filter on the GSR data
         # First, design the Buterworth filter
         gsr_lp = LowPass(3, 0.002, gsr_raw)#signal.filtfilt(B, A, gsr_raw).tolist()
         print type(gsr_lp), len(gsr_raw), len(gsr_lp)
-        #PlotData(time_raw, gsr_raw, gsr_lp, 'Raw GSR', 'Low Pass Filtered GSR' , 'GSR Data Processing')
+        #Plot3Data(time_raw, gsr_raw, gsr_lp, 'Raw GSR', 'Low Pass Filtered GSR' , 'GSR Data Processing')
         ################################################################################################################################################
         #Processing the HR data.
         time_raw = [ float(hrdata[i][0]) for i in range(len(hrdata)) ]
@@ -178,9 +178,9 @@ if __name__ == '__main__':
         hr_raw = [ float(hrdata[i][1]) for i in range(len(hrdata)) ]# For some reason, the values in the main function get edited though I pass arguments by value and not reference#FIX LATER
         #Detect the changes in the heart rate data
         HRChangeIndex = SuddenChangeDetection(hr_nz,15)
-        #PlotData(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes',HRChangeIndex)
+        #Plot3Data(time_raw, hr_raw, hr_nz, 'RAW HR', ' HR with no zeros' , 'Comparing HR processes',HRChangeIndex)
         hr_lp = LowPass(3, 0.002, hr_nz)#signal.filtfilt(B,A,hr_nz).tolist()
-        #PlotData(time_raw, hr_nz, hr_lp ,'No zero HR', 'LP HR', 'Applying Low Pass Filter')
+        #Plot3Data(time_raw, hr_nz, hr_lp ,'No zero HR', 'LP HR', 'Applying Low Pass Filter')
         #################################################################################################################################################
         #Processing eye tracking data. Depends on the availability of the Eye tracker data
         if ETDATAFLAG==1:
@@ -189,14 +189,14 @@ if __name__ == '__main__':
             print " Pupil Diameter values : ", pd_raw[0:10], "\n"
             pd_nz = ZeroElimination(pd_raw)
             pd_raw = [ float(pddata[i][1]) for i in range(len(pddata)) ] # reload the data to make sure we can see the raw data on the
-            #PlotData( time_raw , pd_raw , pd_nz, ' Pupil Diameter', 'Zero Eliminated PD' , 'Plotting Raw Pupil Diameter ')
+            #Plot3Data( time_raw , pd_raw , pd_nz, ' Pupil Diameter', 'Zero Eliminated PD' , 'Plotting Raw Pupil Diameter ')
             pdchangeindex = SuddenChangeDetection(pd_nz,1)
             pd_erd=RemoveErrData(pd_nz, pdchangeindex, 10)
             #Using Pandas Interpolate to solve the problem of the erroneous data that has been deleted
-            #pd_lp = LowPass(6, 0.01, pd_erd)#Can't apply a low pass with None Type in the list. Need to figure a workaround
+            pd_lp = LowPass(6, 0.01, pd_erd)#Can't apply a low pass with None Type in the list. Need to figure a workaround
             #pd_lp = LowPass(6, 0.01 , pd_nz)# Can't apply a low pass with the
             pd_nz = ZeroElimination(pd_raw)
-            PlotData( time_raw, pd_nz, pd_erd , 'Zero Eliminated PD' , ' Error Signals Removed ' , 'Plotting Low Pass Filter Pupil Diameter', [], 0)
+            Plot3Data( time_raw, pd_erd, pd_lp , ' Error Signals Removed ' , 'Low Passed PupilDiameter' , 'Plotting Low Pass Filter Pupil Diameter', [], 0)
         #################################################################################################################################################
     except Exception as e :
         print " Exception recorded here :", e
