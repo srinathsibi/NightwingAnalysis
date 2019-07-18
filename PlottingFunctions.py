@@ -22,7 +22,7 @@ from scipy import interpolate
 import numpy as np
 plt.rcParams.update({'font.size': 3.5})
 DEBUG = 0#Variable to identify what if anything is wrong with the PERCLOS calcuator
-def PlotAndSaveData( plotdata, ylabel, plottitle, savename, LOGFILE, participant, section, savepath, xlabel = 'Time (in seconds)' ):
+def Plot2Data( plotdata, ylabel, plottitle, savename, LOGFILE, participant, section, savepath, xlabel = 'Time (in seconds)' ):
     print "Plotting function called for : ", ylabel
     try:
         try:
@@ -41,6 +41,35 @@ def PlotAndSaveData( plotdata, ylabel, plottitle, savename, LOGFILE, participant
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         plt.legend(loc = 'upper right')
+        plt.savefig(savepath + savename, bbox_inches = 'tight')
+        plt.close()
+    except Exception as e:
+        print "Exception at the plotting function in PlottingFunctions.py : ", e
+        file = open(LOGFILE, 'a')
+        writer = csv.writer(file)
+        writer.writerow([' Exception in the plotting function ',  ' Participant: ' , participant , ' Section : ', section , '  ' , ' Exception: ', e])
+        file.close()
+def Plot3Data(x_data , y_data , z_data , ylabel , zlabel , plottitle , savename, LOGFILE, participant, section , savepath , verticallineindices=[0] , grid = 1, xlabel = 'Time (in Seconds)'):
+    print "Plotting function called for : ", ylabel
+    try:
+        #starting the plot
+        fig = plt.figure()
+        fig.tight_layout()
+        plt.title(plottitle)
+        plt.plot(x_data, y_data, 'r-', label = ylabel)
+        plt.plot(x_data, z_data, 'g--', label = zlabel)
+        if DEBUG == 1:
+            print "First few elements of the x,y and z data are : ", x_data[0:3] ,'\n', y_data[0:3] , '\n', z_data[0:3]
+        if len(verticallineindices) > 1:#Meaning the verticallineindices array is not empty
+            for i in range(len(verticallineindices)):
+                if verticallineindices[i]==1:
+                    plt.axvline(x = x_data[i], linewidth = '1')
+        plt.xlabel(xlabel)
+        plt.ylabel(str(ylabel) + ' and ' + str(zlabel))
+        plt.legend(loc = 'upper right')
+        if grid == 1:
+            plt.grid(color = 'b' , linestyle = '-.', linewidth = 0.1 )
+        #plt.show()
         plt.savefig(savepath + savename, bbox_inches = 'tight')
         plt.close()
     except Exception as e:

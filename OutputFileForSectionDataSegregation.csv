@@ -1,0 +1,28 @@
+Output file and exception recorder for Python Script to Segregate section data into individual files.
+ Main Function Exception Catcher ,P006,list index out of range
+ iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P080
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/CategoryBinocular.csv', ,EndSectionData, ,P080
+ Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P080
+ Main Function Exception Catcher ,P014,list index out of range
+ Main Function Exception Catcher ,P010,list index out of range
+ PERCLOS Data plotting exception catcher,global name 'folder' is not defined, ,EndSectionData, ,P025
+ PERCLOS Data plotting exception catcher,global name 'folder' is not defined, ,SECTION19, ,P025
+ PERCLOS Data plotting exception catcher,global name 'folder' is not defined, ,SECTION20, ,P025
+ PERCLOS Data plotting exception catcher,global name 'folder' is not defined, ,SECTION21, ,P025
+ Main Function Exception Catcher ,P012,list index out of range
+ Main Function Exception Catcher ,P017,list index out of range
+ iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P027
+ Main Function Exception Catcher ,P027,list index out of range
+ iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P057
+ Main Function Exception Catcher ,P057,list index out of range
+ iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P056
+ Main Function Exception Catcher ,P056,list index out of range
+ iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P035
+ Main Function Exception Catcher ,P035,list index out of range
+ Main Function Exception Catcher ,P013,list index out of range
+ Main Function Exception Catcher ,P016,list index out of range
+ Main Function Exception Catcher ,P031,list index out of range
+ Main Function Exception Catcher ,P049,list index out of range
+ iMotions Data Extraction Exception Catcher ,[Errno 2] No such file or directory: 'EndSectionData/iMotionsFile.csv', ,EndSectionData, ,P069
+ PERCLOS Data plotting exception catcher,[Errno 2] No such file or directory: 'EndSectionData/CategoryBinocular.csv', ,EndSectionData, ,P069
+ Eyetracking Data extraction exception catcher ,[Errno 2] No such file or directory: 'EndSectionData/EyetrackingFile.csv', ,EndSectionData, ,P069

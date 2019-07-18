@@ -11,7 +11,7 @@ import csv
 import matplotlib.pyplot as plt
 from scipy import interpolate
 from PERCLOSCalculator import PERCLOSCal
-from PlottingFunctions import PlotAndSaveData
+from PlottingFunctions import Plot2Data
 from SignalProcessing import *
 import numpy as np
 LOGFILE = os.path.abspath('.') + '/OutputFileForSectionDataSegregation.csv'
@@ -49,9 +49,9 @@ def iMotionsExtract(filename, infofilename, subfolder, folder):
         gsrfile.close()
         #Plot and save the data in the individual section folders
         #Plotting the iMotions GSR data
-        PlotAndSaveData( GSRPlotData , 'GSR (uS)' , (' Galvanic Skin Response for '+folder+' in '+subfolder) , 'GalvanicSkinResponse.pdf' , LOGFILE , folder, subfolder , (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
+        Plot2Data( GSRPlotData , 'GSR (uS)' , (' Galvanic Skin Response for '+folder+' in '+subfolder) , 'GalvanicSkinResponse.pdf' , LOGFILE , folder, subfolder , (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
         #Plotting the iMotions HR data
-        PlotAndSaveData( HRPlotData , 'Heart Rate(bpm)' , (' Heart Rate for '+folder+' in '+subfolder) , 'HeartRate.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
+        Plot2Data( HRPlotData , 'Heart Rate(bpm)' , (' Heart Rate for '+folder+' in '+subfolder) , 'HeartRate.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
     except Exception as e:
         print " Exception discovered at the iMotions Processing : ", e
         file = open(LOGFILE,'a')
@@ -88,9 +88,9 @@ def PupilDiaExtract(filename, infofilename, subfolder, folder):
         catbinfile.close()
         #plot and save data in the individual section folder
         #Plotting and saving the Pupil Diameter data
-        PlotAndSaveData( PUPDIAPlotData, 'Pupil Diameter (in mm)' , (' Pupil Diameter for '+folder+' in '+subfolder) , 'PupilDiameter.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
+        Plot2Data( PUPDIAPlotData, 'Pupil Diameter (in mm)' , (' Pupil Diameter for '+folder+' in '+subfolder) , 'PupilDiameter.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
         #Plotting and saving the Category Binocular data
-        PlotAndSaveData( CATBINPlotData, ' Category Binocular', (' Category Binocular for '+folder+' in '+subfolder) , 'CategoryBinocular.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
+        Plot2Data( CATBINPlotData, ' Category Binocular', (' Category Binocular for '+folder+' in '+subfolder) , 'CategoryBinocular.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
     except Exception as e:
         print "Exception discovered at the Eye tracking Processing : ", e
         file = open(LOGFILE,'a')
@@ -127,7 +127,7 @@ def PERCLOSExtract(filename, subfolder, folder):
         #perclos = [ float(data[i][1]) for i in range(len(data))]
         file.close()
         #Plotting and saving the PERCLOS data
-        PlotAndSaveData( PERCLOSPlotData , ' PERCLOS ', ('PERCLOS for '+folder+' in '+subfolder) , 'PERCLOS.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
+        Plot2Data( PERCLOSPlotData , ' PERCLOS ', ('PERCLOS for '+folder+' in '+subfolder) , 'PERCLOS.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
     except Exception as e:
         print "Exception recorded at the PERCLOS plotting function : ", e
         file = open(LOGFILE, 'a')
