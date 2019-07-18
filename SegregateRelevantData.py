@@ -14,7 +14,7 @@ from PERCLOSCalculator import PERCLOSCal
 from PlottingFunctions import PlotAndSaveData
 from SignalProcessing import *
 import numpy as np
-LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'
+LOGFILE = os.path.abspath('.') + '/OutputFileForSectionDataSegregation.csv'
 MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specification and file specifications
 #iMotions data: Both HR and GSR extracted here.
 def iMotionsExtract(filename, infofilename, subfolder, folder):
@@ -138,7 +138,7 @@ def PERCLOSExtract(filename, subfolder, folder):
 if __name__ == '__main__':
     outputfile = open(LOGFILE,'wb')
     outputwriter = csv.writer(outputfile)
-    outputwriter.writerow(['Output file and exception recorder for Python Script to '])
+    outputwriter.writerow(['Output file and exception recorder for Python Script to Segregate section data into individual files.'])
     outputfile.close()
     os.chdir(MAINPATH+'/Data/')
     listoffolders = os.listdir(MAINPATH+'/Data')
