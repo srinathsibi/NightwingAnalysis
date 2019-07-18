@@ -101,7 +101,7 @@ def RemoveErrData(input, markers, bandsize):#bandsize is in indices not in time 
         pass
     return output
 #Function to filter GSR
-def FilterGSR(data , participant , section , LOGFILE):
+def FilterGSR(data , participant , section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
         print "Filtering GSR"
     except Exception as e:
@@ -111,7 +111,7 @@ def FilterGSR(data , participant , section , LOGFILE):
         writer.writerow(['Exception discovered at the GSR filtering function for ', participant , 'at section', section , ' Exception : ', e])
         file.close()
 #Function to filter PPG
-def FilterHR(data , participant , section , LOGFILE):
+def FilterHR(data , participant , section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
         print "Filtering HR"
     except Exception as e:
@@ -121,7 +121,7 @@ def FilterHR(data , participant , section , LOGFILE):
         writer.writerow(['Exception discovered at the HR filtering function for ', participant, 'at section', section , ' Exception: ', e])
         file.close()
 #Function to filter PupDia
-def FilterPupilDiameter(data, participant, section , LOGFILE):
+def FilterPupilDiameter(data, participant, section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
         print "Filtering Pupil Diameter"
     except Exception as e:
@@ -153,7 +153,7 @@ if __name__ == '__main__':
     print "List of folders in Data : \n" , listoffolders
     for folder in listoffolders:
         try:
-            print " Signal Processing for participant :" , folder
+            print " \n\n\nSignal Processing for participant :" , folder
             ClippedData_path = MAINPATH+'/Data/'+folder+'/ClippedData/'
             #print " List of subfolders in the Clipped Data folder \n", os.listdir(ClippedData_path)
             listofsubfolders = os.listdir(ClippedData_path)
@@ -164,8 +164,65 @@ if __name__ == '__main__':
             result.sort()#Doesn't sort the list the way we want, but it works for now and so we will keep it
             listofsubfolders = result
             print " Relevant subfolders in the Clipped Data folder\n " , listofsubfolders
+            for subfolder in listofsubfolders:
+                try:
+                    print " In SECTION: ", subfolder
+                    Section_path = ClippedData_path+subfolder+'/'
+                    ###########################################Loading Data and processing them for analysis ######################################################
+                    #Loading GSR data
+                    try:
+                        file = open(Section_path+'GSR.csv', 'r')
+                        reader = csv.reader(file)
+                        gsrheader = next(reader)
+                        gsrdata = list(reader)
+                        file.close()
+                    except Exception as e:
+                        print "Exception at loading the GSR data : ", e
+                        file = open(LOGFILE, 'a')
+                        writer = csv.writer(file)
+                        writer.writerow(['Exception at loading the GSR data.', 'Participant' , folder , 'Section' , subfolder , 'Exception:' , e])
+                        file.close()
+                    #Loading HR data
+                    try:
+                        file = open(Section_path+'HeartRate.csv','r')
+                        reader = csv.reader(file)
+                        hrheader = next(reader)
+                        hrdata = list(reader)
+                        file.close()
+                    except Exception as e:
+                        print "Exception at loading the HR data : ", e
+                        file = open(LOGFILE, 'a')
+                        writer = csv.writer(file)
+                        writer.writerow(['Exception at loading the HR data.', 'Participant' , folder , 'Section' , subfolder , 'Exception:' , e])
+                        file.close()
+                    #Loading the Eye tracking Data
+                    ETDATAFLAG = 1#ET data available
+                    #Loading the PupilDiameter data
+                    try:
+                        file = open(Section_path+'PupilDiameter.csv','r')
+                        reader = csv.reader(file)
+                        pdheader = next(reader)
+                        pddata = list(reader)
+                        file.close()
+                    except Exception as e:
+                        print "Exception at loading the HR data : ", e
+                        file = open(LOGFILE, 'a')
+                        writer = csv.writer(file)
+                        writer.writerow(['Exception at loading the HR data.', 'Participant' , folder , 'Section' , subfolder , 'Exception:' , e])
+                        file.close()
+                        ETDATAFLAG = 0
+                    #All the data is now loaded
+                    #Test Print
+                    print " GSR Data : ", gsrheader
+                    #################################################################################################################################################
+                except Exception as e:
+                    print "Participant Level Exception Catcher" ,e
+                    file = open(LOGFILE,'a')
+                    writer = csv.writer(file)
+                    writer.writerow(['Participant Level Exception Catcher.', 'Participant:', folder , 'Section:', subfolder, 'Exception:', e])
+                    file.close()
         except Exception as e:
-            print "Main Exception Catcher"
+            print "Main Exception Catcher" ,e
             file = open(LOGFILE,'a')
             writer = csv.writer(file)
             writer.writerow([' Main Function Exception Catcher ', folder , e])

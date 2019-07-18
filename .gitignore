@@ -7,3 +7,4 @@ ClippingProcessOutput.txt
 PERCLOSCalculator.pyc
 OutputFileForSectionDataSegregation.csv
 *.pyc
+OutputFileForSignalProcessing.csv
