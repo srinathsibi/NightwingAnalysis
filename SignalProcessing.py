@@ -101,7 +101,7 @@ def RemoveErrData(input, markers, bandsize):#bandsize is in indices not in time 
         pass
     return output
 #Function to filter GSR
-def FilterGSR(data , participant , section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
+def FilterGSR(data, header , participant , section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
         print "Filtering GSR"
     except Exception as e:
@@ -111,7 +111,7 @@ def FilterGSR(data , participant , section , LOGFILE= os.path.abspath('.') + '/O
         writer.writerow(['Exception discovered at the GSR filtering function for ', participant , 'at section', section , ' Exception : ', e])
         file.close()
 #Function to filter PPG
-def FilterHR(data , participant , section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
+def FilterHR(data, header , participant , section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
         print "Filtering HR"
     except Exception as e:
@@ -121,7 +121,7 @@ def FilterHR(data , participant , section , LOGFILE= os.path.abspath('.') + '/Ou
         writer.writerow(['Exception discovered at the HR filtering function for ', participant, 'at section', section , ' Exception: ', e])
         file.close()
 #Function to filter PupDia
-def FilterPupilDiameter(data, participant, section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
+def FilterPupilDiameter(data, header , participant, section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
         print "Filtering Pupil Diameter"
     except Exception as e:
@@ -205,15 +205,23 @@ if __name__ == '__main__':
                         pddata = list(reader)
                         file.close()
                     except Exception as e:
-                        print "Exception at loading the HR data : ", e
+                        print "Exception at loading the PD data : ", e
                         file = open(LOGFILE, 'a')
                         writer = csv.writer(file)
-                        writer.writerow(['Exception at loading the HR data.', 'Participant' , folder , 'Section' , subfolder , 'Exception:' , e])
+                        writer.writerow(['Exception at loading the Eyetracking data.', 'Participant' , folder , 'Section' , subfolder , 'Exception:' , e])
                         file.close()
                         ETDATAFLAG = 0
                     #All the data is now loaded
                     #Test Print
-                    print " GSR Data : ", gsrheader
+                    #print " GSR Data : ", gsrheader , "HR Header : " , hrheader
+                    #if ETDATAFLAG==1:
+                    #    print " PD Data : ", pdheader
+                    #Now calling Individual functions for signal processing.
+                    FilterGSR(gsrdata, gsrheader , folder , subfolder)
+                    FilterHR(hrdata , hrheader , folder, subfolder)
+                    if ETDATAFLAG == 1:
+                        FilterPupilDiameter(pddata, pdheader, folder, subfolder)
+                    #All the files in individual sections should be analyzed and plotted.
                     #################################################################################################################################################
                 except Exception as e:
                     print "Participant Level Exception Catcher" ,e
