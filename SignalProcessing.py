@@ -12,8 +12,10 @@ from math import factorial
 from scipy.signal import butter, lfilter, freqz
 from statistics import mean
 import scipy.signal as signal
+from PlottingFunctions import Plot3Data
 LOGFILE = os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'
 MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specification and file specifications
+DEBUG = 1# To print statements dor debugging
 #The plan is to identify all the points where the HR goes to 0. These points will be substituted with previous non zero values
 def ZeroElimination(raw_signal,lowestvalue =0):
     print "Eliminating Zeros in signal"
@@ -103,7 +105,25 @@ def RemoveErrData(input, markers, bandsize):#bandsize is in indices not in time 
 #Function to filter GSR
 def FilterGSR(data, header , participant , section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
-        print "Filtering GSR"
+        gsr_raw = [ float(data[i][1]) for i in range(len(data)) ]
+        time_raw = [ float(data[i][0]) for i in range(len(data)) ]
+        if DEBUG == 1:
+            print "\nFiltering GSR for participant :", participant, " in section : " , section
+            print " GSR header", header , " data sample : ", gsr_raw[0:3]
+        #data loaded
+        #LowPass filter #ADD Other signal processing things here if needed
+        gsr_lp = LowPass(3, 0.002, gsr_raw)
+        gsr_raw = [ float(data[i][1]) for i in range(len(data)) ]
+        #Data plot and save
+        savepath = (MAINPATH+'/Data/'+participant+'/ClippedData/'+section+'/')
+        Plot3Data( time_raw, gsr_raw , gsr_lp , ' Raw GSR Data ' , ' Low Passed GSR ' , 'GSR Signal Processing' , 'DSP_FOR_GSR.pdf' , LOGFILE , participant , section , savepath, [] , 0 )#No need for grids here
+        #Save Data
+        file = open( savepath+'/DSP_GSR.csv' , 'wb')
+        writer = csv.writer(file)
+        writer.writerow([header[0] , header[1] , 'Filtered GSR'])
+        for i in range(len(gsr_raw)):
+            writer.writerow([ time_raw[i] , gsr_raw[i] , gsr_lp[i] ])
+        file.close()
     except Exception as e:
         print "Exception discovered at the GSR filtering function ", e
         file = open( LOGFILE , 'a')
@@ -113,7 +133,28 @@ def FilterGSR(data, header , participant , section , LOGFILE= os.path.abspath('.
 #Function to filter PPG
 def FilterHR(data, header , participant , section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
-        print "Filtering HR"
+        hr_raw = [ float(data[i][1]) for i in range(len(data)) ]
+        time_raw = [ float(data[i][0]) for i in range(len(data)) ]
+        if DEBUG == 1:
+            print "\nFiltering HR for participant :", participant, " in section : " , section
+            print " HR header : ", header , " Data Sample : ", hr_raw[0:3]
+        #data loaded
+        #Signal Processing
+        hr_nz = ZeroElimination(hr_raw, 40)
+        hr_raw = [ float(data[i][1]) for i in range(len(data)) ]
+        HRChangeIndex = SuddenChangeDetection(hr_raw, 15)
+        hr_lp = LowPass(3, 0.002 , hr_nz)
+        hr_raw = [ float(data[i][1]) for i in range(len(data)) ]
+        #Plot and Save Data
+        savepath = (MAINPATH+'/Data/'+participant+'/ClippedData/'+section+'/')
+        Plot3Data ( time_raw, hr_raw, hr_lp , ' Raw HR ' , ' Low Passes HR ' , ' HR Signal Processing ', 'DSP_FOR_HR.pdf' , LOGFILE , participant , section , savepath, HRChangeIndex )
+        #Save Data
+        file = open( savepath+'/DSP_FOR_HR.csv' , 'wb')
+        writer = csv.writer(file)
+        writer.writerow([ header[0] , header[1] , 'Filtered HR', ' Sudden Change Indicators'])
+        for i in range(len(hr_raw)):
+            writer.writerow([ time_raw[i] , hr_raw[i] , hr_lp[i] , HRChangeIndex[i] ])
+        file.close()
     except Exception as e:
         print " Exception discovered at the GSR filtering function ", e
         file = open (LOGFILE, 'a')
@@ -123,7 +164,7 @@ def FilterHR(data, header , participant , section , LOGFILE= os.path.abspath('.'
 #Function to filter PupDia
 def FilterPupilDiameter(data, header , participant, section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
-        print "Filtering Pupil Diameter"
+        print "Filtering Pupil Diameter for participant :", participant, " in section : " , section
     except Exception as e:
         print " Exception discovered at the Pupil Diameter filtering function", e
         file = open(LOGFILE, 'a')
@@ -166,7 +207,7 @@ if __name__ == '__main__':
             print " Relevant subfolders in the Clipped Data folder\n " , listofsubfolders
             for subfolder in listofsubfolders:
                 try:
-                    print " In SECTION: ", subfolder
+                    print " \n\nIn SECTION: ", subfolder
                     Section_path = ClippedData_path+subfolder+'/'
                     ###########################################Loading Data and processing them for analysis ######################################################
                     #Loading GSR data
@@ -213,9 +254,10 @@ if __name__ == '__main__':
                         ETDATAFLAG = 0
                     #All the data is now loaded
                     #Test Print
-                    #print " GSR Data : ", gsrheader , "HR Header : " , hrheader
-                    #if ETDATAFLAG==1:
-                    #    print " PD Data : ", pdheader
+                    if DEBUG == 1:
+                        print " GSR Data : ", gsrheader , "HR Header : " , hrheader
+                        if ETDATAFLAG==1:
+                            print " PD Data : ", pdheader
                     #Now calling Individual functions for signal processing.
                     FilterGSR(gsrdata, gsrheader , folder , subfolder)
                     FilterHR(hrdata , hrheader , folder, subfolder)
