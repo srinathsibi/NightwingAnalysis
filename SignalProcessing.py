@@ -83,7 +83,8 @@ def RemoveErrData(input, markers, bandsize):#bandsize is in indices not in time 
         #Remove data outside the 2*SD band
         mean = np.mean(temp)
         sd = np.std(temp)
-        print " Mean :", mean, " standadrd deviation: ", sd, "\n"
+        if DEBUG == 1:
+            print " Mean :", mean, " standadrd deviation: ", sd, "\n"
         for i in range(len(output)):
             if output[i]>= (mean+2*sd) or output[i]<=(mean-2*sd):
                 if output[i]!= None:
@@ -164,12 +165,42 @@ def FilterHR(data, header , participant , section , LOGFILE= os.path.abspath('.'
 #Function to filter PupDia
 def FilterPupilDiameter(data, header , participant, section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
-        print "Filtering Pupil Diameter for participant :", participant, " in section : " , section
+        #We try to assign the pd_raw function a few different ways to make sure that the '-' element in
+        try:
+            pd_raw = [ float(data[i][1]) for i in range(len(data)) ]
+        except:
+            pd_raw = []
+            for i in range(len(data)):
+                if data[i]!='-':
+                    pd_raw.append( float(data[i]) )
+                else:
+                    pd_raw.append( float(data[i-1]) )
+        time_raw = [ float(data[i][0]) for i in range(len(data)) ]
+        if DEBUG == 1:
+            print "\nFiltering Pupil Diameter for participant :", participant, " in section : " , section
+            print " PD Header : " , header , " Data Sample: " , pd_raw[0:3]
+        #Data Loaded
+        #Signal Processing
+        pdchangeindex = SuddenChangeDetection(pd_raw, 1)
+        pd_nz = ZeroElimination(pd_raw)
+        pd_erd = RemoveErrData(pd_nz, pdchangeindex, 10)
+        pd_lp = LowPass(6, 0.01 , pd_erd)
+        pd_raw = [ float(data[i][1]) for i in range(len(data)) ] # Reloading the data for plotting purposes
+        #plot and save data
+        savepath = (MAINPATH+'/Data/'+participant+'/ClippedData/'+section+'/')
+        Plot3Data ( time_raw, pd_raw, pd_lp , ' Raw PD ' , ' Low Passes PD ' , ' PD Signal Processing ', 'DSP_FOR_PD.pdf' , LOGFILE , participant , section , savepath, pdchangeindex )
+        #Save Data
+        file = open( savepath+'/DSP_FOR_PD.csv', 'wb')
+        writer = csv.writer(file)
+        writer.writerow([ header[0] , header[1] , 'Filtered PD' , 'Sudden Change Indicators '])
+        for i in range(len(pd_raw)):
+            writer.writerow( [ time_raw[i] , pd_raw[i] , pd_lp[i] , pdchangeindex[i] ] )
+        file.close()
     except Exception as e:
         print " Exception discovered at the Pupil Diameter filtering function", e
         file = open(LOGFILE, 'a')
         writer = csv.writer(file)
-        writer.writerrow(['Exception discovered at the Pupil Diamter filtering function for ', participant, 'at section', section, 'Exception:',e])
+        writer.writerow(['Exception discovered at the Pupil Diamter filtering function for ', participant, 'at section', section, 'Exception:',e])
         file.close()
 #Function to filter Catbin
 #Not sure, we need it. The perclos function extracts the relevant data pretty well.

@@ -23,7 +23,8 @@ import numpy as np
 plt.rcParams.update({'font.size': 3.5})
 DEBUG = 0#Variable to identify what if anything is wrong with the PERCLOS calcuator
 def Plot2Data( plotdata, ylabel, plottitle, savename, LOGFILE, participant, section, savepath, xlabel = 'Time (in seconds)' ):
-    print "Plotting function called for : ", ylabel
+    if DEBUG == 1:
+        print "Plotting function called for : ", ylabel
     try:
         try:
             x_data = [ float(plotdata[i][0]) for i in range(len(plotdata)) ]
@@ -50,7 +51,8 @@ def Plot2Data( plotdata, ylabel, plottitle, savename, LOGFILE, participant, sect
         writer.writerow([' Exception in the plotting function ',  ' Participant: ' , participant , ' Section : ', section , '  ' , ' Exception: ', e])
         file.close()
 def Plot3Data(x_data , y_data , z_data , ylabel , zlabel , plottitle , savename, LOGFILE, participant, section , savepath , verticallineindices=[0] , grid = 1, xlabel = 'Time (in Seconds)'):
-    print "Plotting function called for : ", ylabel
+    if DEBUG == 1:
+        print "Plotting function called for : ", ylabel
     try:
         #starting the plot
         fig = plt.figure()
