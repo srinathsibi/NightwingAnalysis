@@ -15,10 +15,11 @@ import scipy.signal as signal
 from PlottingFunctions import Plot3Data
 LOGFILE = os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'
 MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specification and file specifications
-DEBUG = 1# To print statements dor debugging
+DEBUG = 0# To print statements dor debugging
 #The plan is to identify all the points where the HR goes to 0. These points will be substituted with previous non zero values
 def ZeroElimination(raw_signal,lowestvalue =0):
-    print "Eliminating Zeros in signal"
+    if DEBUG == 1:
+        print "Eliminating Zeros in signal"
     temp = raw_signal
     for i in range(len(temp)):
         if temp[i] <= lowestvalue and i!=0 :
@@ -67,14 +68,20 @@ def SuddenChangeDetection(Input,change = 0):
     return changeindex
 #Function to replace the spikes in the data further based on markers. I am replacing the erroneous data around the spikes with None
 #First we remove the band around the spikes as indicated by the markers and then remove the outliers by removing data 2*SDs away from mean
-def RemoveErrData(input, markers, bandsize):#bandsize is in indices not in time interval
-    print "In function to remove erroneous data."
+def RemoveErrData(input, markers, bandsize, participant , section, LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv' ):#bandsize is in indices not in time interval
+    if DEBUG ==1:
+         print "In function to remove erroneous data."
     output = input
     try:
         for i in range(len(output)):
             if markers[i] == 1:
-                for j in range(i-bandsize,i+bandsize):
-                    output[j] = None
+                #This is necessary since some markers are at the start or end of the section and throw up errors
+                try:
+                    for j in range(i-bandsize,i+bandsize):
+                        output[j] = None
+                except:
+                    for j in range(i-1,1+1):
+                        output[j] = None
         #Create a temporary list with no None values
         temp = []
         for k in range(len(output)):
@@ -100,7 +107,12 @@ def RemoveErrData(input, markers, bandsize):#bandsize is in indices not in time 
         output = df.A.tolist()
         #print "Interpolated PD: ", output
     except Exception as e:
-        print "************** Exception ************** : ", e
+        print "Exception at the RemoveErrData Function : ", e
+        print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
+        file = open( LOGFILE , 'a')
+        writer = csv.writer(file)
+        writer.writerow(['Exception discovered at the PD filtering function for ', participant , 'at section', section , ' Exception : ', e , 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno) ])
+        file.close()
         pass
     return output
 #Function to filter GSR
@@ -127,9 +139,10 @@ def FilterGSR(data, header , participant , section , LOGFILE= os.path.abspath('.
         file.close()
     except Exception as e:
         print "Exception discovered at the GSR filtering function ", e
+        print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
         file = open( LOGFILE , 'a')
         writer = csv.writer(file)
-        writer.writerow(['Exception discovered at the GSR filtering function for ', participant , 'at section', section , ' Exception : ', e])
+        writer.writerow(['Exception discovered at the GSR filtering function for ', participant , 'at section', section , ' Exception : ', e , 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno) ])
         file.close()
 #Function to filter PPG
 def FilterHR(data, header , participant , section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
@@ -158,23 +171,27 @@ def FilterHR(data, header , participant , section , LOGFILE= os.path.abspath('.'
         file.close()
     except Exception as e:
         print " Exception discovered at the GSR filtering function ", e
+        print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
         file = open (LOGFILE, 'a')
         writer = csv.writer(file)
-        writer.writerow(['Exception discovered at the HR filtering function for ', participant, 'at section', section , ' Exception: ', e])
+        writer.writerow(['Exception discovered at the HR filtering function for ', participant, 'at section', section , ' Exception: ', e , 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno) ])
         file.close()
 #Function to filter PupDia
 def FilterPupilDiameter(data, header , participant, section , LOGFILE= os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'):
     try:
-        #We try to assign the pd_raw function a few different ways to make sure that the '-' element in
+        #We try to assign the pd_raw function a few different ways to make sure that the '-' element in pupil diameter data
         try:
             pd_raw = [ float(data[i][1]) for i in range(len(data)) ]
         except:
-            pd_raw = []
+            if DEBUG == 0:
+                print " There are hyfens in the data. "
+            temp = [ data[i][1] for i in range(len(data)) ]
+            pd_raw = [0]*len(temp)
             for i in range(len(data)):
-                if data[i]!='-':
-                    pd_raw.append( float(data[i]) )
-                else:
-                    pd_raw.append( float(data[i-1]) )
+                if temp[i] != '-':
+                    pd_raw[i] = float(temp[i])
+                elif temp[i] == '-':
+                    pd_raw[i] = pd_raw[i-1]#float(temp[i-1])
         time_raw = [ float(data[i][0]) for i in range(len(data)) ]
         if DEBUG == 1:
             print "\nFiltering Pupil Diameter for participant :", participant, " in section : " , section
@@ -183,9 +200,21 @@ def FilterPupilDiameter(data, header , participant, section , LOGFILE= os.path.a
         #Signal Processing
         pdchangeindex = SuddenChangeDetection(pd_raw, 1)
         pd_nz = ZeroElimination(pd_raw)
-        pd_erd = RemoveErrData(pd_nz, pdchangeindex, 10)
+        pd_erd = RemoveErrData(pd_nz, pdchangeindex, 10 , participant , section)
         pd_lp = LowPass(6, 0.01 , pd_erd)
-        pd_raw = [ float(data[i][1]) for i in range(len(data)) ] # Reloading the data for plotting purposes
+        # Reloading the data for plotting purposes
+        try:
+            pd_raw = [ float(data[i][1]) for i in range(len(data)) ]
+        except:
+            if DEBUG == 0:
+                print " There are hyfens in the data. "
+            temp = [ data[i][1] for i in range(len(data)) ]
+            pd_raw = [0]*len(temp)
+            for i in range(len(data)):
+                if temp[i] != '-':
+                    pd_raw[i] = float(temp[i])
+                elif temp[i] == '-':
+                    pd_raw[i] = pd_raw[i-1]#float(temp[i-1])
         #plot and save data
         savepath = (MAINPATH+'/Data/'+participant+'/ClippedData/'+section+'/')
         Plot3Data ( time_raw, pd_raw, pd_lp , ' Raw PD ' , ' Low Passes PD ' , ' PD Signal Processing ', 'DSP_FOR_PD.pdf' , LOGFILE , participant , section , savepath, pdchangeindex )
@@ -198,9 +227,10 @@ def FilterPupilDiameter(data, header , participant, section , LOGFILE= os.path.a
         file.close()
     except Exception as e:
         print " Exception discovered at the Pupil Diameter filtering function", e
+        print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
         file = open(LOGFILE, 'a')
         writer = csv.writer(file)
-        writer.writerow(['Exception discovered at the Pupil Diamter filtering function for ', participant, 'at section', section, 'Exception:',e])
+        writer.writerow(['Exception discovered at the Pupil Diamter filtering function for ', participant, 'at section', section, 'Exception:',e , 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno) ])
         file.close()
 #Function to filter Catbin
 #Not sure, we need it. The perclos function extracts the relevant data pretty well.
@@ -298,13 +328,15 @@ if __name__ == '__main__':
                     #################################################################################################################################################
                 except Exception as e:
                     print "Participant Level Exception Catcher" ,e
+                    print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
                     file = open(LOGFILE,'a')
                     writer = csv.writer(file)
-                    writer.writerow(['Participant Level Exception Catcher.', 'Participant:', folder , 'Section:', subfolder, 'Exception:', e])
+                    writer.writerow(['Participant Level Exception Catcher.', 'Participant:', folder , 'Section:', subfolder, 'Exception:', e , 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)])
                     file.close()
         except Exception as e:
             print "Main Exception Catcher" ,e
+            print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
             file = open(LOGFILE,'a')
             writer = csv.writer(file)
-            writer.writerow([' Main Function Exception Catcher ', folder , e])
+            writer.writerow([' Main Function Exception Catcher ', folder , e,'Error on line {}'.format(sys.exc_info()[-1].tb_lineno) ])
             file.close()
