@@ -96,6 +96,12 @@ def RemoveErrData(input, markers, bandsize, participant , section, LOGFILE= os.p
             if output[i]>= (mean+2*sd) or output[i]<=(mean-2*sd):
                 if output[i]!= None:
                     output[i] = None
+        #The above processes sometimes cause the first few values to sometimes be empty. This ijn turn causes the low pass filter to output Nan values for all the values
+        #So we make sure the first value is not nan so that the interpolation function interpolates all the data and doesn't ignore the data at the start.
+        if output[0]==None:
+            if DEBUG == 1:
+                print " Likely nan values in the output. "
+            output[0]=mean
         #Now adding the interpolation function using the pandas interpolation using the interpolation function
         #First replace the None with Nan
         df = pd.DataFrame( output, index = range(len(output)) , columns=['PupilDiameter'] )
@@ -183,7 +189,7 @@ def FilterPupilDiameter(data, header , participant, section , LOGFILE= os.path.a
         try:
             pd_raw = [ float(data[i][1]) for i in range(len(data)) ]
         except:
-            if DEBUG == 0:
+            if DEBUG == 1:
                 print " There are hyfens in the data. "
             temp = [ data[i][1] for i in range(len(data)) ]
             pd_raw = [0]*len(temp)
@@ -201,12 +207,12 @@ def FilterPupilDiameter(data, header , participant, section , LOGFILE= os.path.a
         pdchangeindex = SuddenChangeDetection(pd_raw, 1)
         pd_nz = ZeroElimination(pd_raw)
         pd_erd = RemoveErrData(pd_nz, pdchangeindex, 10 , participant , section)
-        pd_lp = LowPass(6, 0.01 , pd_erd)
+        pd_lp = LowPass(3, 0.002 , pd_erd)
         # Reloading the data for plotting purposes
         try:
             pd_raw = [ float(data[i][1]) for i in range(len(data)) ]
         except:
-            if DEBUG == 0:
+            if DEBUG == 1:
                 print " There are hyfens in the data. "
             temp = [ data[i][1] for i in range(len(data)) ]
             pd_raw = [0]*len(temp)
@@ -217,7 +223,14 @@ def FilterPupilDiameter(data, header , participant, section , LOGFILE= os.path.a
                     pd_raw[i] = pd_raw[i-1]#float(temp[i-1])
         #plot and save data
         savepath = (MAINPATH+'/Data/'+participant+'/ClippedData/'+section+'/')
-        Plot3Data ( time_raw, pd_raw, pd_lp , ' Raw PD ' , ' Low Passes PD ' , ' PD Signal Processing ', 'DSP_FOR_PD.pdf' , LOGFILE , participant , section , savepath, pdchangeindex )
+        Plot3Data ( time_raw, pd_raw, pd_lp , ' Raw PD ' , ' Low Pass PD ' , ' PD Signal Processing ', 'DSP_FOR_PD.pdf' , LOGFILE , participant , section , savepath, pdchangeindex )
+        if np.isnan(pd_lp).any():
+            print "###### There is a problem in the low pass output. ######"
+            Plot3Data ( time_raw, pd_raw, pd_erd , ' Raw PD ' , ' Pre-Low Pass PD ' , ' PD Signal Processing ', 'DSP_FOR_PD.pdf' , LOGFILE , participant , section , savepath, pdchangeindex )
+            file = open(LOGFILE, 'a')
+            writer = csv.writer(file)
+            writer.writerow([' PupilDiameter Data has some Nans before Low Pass ', participant, 'at section', section ])
+            file.close()
         #Save Data
         file = open( savepath+'/DSP_FOR_PD.csv', 'wb')
         writer = csv.writer(file)

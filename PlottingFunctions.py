@@ -42,7 +42,7 @@ def Plot2Data( plotdata, ylabel, plottitle, savename, LOGFILE, participant, sect
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         plt.legend(loc = 'upper right')
-        plt.savefig(savepath + savename, bbox_inches = 'tight')
+        plt.savefig(savepath + savename, bbox_inches = 'tight', dpi=900 , quality = 100)
         plt.close()
     except Exception as e:
         print "Exception at the plotting function in PlottingFunctions.py : ", e
@@ -72,7 +72,7 @@ def Plot3Data(x_data , y_data , z_data , ylabel , zlabel , plottitle , savename,
         if grid == 1:
             plt.grid(color = 'b' , linestyle = '-.', linewidth = 0.1 )
         #plt.show()
-        plt.savefig(savepath + savename, bbox_inches = 'tight')
+        plt.savefig(savepath + savename, bbox_inches = 'tight', dpi=900 , quality=100)
         plt.close()
     except Exception as e:
         print "Exception at the plotting function in PlottingFunctions.py : ", e
