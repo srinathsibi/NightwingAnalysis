@@ -8,3 +8,4 @@ PERCLOSCalculator.pyc
 OutputFileForSectionDataSegregation.csv
 *.pyc
 OutputFileForSignalProcessing.csv
+signalprocessingtest.py
