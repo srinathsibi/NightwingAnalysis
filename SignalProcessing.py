@@ -15,7 +15,7 @@ import scipy.signal as signal
 from PlottingFunctions import Plot3Data
 LOGFILE = os.path.abspath('.') + '/OutputFileForSignalProcessing.csv'
 MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specification and file specifications
-DEBUG = 0# To print statements dor debugging
+DEBUG = 0# To print statements for debugging
 #The plan is to identify all the points where the HR goes to 0. These points will be substituted with previous non zero values
 def ZeroElimination(raw_signal,lowestvalue =0):
     if DEBUG == 1:
