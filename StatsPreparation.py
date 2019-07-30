@@ -89,7 +89,8 @@ if __name__ == '__main__':
                 if DEBUG == 1:
                     print " \n\n\nList of subfolders for participant ", folder , " is: \n", listofsubfolders
                 #Initialize the dataframes for individual streams for a particpant
-                participantperclos = pd.DataFrame()
+                participantperclosdf = pd.DataFrame()
+                participantperclosdict = {}
                 for subfolder in listofsubfolders:
                     Section_path = MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'
                     #Load the data
@@ -168,9 +169,12 @@ if __name__ == '__main__':
                         ConvertPDToStats(pdheader, pddata, folder, subfolder)
                     if PERCLOSFLAG==1:
                         perclosdict = ConvertPERCLOSToStats(perclosheader, perclosdata, folder, subfolder)
-                        participantperclos.add( pd.DataFrame(perclosdict) , fill_value=0 )
-                        if DEBUG == 0:
-                            print " Participant:", folder, "Section: ", subfolder , " \n\nParticipant Perclos: ", (participantperclos.to_string())
+                        #participantperclos.add( pd.DataFrame(perclosdict) , fill_value=0 )
+                        participantperclosdict.update(perclosdict)#So it looks like adding to a dictionary is better than adding to a dataframe. We can convert to a dataframe at the end of the participant loop.
+                        if DEBUG == 1:
+                            print " Participant:", folder, "Section: ", subfolder, " \n\nParticipant Perclos Dictionary :\n ", participantperclosdict
+                if DEBUG==0:
+                    print "Participant Perclos Dictionary :\n" , participantperclosdict , "\nEnd of participant", folder, "\n\n\n\n\n\n\n##########################################################################################"
             except Exception as e:
                 print " Participant level exception catcher :", # -*- coding: utf-8 -*-
                 print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
