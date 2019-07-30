@@ -13,7 +13,9 @@ from statistics import mean
 from PlottingFunctions import *
 LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'
 MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specification and file specifications
-DEBUG = 1# To print statements for debugging
+LISTOFPARTICIPANTS =[]#This is the list of all participants in the Data folder
+LISTOFSECTIONS =[]# List of all sections for a participant
+DEBUG = 0# To print statements for debugging
 def ConvertHRToStats(hrheader,hrdata, participant, section , LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'):
     try:
         if DEBUG==1:
@@ -55,6 +57,10 @@ def ConvertPERCLOSToStats(perclosheader, perclosdata, participant, section , LOG
         if DEBUG==1:
             print "Convert PERCLOS Data to Stats for ", participant , " in ", section
             print " Test Print\n", "Header: ", perclosheader , "\nData Sample:" , perclosdata[0:3]
+        perclos = [ float(perclosdata[i][1]) for i in range(len(perclosdata))]
+        header = [ str(perclosheader[i]) for i in range(len(perclosheader)) ]
+        dict = { str(section) : perclos}
+        return dict
     except Exception as e:
         print "Exception in PERCLOS data processing to stats for ", participant, " in ", section
         print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
@@ -82,6 +88,8 @@ if __name__ == '__main__':
                 #listofsubfolders = listofsubfolders.sort()
                 if DEBUG == 1:
                     print " \n\n\nList of subfolders for participant ", folder , " is: \n", listofsubfolders
+                #Initialize the dataframes for individual streams for a particpant
+                participantperclos = pd.DataFrame()
                 for subfolder in listofsubfolders:
                     Section_path = MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'
                     #Load the data
@@ -159,7 +167,10 @@ if __name__ == '__main__':
                     if ETDATAFLAG==1:
                         ConvertPDToStats(pdheader, pddata, folder, subfolder)
                     if PERCLOSFLAG==1:
-                        ConvertPERCLOSToStats(perclosheader, perclosdata, folder, subfolder)
+                        perclosdict = ConvertPERCLOSToStats(perclosheader, perclosdata, folder, subfolder)
+                        participantperclos.add( pd.DataFrame(perclosdict) , fill_value=0 )
+                        if DEBUG == 0:
+                            print " Participant:", folder, "Section: ", subfolder , " \n\nParticipant Perclos: ", (participantperclos.to_string())
             except Exception as e:
                 print " Participant level exception catcher :", # -*- coding: utf-8 -*-
                 print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
@@ -167,6 +178,7 @@ if __name__ == '__main__':
                 writer = csv.writer(file)
                 writer.writerow(['Exception at participant level', 'Participant' , folder ,'Exception:' , e, 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)])
                 file.close()
+            #print "\n\n Entire Participant perclos dataframe : ", participantperclos
     except Exception as e:
         print " Main Function Exception Catcher : " , e
         print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
