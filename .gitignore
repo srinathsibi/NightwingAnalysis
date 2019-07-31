@@ -10,3 +10,7 @@ OutputFileForSectionDataSegregation.csv
 OutputFileForSignalProcessing.csv
 signalprocessingtest.py
 OutputFileForStatsPreparation.csv
+PERCLOSOUTPUT.csv
+PDOUTPUT.csv
+HROUTPUT.csv
+GSROUTPUT.csv

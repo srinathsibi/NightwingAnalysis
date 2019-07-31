@@ -16,6 +16,13 @@ MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specif
 LISTOFPARTICIPANTS =[]#This is the list of all participants in the Data folder
 LISTOFSECTIONS =[]# List of all sections for a participant
 DEBUG = 0# To print statements for debugging
+CSV_COLUMNS = ['Baseline', 'SECTION0', 'SECTION1', 'SECTION2' ,'SECTION3', 'SECTION4', 'SECTION5' , 'SECTION6', 'SECTION7', 'SECTION8', 'SECTION9', 'SECTION10', 'SECTION11', 'SECTION12', 'SECTION13', 'SECTION14', 'SECTION15', 'SECTION16', 'SECTION17', 'SECTION18', 'SECTION19', 'SECTION20', 'SECTION21' , 'SECTION22', 'SECTION23', 'SECTION24', 'SECTION25', 'SECTION26', 'SECTION27', 'SECTION28', 'EndSectionData']
+#This is the super set of all sections in the participant file in all the fields. Every participant dictionary key list should be a subset of this list
+#OUTPUT FILES FOR ALL THE RELEVANT DATA
+PERCLOSOUTPUT = os.path.abspath('.') + '/PERCLOSOUTPUT.csv'
+HROUTPUT = os.path.abspath('.') + '/HROUTPUT.csv'
+PDOUTPUT = os.path.abspath('.') + '/PDOUTPUT.csv'
+GSROUTPUT = os.path.abspath('.') + '/GSROUTPUT.csv'
 def ConvertHRToStats(hrheader,hrdata, participant, section , LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'):
     try:
         if DEBUG==1:
@@ -73,7 +80,28 @@ if __name__ == '__main__':
         #output file prep
         file = open(LOGFILE, 'wb')
         writer = csv.writer(file)
-        writer.writerow([' Output file for Statistics Values Calculation.'])
+        writer.writerow(['Log file for Output Values Calculation to run stats on.'])
+        file.close()
+        #Prepare the files for aggregation for PERCLOS, HR, GSR and PD
+        #PERCLOS
+        file = open(PERCLOSOUTPUT, 'wb')
+        writer = csv.writer(file)
+        writer.writerow([' Output file for PERCLOS values calculated .'])
+        file.close()
+        #HR
+        file = open(HROUTPUT, 'wb')
+        writer = csv.writer(file)
+        writer.writerow([' Output file for HR Values Calculation.'])
+        file.close()
+        #PD
+        file = open(PDOUTPUT, 'wb')
+        writer = csv.writer(file)
+        writer.writerow([' Output file for PD Values Calculation.'])
+        file.close()
+        #GSR
+        file = open(GSROUTPUT, 'wb')
+        writer = csv.writer(file)
+        writer.writerow([' Output file for GSR Values Calculation.'])
         file.close()
         #Get all the participant folders in the Data folder
         listoffolders = os.listdir(MAINPATH+'/Data/')
@@ -174,7 +202,10 @@ if __name__ == '__main__':
                         if DEBUG == 1:
                             print " Participant:", folder, "Section: ", subfolder, " \n\nParticipant Perclos Dictionary :\n ", participantperclosdict
                 if DEBUG==0:
-                    print "Participant Perclos Dictionary :\n" , participantperclosdict , "\nEnd of participant", folder, "\n\n\n\n\n\n\n##########################################################################################"
+                    print "\n\nKeys length : " , len(participantperclosdict.keys())
+                    print "Participant Perclos Dictionary keys :\n" , participantperclosdict.keys()
+                #Now aggregating the PERCLOS Data for all participants and printing them to previously aggregated file
+                #We iterate through the section names in the CSV_COLUMNS and if the dictionary for a participant is not empty, then we fill an empty section value with [----] and move on to other participants
             except Exception as e:
                 print " Participant level exception catcher :", # -*- coding: utf-8 -*-
                 print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
