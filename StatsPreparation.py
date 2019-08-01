@@ -197,15 +197,33 @@ if __name__ == '__main__':
                         ConvertPDToStats(pdheader, pddata, folder, subfolder)
                     if PERCLOSFLAG==1:
                         perclosdict = ConvertPERCLOSToStats(perclosheader, perclosdata, folder, subfolder)
-                        #participantperclos.add( pd.DataFrame(perclosdict) , fill_value=0 )
                         participantperclosdict.update(perclosdict)#So it looks like adding to a dictionary is better than adding to a dataframe. We can convert to a dataframe at the end of the participant loop.
                         if DEBUG == 1:
                             print " Participant:", folder, "Section: ", subfolder, " \n\nParticipant Perclos Dictionary :\n ", participantperclosdict
-                if DEBUG==0:
+                if DEBUG==1:
                     print "\n\nKeys length : " , len(participantperclosdict.keys())
                     print "Participant Perclos Dictionary keys :\n" , participantperclosdict.keys()
                 #Now aggregating the PERCLOS Data for all participants and printing them to previously aggregated file
                 #We iterate through the section names in the CSV_COLUMNS and if the dictionary for a participant is not empty, then we fill an empty section value with [----] and move on to other participants
+                #POPULATING PERCLOS
+                f = open(PERCLOSOUTPUT,'a')
+                w = csv.writer(f)
+                dw = csv.DictWriter(f, fieldnames = CSV_COLUMNS)
+                #Final Dictionary to Write to the file
+                perclosdict_new = {}
+                for i,section in enumerate(CSV_COLUMNS):
+                    if section in participantperclosdict.keys():
+                        perclosdict_new.update( { str(section) : participantperclosdict[ str(section) ] } )
+                    elif section not in participantperclosdict.keys():
+                        perclosdict_new.update( { str(section) : ['No values here'] })
+                if DEBUG==0:
+                    print "\n\n\n\nThe ordered perclos dictionary for participant " , folder , "\nPERCLOS Dictionary :" , perclosdict_new
+                w.writerow(['Participant :' + folder])
+                dw.writeheader()
+                dw.writerow(perclosdict_new)
+                w.writerow([' '])#Blank spaces for easy reading
+                w.writerow([' '])
+                f.close()
             except Exception as e:
                 print " Participant level exception catcher :", # -*- coding: utf-8 -*-
                 print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
