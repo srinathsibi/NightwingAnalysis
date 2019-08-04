@@ -1,6 +1,11 @@
 #Author : Srinath Sibi
 #Email : ssibi@stanford.edu
 #Purpose: This file is to convert the values that are signal processed into the values for statistics
+#Conversion to values for Statistics:
+# 1. PERCLOS is retained as is
+# 2. HR is averaged out in the interval and the max value in the interval is also calculated
+# 3. GSR decline is calculated ( positive or negative ), we also calculate the average
+# 4. PD is averaged out the interval.
 import glob, os, sys, shutil
 import matplotlib as plt
 import numpy as np
@@ -28,12 +33,17 @@ def ConvertHRToStats(hrheader,hrdata, participant, section , LOGFILE = os.path.a
         if DEBUG==1:
             print "Convert HR to stats for ", participant, " in ", section
             print "Test Print \n", "Header: " , hrheader , "\nData Sample:",hrdata[0:3]
+        filteredhr = [ float(hrdata[i][2]) for i in range(len(hrdata)) ]
+        hravg = mean(filteredhr)
+        hrmax = max(filteredhr)
+        dict = { str(section) : [hravg, hrmax] }
+        return dict
     except Exception as e:
         print "Exception in HR processing to stats for ", participant, " in ", section
         print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
         file = open(LOGFILE, 'a')
         writer = csv.writer(file)
-        writer.writerow(['Exception at Converting the HR Data to Statistics.', 'Participant', particpant , 'Section' , section , 'Exception' , e , 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)])
+        writer.writerow(['Exception at Converting the HR Data to Statistics.', 'Participant', participant , 'Section' , section , 'Exception' , e , 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)])
         file.close()
 def ConvertGSRToStats(gsrheader, gsrdata , participant, section , LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'):
     try:
@@ -52,6 +62,11 @@ def ConvertPDToStats(pdheader, pddata, participant, section , LOGFILE = os.path.
         if DEBUG==1:
             print "Convert PD Data to Stats for ", participant , " in ", section
             print " Test Print\n", "Header: ", pdheader , "\nData Sample:" , pddata[0:3]
+        filteredpd = [ float(pddata[i][2]) for i in range(len(pddata)) ]
+        pdavg = mean(filteredpd)
+        pdmax = max(filteredpd)
+        dict = { str(section) : [pdavg, pdmax] }
+        return dict
     except Exception as e:
         print "Exception in PD data processing to stats for ", participant, " in ", section
         print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
@@ -117,8 +132,11 @@ if __name__ == '__main__':
                 if DEBUG == 1:
                     print " \n\n\nList of subfolders for participant ", folder , " is: \n", listofsubfolders
                 #Initialize the dataframes for individual streams for a particpant
-                participantperclosdf = pd.DataFrame()
                 participantperclosdict = {}
+                participanthrdict = {}
+                participantpddict = {}
+                participantgsrdict = {}
+                #Now iterate through the subsections
                 for subfolder in listofsubfolders:
                     Section_path = MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'
                     #Load the data
@@ -191,18 +209,17 @@ if __name__ == '__main__':
                     #    if ETDATAFLAG==1:
                     #        print " PD Data : ", pdheader
                     #Calling the individual Functions
-                    ConvertHRToStats(hrheader, hrdata, folder, subfolder)
+                    participanthrdict.update(ConvertHRToStats(hrheader, hrdata, folder, subfolder))#Adding to the  participant HR dictionary
                     ConvertGSRToStats(gsrheader, gsrdata, folder, subfolder)
                     if ETDATAFLAG==1:
-                        ConvertPDToStats(pdheader, pddata, folder, subfolder)
+                        participantpddict.update(ConvertPDToStats(pdheader, pddata, folder, subfolder)) # Adding to the participant pd dictionary
                     if PERCLOSFLAG==1:
                         perclosdict = ConvertPERCLOSToStats(perclosheader, perclosdata, folder, subfolder)
                         participantperclosdict.update(perclosdict)#So it looks like adding to a dictionary is better than adding to a dataframe. We can convert to a dataframe at the end of the participant loop.
                         if DEBUG == 1:
                             print " Participant:", folder, "Section: ", subfolder, " \n\nParticipant Perclos Dictionary :\n ", participantperclosdict
-                if DEBUG==1:
-                    print "\n\nKeys length : " , len(participantperclosdict.keys())
-                    print "Participant Perclos Dictionary keys :\n" , participantperclosdict.keys()
+                if DEBUG==0:
+                    print "\n\nKeys length : " , len(participanthrdict.keys())
                 #Now aggregating the PERCLOS Data for all participants and printing them to previously aggregated file
                 #We iterate through the section names in the CSV_COLUMNS and if the dictionary for a participant is not empty, then we fill an empty section value with [----] and move on to other participants
                 #POPULATING PERCLOS
@@ -216,7 +233,7 @@ if __name__ == '__main__':
                         perclosdict_new.update( { str(section) : participantperclosdict[ str(section) ] } )
                     elif section not in participantperclosdict.keys():
                         perclosdict_new.update( { str(section) : ['No values here'] })
-                if DEBUG==0:
+                if DEBUG==1:
                     print "\n\n\n\nThe ordered perclos dictionary for participant " , folder , "\nPERCLOS Dictionary :" , perclosdict_new
                 w.writerow(['Participant :' + folder])
                 dw.writeheader()
@@ -224,6 +241,26 @@ if __name__ == '__main__':
                 w.writerow([' '])#Blank spaces for easy reading
                 w.writerow([' '])
                 f.close()
+                #Populating HR
+                f = open(HROUTPUT, 'a')
+                w = csv.writer(f)
+                dw = csv.DictWriter(f, fieldnames = CSV_COLUMNS)
+                #Final HR dictionary to write to output file
+                hrdict_new ={}
+                for i, section in enumerate(CSV_COLUMNS):
+                    if section in participanthrdict.keys():
+                        hrdict_new.update( { str(section) : participanthrdict[ str(section) ] } )
+                    elif section in participanthrdict.keys():
+                        hrdict_new.update( { str(section) : ['No values here '] } )
+                if DEBUG==0:
+                    print "\n\n\n\nThe ordered hr dictionary for participant " , folder , "\n HR Dictionary :" , hrdict_new
+                w.writerow(["Participant :"+folder])
+                dw.writeheader()
+                dw.writerow(hrdict_new)
+                w.writerow([' '])#Blank spaces for easy reading
+                w.writerow([' '])
+                f.close()
+                #Populating PD
             except Exception as e:
                 print " Participant level exception catcher :", # -*- coding: utf-8 -*-
                 print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
