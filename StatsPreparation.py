@@ -28,6 +28,24 @@ PERCLOSOUTPUT = os.path.abspath('.') + '/PERCLOSOUTPUT.csv'
 HROUTPUT = os.path.abspath('.') + '/HROUTPUT.csv'
 PDOUTPUT = os.path.abspath('.') + '/PDOUTPUT.csv'
 GSROUTPUT = os.path.abspath('.') + '/GSROUTPUT.csv'
+def SeparateListIntoPieces(inputlist , numpieces, participant, section , LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'):
+    try:
+        if DEBUG ==1:
+            print " Function to split list into pieces called."
+        avg = len(inputlist) / float(numpieces)
+        out = []
+        last = 0.0
+        while last < len(inputlist):
+            out.append(inputlist[int(last):int(last+avg)])
+            last = last+avg
+        return out
+    except Exception as e:
+        print "Exception in list splitting function for ", participant, " in ", section
+        print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
+        file = open(LOGFILE, 'a')
+        writer = csv.writer(file)
+        writer.writerow(['Exception in function to cut list into pieces.', 'Participant', participant , 'Section' , section , 'Exception' , e , 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)])
+        file.close()
 def ConvertHRToStats(hrheader,hrdata, participant, section , LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'):
     try:
         if DEBUG==1:
@@ -50,6 +68,16 @@ def ConvertGSRToStats(gsrheader, gsrdata , participant, section , LOGFILE = os.p
         if DEBUG==1:
             print "Convert GSR to Stats for ", participant , " in ", section
             print "Test Print \n", "Header: " , gsrheader , "\nData Sample:",gsrdata[0:3]
+        filteredgsr = [ float(gsrdata[i][2]) for i in range(len(gsrdata)) ]
+        seperatedlists = SeparateListIntoPieces(filteredgsr, 10 , participant, section)
+        print " Separated List length: ", len(seperatedlists)
+        decreasesinGSR = []#Array that records the decrease in GSR for the 10 intervals
+        for i in range(len(seperatedlists)):
+            decreasesinGSR.append( seperatedlists[i][-1]  - seperatedlists[i][0] )
+        avg_decGSR = mean( decreasesinGSR )
+        avg_GSR = mean ( filteredgsr )
+        dict  = { str(section) : [avg_decGSR , avg_GSR] }
+        return dict
     except Exception as e:
         print "Exception in GSR processing to stats for ", participant, " in ", section
         print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
@@ -209,8 +237,8 @@ if __name__ == '__main__':
                     #    if ETDATAFLAG==1:
                     #        print " PD Data : ", pdheader
                     #Calling the individual Functions
-                    participanthrdict.update(ConvertHRToStats(hrheader, hrdata, folder, subfolder))#Adding to the  participant HR dictionary
-                    ConvertGSRToStats(gsrheader, gsrdata, folder, subfolder)
+                    participanthrdict.update(ConvertHRToStats(hrheader, hrdata, folder, subfolder))#Adding to the participant HR dictionary
+                    participantgsrdict.update(ConvertGSRToStats(gsrheader, gsrdata, folder, subfolder))#Adding to the participant GSR dictionary
                     if ETDATAFLAG==1:
                         participantpddict.update(ConvertPDToStats(pdheader, pddata, folder, subfolder)) # Adding to the participant pd dictionary
                     if PERCLOSFLAG==1:
@@ -250,10 +278,8 @@ if __name__ == '__main__':
                 for i, section in enumerate(CSV_COLUMNS):
                     if section in participanthrdict.keys():
                         hrdict_new.update( { str(section) : participanthrdict[ str(section) ] } )
-                    elif section in participanthrdict.keys():
+                    elif section not in participanthrdict.keys():
                         hrdict_new.update( { str(section) : ['No values here '] } )
-                if DEBUG==0:
-                    print "\n\n\n\nThe ordered hr dictionary for participant " , folder , "\n HR Dictionary :" , hrdict_new
                 w.writerow(["Participant :"+folder])
                 dw.writeheader()
                 dw.writerow(hrdict_new)
@@ -261,6 +287,41 @@ if __name__ == '__main__':
                 w.writerow([' '])
                 f.close()
                 #Populating PD
+                f= open(PDOUTPUT, 'a')
+                w = csv.writer(f)
+                dw = csv.DictWriter(f , fieldnames = CSV_COLUMNS)
+                #Final PD Dictionary to write to output file
+                pddict_new = {}
+                for i, section in enumerate(CSV_COLUMNS):
+                    if section in participantpddict.keys():
+                        pddict_new.update( { str(section) : participantpddict[ str(section) ] } )
+                    elif section not in participantpddict.keys():
+                        pddict_new.update( {str(section) : ['No values here']} )
+                w.writerow(["Participant :"+folder])
+                dw.writeheader()
+                dw.writerow(pddict_new)
+                w.writerow([' '])#Blank spaces for easy reading
+                w.writerow([' '])
+                f.close()
+                #Populating the GSR dictionary to write to the OUTPUT file
+                f = open(GSROUTPUT, 'a')
+                w = csv.writer(f)
+                dw = csv.DictWriter(f , fieldnames = CSV_COLUMNS)
+                #Final GSR Dictionary to write to the output file
+                gsrdict_new = {}
+                for i, section in enumerate(CSV_COLUMNS):
+                    if section in participantgsrdict.keys():
+                        gsrdict_new.update( { str(section) : participantgsrdict[str(section)] } )
+                    elif section not in participantgsrdict.keys():
+                        gsrdict_new.update( { str(section) : ['No values here'] } )
+                w.writerow(["Participant :"+folder])
+                dw.writeheader()
+                dw.writerow(gsrdict_new)
+                w.writerow([' '])#Blank spaces for easy reading
+                w.writerow([' '])
+                f.close()
+                if DEBUG==0:
+                    print "\n\n\n\nThe ordered GSR dictionary for participant " , folder , "\n GSR Dictionary :" , gsrdict_new
             except Exception as e:
                 print " Participant level exception catcher :", # -*- coding: utf-8 -*-
                 print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
