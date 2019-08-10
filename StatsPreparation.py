@@ -11,6 +11,7 @@ import matplotlib as plt
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
+import math
 from scipy import interpolate
 import numpy as np
 import pandas as pd
@@ -51,11 +52,25 @@ def ConvertHRToStats(hrheader,hrdata, participant, section , LOGFILE = os.path.a
         if DEBUG==1:
             print "Convert HR to stats for ", participant, " in ", section
             print "Test Print \n", "Header: " , hrheader , "\nData Sample:",hrdata[0:3]
-        filteredhr = [ float(hrdata[i][2]) for i in range(len(hrdata)) ]
-        hravg = mean(filteredhr)
-        hrmax = max(filteredhr)
-        dict = { str(section) : [hravg, hrmax] }
-        return dict
+        if section not in ['Baseline','EndSectionData']:
+            filteredhr = [ float(hrdata[i][2]) for i in range(len(hrdata)) ]
+            hravg = mean(filteredhr)# we take the 10 second intervalsand average the values over it
+            hrmax = max(filteredhr)
+            dict = { str(section) : [hravg, hrmax] }
+            return dict
+        elif section in ['Baseline','EndSectionData']:
+            filteredhr = [ float(hrdata[i][2]) for i in range(len(hrdata)) ]
+            time = [ float(hrdata[i][0]) for i in range(len(hrdata)) ]
+            hrpieces = SeparateListIntoPieces(filteredhr,  math.floor( abs(time[-1] - time[0])/20 ), participant, section)#This is done to make sure that the Baseline and EndSectionData sections don't get averaged out into a single value
+            hravg = []
+            hrmax = []
+            for list in hrpieces:
+                hravg.append(mean(list))
+                hrmax.append(max(list))
+            dict = {str(section): [hravg , hrmax]}
+            if DEBUG == 1:
+                print "\n\n\nTest Print of dictionary for section : ", section , " HR Dictionary : " , dict
+            return dict
     except Exception as e:
         print "Exception in HR processing to stats for ", participant, " in ", section
         print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
@@ -68,16 +83,42 @@ def ConvertGSRToStats(gsrheader, gsrdata , participant, section , LOGFILE = os.p
         if DEBUG==1:
             print "Convert GSR to Stats for ", participant , " in ", section
             print "Test Print \n", "Header: " , gsrheader , "\nData Sample:",gsrdata[0:3]
-        filteredgsr = [ float(gsrdata[i][2]) for i in range(len(gsrdata)) ]
-        seperatedlists = SeparateListIntoPieces(filteredgsr, 10 , participant, section)
-        print " Separated List length: ", len(seperatedlists)
-        decreasesinGSR = []#Array that records the decrease in GSR for the 10 intervals
-        for i in range(len(seperatedlists)):
-            decreasesinGSR.append( seperatedlists[i][-1]  - seperatedlists[i][0] )
-        avg_decGSR = mean( decreasesinGSR )
-        avg_GSR = mean ( filteredgsr )
-        dict  = { str(section) : [avg_decGSR , avg_GSR] }
-        return dict
+        if section not in ['Baseline', 'EndSectionData']:
+            filteredgsr = [ float(gsrdata[i][2]) for i in range(len(gsrdata)) ]
+            seperatedlists = SeparateListIntoPieces(filteredgsr, 10 , participant, section)
+            decreasesinGSR = []#Array that records the decrease in GSR for the 10 intervals
+            for i in range(len(seperatedlists)):
+                decreasesinGSR.append( seperatedlists[i][-1]  - seperatedlists[i][0] )
+            avg_decGSR = mean( decreasesinGSR )
+            avg_GSR = mean ( filteredgsr )
+            dict  = { str(section) : [avg_decGSR , avg_GSR] }
+            return dict
+        elif section in ['Baseline' , 'EndSectionData']:
+            filteredgsr = [ float(gsrdata[i][2]) for i in range(len(gsrdata)) ]
+            time = [ float(gsrdata[i][0]) for i in range(len(gsrdata)) ]
+            separatelists = SeparateListIntoPieces(filteredgsr, math.floor( abs( time[-1] - time[0] )/20 ), participant, section)#Adjust the number of intervals formed here
+            #For each interval in the Separatelists, we have
+            avg_decGSR = []
+            avg_GSR =[]
+            for list in separatelists:
+                if len(list)>5:#We ignore the really short lists that are formed as a result of the list cutting
+                    temp=[]
+                    index = 0
+                    inc = int(len(list)/10)
+                    while (index+inc+1) < len(list):
+                        temp.append( ( list[index+inc] - list[index] ) )
+                        index = index + inc
+                    avg_decGSR.append( mean(temp) )# Mean reduction in GSR over an interval
+                    avg_GSR.append( mean(list) )# Mean GSR over an interval
+                elif len(list)<=5:
+                    if DEBUG == 0:
+                        print "There's a very short list here. "
+            if DEBUG == 0:
+                print "Participant: ", participant, "  Section: ", section
+                print "\n\n\nThe average decrease in GSR list is: ", avg_decGSR
+                print "\n\n\nThe average GSR list is: ", avg_GSR
+            dict = { str(section) : [avg_decGSR , avg_GSR] }
+            return dict
     except Exception as e:
         print "Exception in GSR processing to stats for ", participant, " in ", section
         print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
@@ -90,11 +131,25 @@ def ConvertPDToStats(pdheader, pddata, participant, section , LOGFILE = os.path.
         if DEBUG==1:
             print "Convert PD Data to Stats for ", participant , " in ", section
             print " Test Print\n", "Header: ", pdheader , "\nData Sample:" , pddata[0:3]
-        filteredpd = [ float(pddata[i][2]) for i in range(len(pddata)) ]
-        pdavg = mean(filteredpd)
-        pdmax = max(filteredpd)
-        dict = { str(section) : [pdavg, pdmax] }
-        return dict
+        if section not in ['Baseline','EndSectionData']:
+            filteredpd = [ float(pddata[i][2]) for i in range(len(pddata)) ]
+            pdavg = mean(filteredpd)# we take the 10 second intervalsand average the values over it
+            pdmax = max(filteredpd)
+            dict = { str(section) : [pdavg, pdmax] }
+            return dict
+        elif section in ['Baseline' , 'EndSectionData']:
+            filteredpd = [ float(pddata[i][2]) for i in range(len(pddata)) ]
+            time = [ float(pddata[i][0]) for i in range(len(pddata)) ]
+            pdpieces = SeparateListIntoPieces(filteredpd , math.floor( abs(time[-1] - time[0])/20 ), participant, section)#This is done to make sure that the Baseline and EndSectionData sections don't get averaged out into a single value
+            pdavg = []
+            pdmax = []
+            for list in pdpieces:
+                pdavg.append(mean(list))
+                pdmax.append(max(list))
+            dict = { str(section) : [pdavg, pdmax] }
+            if DEBUG == 1:
+                print "\n\n\nTest Print of dictionary for section : ", section , " PD Dictionary : " , dict
+            return dict
     except Exception as e:
         print "Exception in PD data processing to stats for ", participant, " in ", section
         print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
@@ -246,7 +301,7 @@ if __name__ == '__main__':
                         participantperclosdict.update(perclosdict)#So it looks like adding to a dictionary is better than adding to a dataframe. We can convert to a dataframe at the end of the participant loop.
                         if DEBUG == 1:
                             print " Participant:", folder, "Section: ", subfolder, " \n\nParticipant Perclos Dictionary :\n ", participantperclosdict
-                if DEBUG==0:
+                if DEBUG==1:
                     print "\n\nKeys length : " , len(participanthrdict.keys())
                 #Now aggregating the PERCLOS Data for all participants and printing them to previously aggregated file
                 #We iterate through the section names in the CSV_COLUMNS and if the dictionary for a participant is not empty, then we fill an empty section value with [----] and move on to other participants
@@ -320,8 +375,9 @@ if __name__ == '__main__':
                 w.writerow([' '])#Blank spaces for easy reading
                 w.writerow([' '])
                 f.close()
-                if DEBUG==0:
-                    print "\n\n\n\nThe ordered GSR dictionary for participant " , folder , "\n GSR Dictionary :" , gsrdict_new
+                #Line Demarcation for the end of the participant analysis
+                print " END OF PARTICIPANT \n"
+                print "\n\n\n\n#################################################################################################################################################################"
             except Exception as e:
                 print " Participant level exception catcher :", # -*- coding: utf-8 -*-
                 print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
