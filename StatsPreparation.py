@@ -68,8 +68,10 @@ def ConvertHRToStats(hrheader,hrdata, participant, section , LOGFILE = os.path.a
                 hravg.append(mean(list))
                 hrmax.append(max(list))
             dict = {str(section): [hravg , hrmax]}
-            if DEBUG == 1:
-                print "\n\n\nTest Print of dictionary for section : ", section , " HR Dictionary : " , dict
+            if DEBUG == 0:
+                print "\n\n\nParticipant: ", participant, "  Section: ", section
+                print "\nThe length of HRavg : " , len(hravg)
+                print "\nThe length of HRmax : " , len(hrmax), '\n\n'
             return dict
     except Exception as e:
         print "Exception in HR processing to stats for ", participant, " in ", section
@@ -114,9 +116,9 @@ def ConvertGSRToStats(gsrheader, gsrdata , participant, section , LOGFILE = os.p
                     if DEBUG == 0:
                         print "There's a very short list here. "
             if DEBUG == 0:
-                print "Participant: ", participant, "  Section: ", section
-                print "\n\n\nThe average decrease in GSR list is: ", avg_decGSR
-                print "\n\n\nThe average GSR list is: ", avg_GSR
+                print "\n\n\nParticipant: ", participant, "  Section: ", section
+                print "\nThe length of avg dec in GSR ", len(avg_decGSR)
+                print "\nThe length of avg dec in GSR ", len(avg_GSR) , "\n\n"
             dict = { str(section) : [avg_decGSR , avg_GSR] }
             return dict
     except Exception as e:
@@ -147,8 +149,10 @@ def ConvertPDToStats(pdheader, pddata, participant, section , LOGFILE = os.path.
                 pdavg.append(mean(list))
                 pdmax.append(max(list))
             dict = { str(section) : [pdavg, pdmax] }
-            if DEBUG == 1:
-                print "\n\n\nTest Print of dictionary for section : ", section , " PD Dictionary : " , dict
+            if DEBUG == 0:
+                print "\n\n\nParticipant: ", participant, "  Section: ", section
+                print "\nThe length of pdavg : " , len(pdavg)
+                print "\nThe length of pdmax : " , len(pdmax) , "\n\n"
             return dict
     except Exception as e:
         print "Exception in PD data processing to stats for ", participant, " in ", section
@@ -378,6 +382,7 @@ if __name__ == '__main__':
                 #Line Demarcation for the end of the participant analysis
                 print " END OF PARTICIPANT \n"
                 print "\n\n\n\n#################################################################################################################################################################"
+                print "#################################################################################################################################################################"
             except Exception as e:
                 print " Participant level exception catcher :", # -*- coding: utf-8 -*-
                 print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
