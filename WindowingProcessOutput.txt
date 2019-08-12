@@ -3,7 +3,17 @@ This is the output file for the Windowing Process. File contains the errors and 
 "
 "Participant P012 has an exception
 "
+"Participant P027 has an exception
+"
+"Participant P057 has an exception
+"
+"Participant P056 has an exception
+"
+"Participant P035 has an exception
+"
 "Participant P013 has an exception
+"
+"Participant P031 has an exception
 "
 "Participant P069 has an exception
 "
