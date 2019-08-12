@@ -12,8 +12,8 @@ from moviepy.editor import *
 from StripData import PERCLOS
 from ScriptforDavesNightwingAnalysis import WriteOutputFile
 #Function to load the data from the Stripped Data List
-WINDOWSIZE = 60;#Width of the windows
-WINDOWSTEP = 60;#Difference between the start points of the windows
+WINDOWSIZE = 10;#Width of the windows
+WINDOWSTEP = 10;#Difference between the start points of the windows
 VIDEO_PROCESSING = 0; # This value needs to be set to 1 if we need the videos sliced along with the other data streams.
 def CreateSegments(folder):
     print "\n\n\n\nIn Clipped data folder for:",folder
