@@ -68,7 +68,7 @@ def ConvertHRToStats(hrheader,hrdata, participant, section , LOGFILE = os.path.a
                 hravg.append(mean(list))
                 hrmax.append(max(list))
             dict = {str(section): [hravg , hrmax]}
-            if DEBUG == 0:
+            if DEBUG == 1:
                 print "\n\n\nParticipant: ", participant, "  Section: ", section
                 print "\nThe length of HRavg : " , len(hravg)
                 print "\nThe length of HRmax : " , len(hrmax), '\n\n'
@@ -115,7 +115,7 @@ def ConvertGSRToStats(gsrheader, gsrdata , participant, section , LOGFILE = os.p
                 elif len(list)<=5:
                     if DEBUG == 0:
                         print "There's a very short list here. "
-            if DEBUG == 0:
+            if DEBUG == 1:
                 print "\n\n\nParticipant: ", participant, "  Section: ", section
                 print "\nThe length of avg dec in GSR ", len(avg_decGSR)
                 print "\nThe length of avg dec in GSR ", len(avg_GSR) , "\n\n"
@@ -149,7 +149,7 @@ def ConvertPDToStats(pdheader, pddata, participant, section , LOGFILE = os.path.
                 pdavg.append(mean(list))
                 pdmax.append(max(list))
             dict = { str(section) : [pdavg, pdmax] }
-            if DEBUG == 0:
+            if DEBUG == 1:
                 print "\n\n\nParticipant: ", participant, "  Section: ", section
                 print "\nThe length of pdavg : " , len(pdavg)
                 print "\nThe length of pdmax : " , len(pdmax) , "\n\n"
