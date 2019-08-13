@@ -130,6 +130,7 @@ def PERCLOSExtract(filename, subfolder, folder):
         Plot2Data( PERCLOSPlotData , ' PERCLOS ', ('PERCLOS for '+folder+' in '+subfolder) , 'PERCLOS.pdf', LOGFILE, folder, subfolder, (MAINPATH+'/Data/'+folder+'/ClippedData/'+subfolder+'/'), 'Time (seconds)' )
     except Exception as e:
         print "Exception recorded at the PERCLOS plotting function : ", e
+        print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
         file = open(LOGFILE, 'a')
         writer = csv.writer(file)
         writer.writerow([' PERCLOS Data plotting exception catcher', e , ' ', subfolder, ' ', folder])
