@@ -12,8 +12,8 @@ from moviepy.editor import *
 from StripData import PERCLOS
 from ScriptforDavesNightwingAnalysis import WriteOutputFile
 #Function to load the data from the Stripped Data List
-WINDOWSIZE = 20;#Width of the windows
-WINDOWSTEP = 20;#Difference between the start points of the windows
+WINDOWSIZE = 10;#Width of the windows
+WINDOWSTEP = 10;#Difference between the start points of the windows
 VIDEO_PROCESSING = 0; # This value needs to be set to 1 if we need the videos sliced along with the other data streams.
 def CreateSegments(folder):
     print "\n\n\n\nIn Clipped data folder for:",folder
@@ -114,12 +114,14 @@ def CreateSegments(folder):
             os.makedirs('Baseline')
         #Using the same iterative mechanism from the Script fro Dave's Analysis
         for i,filename in enumerate(Outputfilelist):
+            #WriteOutputFile('Baseline/'+filename,(-180.00),(0.00),Datalist[i],FirstLineArray[i])
             WriteOutputFile('Baseline/'+filename,(-180.00),(0.00),Datalist[i],FirstLineArray[i])
         #Processing Baseline Video here.
         if VIDEO_PROCESSING == 1:
             for i,video in enumerate(glob.glob('*.mp4')):
                 print "Processing :" , video , "\n"
-                clip = VideoFileClip(video).subclip(0.00, 180.00)
+                #clip = VideoFileClip(video).subclip(0.00, 180.00)
+                clip = VideoFileClip(video).subclip(80.00, 180.00)#100 seconds before the start of the first marker
                 clip.write_videofile('Baseline/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
         #Moving auxillary files
         try:
@@ -144,7 +146,7 @@ def CreateSegments(folder):
     windex = 0;#Index of the window
     wstop = wstart + WINDOWSIZE
     wstartarray = []
-    while wstop <= (Marker5time - 240):#works for both conditions since they both have marker 5
+    while wstop <= (Marker5time - 100):#works for both conditions since they both have marker 5
         wstartarray.append(wstart)
         try:
             #First Creating the folder for the section

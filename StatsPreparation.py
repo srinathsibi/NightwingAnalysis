@@ -6,7 +6,7 @@
 # 2. HR is averaged out in the interval and the max value in the interval is also calculated
 # 3. GSR decline is calculated ( positive or negative ), we also calculate the average
 # 4. PD is averaged out the interval.
-import glob, os, sys, shutil
+import glob, os, sys, shutil,re
 import matplotlib as plt
 import numpy as np
 import csv
@@ -22,7 +22,9 @@ MAINPATH = os.path.abspath('.')#Always specify absolute path for all path specif
 LISTOFPARTICIPANTS =[]#This is the list of all participants in the Data folder
 LISTOFSECTIONS =[]# List of all sections for a participant
 DEBUG = 0# To print statements for debugging
-CSV_COLUMNS = ['Baseline', 'SECTION0', 'SECTION1', 'SECTION2' ,'SECTION3', 'SECTION4', 'SECTION5' , 'SECTION6', 'SECTION7', 'SECTION8', 'SECTION9', 'SECTION10', 'SECTION11', 'SECTION12', 'SECTION13', 'SECTION14', 'SECTION15', 'SECTION16', 'SECTION17', 'SECTION18', 'SECTION19', 'SECTION20', 'SECTION21' , 'SECTION22', 'SECTION23', 'SECTION24', 'SECTION25', 'SECTION26', 'SECTION27', 'SECTION28', 'EndSectionData']
+#This is hardcoded list of CSV columns, this is a backup if the dynamic computation of the CSV columns doesn't work.
+#CSV_COLUMNS = ['Baseline', 'SECTION0', 'SECTION1', 'SECTION2' ,'SECTION3', 'SECTION4', 'SECTION5' , 'SECTION6', 'SECTION7', 'SECTION8', 'SECTION9', 'SECTION10', 'SECTION11', 'SECTION12', 'SECTION13', 'SECTION14', 'SECTION15', 'SECTION16', 'SECTION17', 'SECTION18', 'SECTION19', 'SECTION20', 'SECTION21' , 'SECTION22', 'SECTION23', 'SECTION24', 'SECTION25', 'SECTION26', 'SECTION27', 'SECTION28',\
+#'SECTION29','SECTION30','SECTION31', 'SECTION32','SECTION33','SECTION34','SECTION35','SECTION36','SECTION37','SECTION38' ,'SECTION32', 'EndSectionData']
 #This is the super set of all sections in the participant file in all the fields. Every participant dictionary key list should be a subset of this list
 #OUTPUT FILES FOR ALL THE RELEVANT DATA
 PERCLOSOUTPUT = os.path.abspath('.') + '/PERCLOSOUTPUT.csv'
@@ -67,7 +69,14 @@ def ConvertHRToStats(hrheader,hrdata, participant, section , LOGFILE = os.path.a
             for list in hrpieces:
                 hravg.append(mean(list))
                 hrmax.append(max(list))
-            dict = {str(section): [hravg , hrmax]}
+            #Need to add them to different pieces of the baseline and EndSection
+            dict = {}
+            for i in range(len(hravg)):
+                if section in ['Baseline']:
+                    dict.update({ str('Baseline') + str(i+1) : [ hravg[i] , hrmax[i] ] })
+                if section in ['EndSectionData']:
+                    dict.update({ str('EndSectionData') + str(i+1) : [ hravg[i] , hrmax[i] ] })
+            #dict = {str(section): [hravg , hrmax]}
             if DEBUG == 1:
                 print "\n\n\nParticipant: ", participant, "  Section: ", section
                 print "\nThe length of HRavg : " , len(hravg)
@@ -119,7 +128,14 @@ def ConvertGSRToStats(gsrheader, gsrdata , participant, section , LOGFILE = os.p
                 print "\n\n\nParticipant: ", participant, "  Section: ", section
                 print "\nThe length of avg dec in GSR ", len(avg_decGSR)
                 print "\nThe length of avg dec in GSR ", len(avg_GSR) , "\n\n"
-            dict = { str(section) : [avg_decGSR , avg_GSR] }
+            #Adding a new bit to create multiple section of Baseline and EndSectionData
+            dict ={}#Empty dict
+            for i in range(len(avg_GSR)):
+                if section in ['Baseline']:
+                    dict.update ( { 'Baseline' + str(i+1) : [avg_decGSR[i], avg_GSR[i]] } )
+                elif section in ['EndSectionData']:
+                    dict.update ( { 'EndSectionData' + str(i+1) : [avg_decGSR[i], avg_GSR[i]] } )
+            #dict = { str(section) : [avg_decGSR , avg_GSR] }
             return dict
     except Exception as e:
         print "Exception in GSR processing to stats for ", participant, " in ", section
@@ -148,7 +164,14 @@ def ConvertPDToStats(pdheader, pddata, participant, section , LOGFILE = os.path.
             for list in pdpieces:
                 pdavg.append(mean(list))
                 pdmax.append(max(list))
-            dict = { str(section) : [pdavg, pdmax] }
+            #Adding a new bit to create multiple sections of Baseline and EnsSectionData
+            dict = {}
+            for i in range(len(pdavg)):
+                if section in ['Baseline']:
+                    dict.update( { 'Baseline'+str(i+1): [ pdavg[i],pdmax[i] ] })
+                if section in ['EndSectionData']:
+                    dict.update( { 'EndSectionData'+str(i+1): [ pdavg[i],pdmax[i] ] })
+            #dict = { str(section) : [pdavg, pdmax] }
             if DEBUG == 1:
                 print "\n\n\nParticipant: ", participant, "  Section: ", section
                 print "\nThe length of pdavg : " , len(pdavg)
@@ -168,7 +191,15 @@ def ConvertPERCLOSToStats(perclosheader, perclosdata, participant, section , LOG
             print " Test Print\n", "Header: ", perclosheader , "\nData Sample:" , perclosdata[0:3]
         perclos = [ float(perclosdata[i][1]) for i in range(len(perclosdata))]
         header = [ str(perclosheader[i]) for i in range(len(perclosheader)) ]
-        dict = { str(section) : perclos}
+        dict = {}
+        if section not in ['Baseline','EndSectionData']:
+            dict = { str(section) : perclos}
+        elif section in ['Baseline','EndSection']:
+            for i in range(len(perclos)):
+                if section in ['Baseline']:
+                    dict.update( {'Baseline'+str(i+1) : perclos[i]} )
+                elif section in ['EndSectionData']:
+                    dict.update( { 'EndSectionData'+str(i): perclos[i] } )
         return dict
     except Exception as e:
         print "Exception in PERCLOS data processing to stats for ", participant, " in ", section
@@ -177,6 +208,9 @@ def ConvertPERCLOSToStats(perclosheader, perclosdata, participant, section , LOG
         writer = csv.writer(file)
         writer.writerow(['Exception at Converting the PERCLOS data to Statistics.' , 'Participant' , participant , 'Section', section , 'Exception', e , 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)])
         file.close()
+#We use this function as a key to sorting a list.
+def SortFunc(e):
+    return int( re.sub('SECTION','',e) )
 if __name__ == '__main__':
     try:
         #output file prep
@@ -213,11 +247,19 @@ if __name__ == '__main__':
                 temp = os.listdir(MAINPATH+'/Data/'+folder+'/ClippedData/')
                 listofsubfolders =[]
                 for item in temp:
-                    if 'SECTION' in item or 'Baseline' in item or 'EndSectionData' in item:
+                    if 'SECTION' in item:# or 'Baseline' in item or 'EndSectionData' in item:
                         listofsubfolders.append(item)
-                #listofsubfolders = listofsubfolders.sort()
-                if DEBUG == 1:
-                    print " \n\n\nList of subfolders for participant ", folder , " is: \n", listofsubfolders
+                # We need to sort the list to make sure that the CSV columns are properly structured.
+                #We add 'Baseline' and 'EndSectionData' to the list post sorting
+                listofsubfolders.sort(key=SortFunc)
+                CSV_COLUMNS = ['Participant','Baseline1','Baseline2','Baseline3','Baseline4','Baseline5','Baseline6','Baseline7','Baseline8','Baseline9','Baseline10'] + listofsubfolders \
+                + ['EndSectionData1','EndSectionData2','EndSectionData3','EndSectionData4','EndSectionData5','EndSectionData6','EndSectionData7','EndSectionData8','EndSectionData9','EndSectionData10']# Here we set the CSV_COlUMNS. We can either use the listofsubfolders or we can
+                listofsubfolders = listofsubfolders +['EndSectionData']
+                listofsubfolders = ['Baseline']+listofsubfolders
+
+                if DEBUG == 0:
+                    print " \n\n\nList of subfolders for participant ", folder , " is: \n", CSV_COLUMNS
+                #Need to order the list of subfolders
                 #Initialize the dataframes for individual streams for a particpant
                 participantperclosdict = {}
                 participanthrdict = {}
@@ -309,6 +351,11 @@ if __name__ == '__main__':
                     print "\n\nKeys length : " , len(participanthrdict.keys())
                 #Now aggregating the PERCLOS Data for all participants and printing them to previously aggregated file
                 #We iterate through the section names in the CSV_COLUMNS and if the dictionary for a participant is not empty, then we fill an empty section value with [----] and move on to other participants
+                #We add participant number to all the dictionaries to be the first column instead of a separate row. We expect this to be the first column in all data rows.
+                participanthrdict.update({'Participant':folder})
+                participantgsrdict.update({'Participant':folder})
+                participantpddict.update({'Participant':folder})
+                participantperclosdict.update({'Participant':folder})
                 #POPULATING PERCLOS
                 f = open(PERCLOSOUTPUT,'a')
                 w = csv.writer(f)
@@ -322,11 +369,10 @@ if __name__ == '__main__':
                         perclosdict_new.update( { str(section) : ['No values here'] })
                 if DEBUG==1:
                     print "\n\n\n\nThe ordered perclos dictionary for participant " , folder , "\nPERCLOS Dictionary :" , perclosdict_new
-                w.writerow(['Participant :' + folder])
+                #w.writerow(['Participant :' + folder])
                 dw.writeheader()
                 dw.writerow(perclosdict_new)
                 w.writerow([' '])#Blank spaces for easy reading
-                w.writerow([' '])
                 f.close()
                 #Populating HR
                 f = open(HROUTPUT, 'a')
@@ -339,11 +385,10 @@ if __name__ == '__main__':
                         hrdict_new.update( { str(section) : participanthrdict[ str(section) ] } )
                     elif section not in participanthrdict.keys():
                         hrdict_new.update( { str(section) : ['No values here '] } )
-                w.writerow(["Participant :"+folder])
+                #w.writerow(["Participant :"+folder])
                 dw.writeheader()
                 dw.writerow(hrdict_new)
                 w.writerow([' '])#Blank spaces for easy reading
-                w.writerow([' '])
                 f.close()
                 #Populating PD
                 f= open(PDOUTPUT, 'a')
@@ -356,11 +401,10 @@ if __name__ == '__main__':
                         pddict_new.update( { str(section) : participantpddict[ str(section) ] } )
                     elif section not in participantpddict.keys():
                         pddict_new.update( {str(section) : ['No values here']} )
-                w.writerow(["Participant :"+folder])
+                #w.writerow(["Participant :"+folder])
                 dw.writeheader()
                 dw.writerow(pddict_new)
                 w.writerow([' '])#Blank spaces for easy reading
-                w.writerow([' '])
                 f.close()
                 #Populating the GSR dictionary to write to the OUTPUT file
                 f = open(GSROUTPUT, 'a')
@@ -373,14 +417,13 @@ if __name__ == '__main__':
                         gsrdict_new.update( { str(section) : participantgsrdict[str(section)] } )
                     elif section not in participantgsrdict.keys():
                         gsrdict_new.update( { str(section) : ['No values here'] } )
-                w.writerow(["Participant :"+folder])
+                #w.writerow(["Participant :"+folder])
                 dw.writeheader()
                 dw.writerow(gsrdict_new)
                 w.writerow([' '])#Blank spaces for easy reading
-                w.writerow([' '])
                 f.close()
                 #Line Demarcation for the end of the participant analysis
-                print " END OF PARTICIPANT \n"
+                print " END OF PARTICIPANT ", folder , "\n"
                 print "\n\n\n\n#################################################################################################################################################################"
                 print "#################################################################################################################################################################"
             except Exception as e:

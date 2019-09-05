@@ -11,7 +11,7 @@ from scipy import interpolate
 import numpy as np
 from moviepy.editor import *
 from StripData import PERCLOS
-VIDEO_PROCESSING = 1#this value needs to be set to 1 if the videos needs to be cut along with the other streams of data
+VIDEO_PROCESSING = 0#this value needs to be set to 1 if the videos needs to be cut along with the other streams of data
 def ExtractData(foldername):
     print "\n\nIn Clipped data folder for:",foldername
     FirstLineArray =[]#First Line Array contains the three first lines from the iMotions, eye tracking and Sim file
@@ -87,7 +87,8 @@ def ExtractData(foldername):
     # move to EndSectionData folder
     for i,filename in enumerate(Outputfilelist):
         os.chdir('EndSectionData/')
-        WriteOutputFile(filename,(Marker3time-240.0),(Marker3time+80.0),Datalist[i],FirstLineArray[i])
+        #WriteOutputFile(filename,(Marker3time-240.0),(Marker3time+80.0),Datalist[i],FirstLineArray[i])
+        WriteOutputFile(filename,(Marker3time-100.0),(Marker3time+0.0),Datalist[i],FirstLineArray[i])
         #An interval of 80 seconds around marker 3 was chosen to clip the interval when the trucks
         #appear to after the accident
         os.chdir('../')
@@ -95,7 +96,8 @@ def ExtractData(foldername):
     if VIDEO_PROCESSING == 1:
         for i,video in enumerate(glob.glob('*.mp4')):
             print "Processing :" , video , "\n"
-            clip = VideoFileClip(video).subclip((Marker3time-240+180), (Marker3time+80+180))
+            #clip = VideoFileClip(video).subclip((Marker3time-240+180), (Marker3time+80+180))
+            clip = VideoFileClip(video).subclip((Marker3time-100+180), (Marker3time+0.0+180))
             clip.write_videofile('EndSectionData/File' + str(i) +'.mp4' , fps = clip.fps , audio_bitrate="1000k")
     #Opening the eye tracking file that was just saved
     try:
@@ -164,11 +166,15 @@ def skiplines(fr, lines):
 #Main Function
 if __name__=='__main__':
     os.chdir('Data/')#Moving to the folder containing the data
-    listoffolders =os.listdir('.')#Getting the list of folders#['P062','P063','P064','P065','P066','P067','P068','P069','P070','P071','P072','P073','P074','P075','P076','P077','P078','P079','P080','P081','P082','P083','P084','P085']#
+    listoffolders =os.listdir('.')#Getting the list of folders
     print "\nInside Data Folder, these are the particpant folders located here :\n" , listoffolders, '\n'
     for folder in listoffolders:
-        os.chdir(folder + '/ClippedData/')
-        #print "List of Contents in ClippedData Folder : \n", os.listdir('.')
-        ExtractData(folder)
-        os.chdir('../../')
+        if folder not in ['P027','P057','P056','P035']:#These participants have been excluded for unknown reasons
+            try:
+                os.chdir(folder + '/ClippedData/')
+                #print "List of Contents in ClippedData Folder : \n", os.listdir('.')
+                ExtractData(folder)
+                os.chdir('../../')
+            except Exception as e:
+                print " Participant ", folder, " has an error. It has been skipped."
     print "\n\n################# END OF END-SECTION DATA PROCESSING! #################\n\n"
