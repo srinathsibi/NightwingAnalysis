@@ -211,9 +211,12 @@ def ConvertPERCLOSToStats(perclosheader, perclosdata, participant, section , LOG
         writer = csv.writer(file)
         writer.writerow(['Exception at Converting the PERCLOS data to Statistics.' , 'Participant' , participant , 'Section', section , 'Exception', e , 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)])
         file.close()
-#We use this function as a key to sorting a list.
-def SortFunc(e):
+#We use this function as a key to sorting a list of subfolders.
+def SortFunc1(e):
     return int( re.sub('SECTION','',e) )
+#We use this function as a key to sorting the list of folders (participants)
+def SortFunc2(e):
+    return int( re.sub('P','',e) )
 if __name__ == '__main__':
     try:
         #output file prep
@@ -259,6 +262,8 @@ if __name__ == '__main__':
         file.close()
         #Get all the participant folders in the Data folder
         listoffolders = os.listdir(MAINPATH+'/Data/')
+        #Sorting the participants list means the output will be ordered and clean rather than at random
+        listoffolders.sort(key=SortFunc2)
         for folder in listoffolders:
             try:
                 #Get list of subfolders in each participants ClippedData folder
@@ -269,7 +274,7 @@ if __name__ == '__main__':
                         listofsubfolders.append(item)
                 # We need to sort the list to make sure that the CSV columns are properly structured.
                 #We add 'Baseline' and 'EndSectionData' to the list post sorting
-                listofsubfolders.sort(key=SortFunc)
+                listofsubfolders.sort(key=SortFunc1)
                 CSV_COLUMNS = ['Participant','Baseline1','Baseline2','Baseline3','Baseline4','Baseline5','Baseline6','Baseline7','Baseline8','Baseline9','Baseline10'] + listofsubfolders \
                 + ['EndSectionData1','EndSectionData2','EndSectionData3','EndSectionData4','EndSectionData5','EndSectionData6','EndSectionData7','EndSectionData8','EndSectionData9','EndSectionData10']# Here we set the CSV_COlUMNS. We can either use the listofsubfolders or we can
                 listofsubfolders = listofsubfolders +['EndSectionData']
