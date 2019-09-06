@@ -15,3 +15,6 @@ PDOUTPUT.csv
 HROUTPUT.csv
 GSROUTPUT.csv
 RunMultiplePythonScripts.sh
+PDMAXOUTPUT.csv
+HRMAXOUTPUT.csv
+GSRDECOUTPUT.csv

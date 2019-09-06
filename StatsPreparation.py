@@ -28,9 +28,12 @@ DEBUG = 0# To print statements for debugging
 #This is the super set of all sections in the participant file in all the fields. Every participant dictionary key list should be a subset of this list
 #OUTPUT FILES FOR ALL THE RELEVANT DATA
 PERCLOSOUTPUT = os.path.abspath('.') + '/PERCLOSOUTPUT.csv'
-HROUTPUT = os.path.abspath('.') + '/HROUTPUT.csv'
-PDOUTPUT = os.path.abspath('.') + '/PDOUTPUT.csv'
-GSROUTPUT = os.path.abspath('.') + '/GSROUTPUT.csv'
+HROUTPUT = os.path.abspath('.') + '/HROUTPUT.csv'#Contains avg HR output
+PDOUTPUT = os.path.abspath('.') + '/PDOUTPUT.csv'#Contains avg PD output
+GSROUTPUT = os.path.abspath('.') + '/GSROUTPUT.csv'#Contains avg GSR output
+HRMAXOUTPUT = os.path.abspath('.') + '/HRMAXOUTPUT.csv'#Contains max HR output
+PDMAXOUTPUT = os.path.abspath('.') + '/PDMAXOUTPUT.csv'#Contains max PD output
+GSRDECOUTPUT = os.path.abspath('.') + '/GSRDECOUTPUT.csv'#Contains DECrease in tonic GSR
 def SeparateListIntoPieces(inputlist , numpieces, participant, section , LOGFILE = os.path.abspath('.') + '/OutputFileForStatsPreparation.csv'):
     try:
         if DEBUG ==1:
@@ -224,20 +227,35 @@ if __name__ == '__main__':
         writer = csv.writer(file)
         writer.writerow([' Output file for PERCLOS values calculated .'])
         file.close()
-        #HR
+        #HR_AVG
         file = open(HROUTPUT, 'wb')
         writer = csv.writer(file)
-        writer.writerow([' Output file for HR Values Calculation.'])
+        writer.writerow([' Output file for Average HR Values Calculation.'])
         file.close()
-        #PD
+        #HR_MAX
+        file = open(HRMAXOUTPUT, 'wb')
+        writer = csv.writer(file)
+        writer.writerow([' Output file for Maximum HR Values Calculation.'])
+        file.close()
+        #PD_AVG
         file = open(PDOUTPUT, 'wb')
         writer = csv.writer(file)
-        writer.writerow([' Output file for PD Values Calculation.'])
+        writer.writerow([' Output file for Average PD Values Calculation.'])
         file.close()
-        #GSR
+        #PD_MAX
+        file = open(PDMAXOUTPUT, 'wb')
+        writer = csv.writer(file)
+        writer.writerow([' Output file for Maximum PD Values Calculation.'])
+        file.close()
+        #GSR_AVG
         file = open(GSROUTPUT, 'wb')
         writer = csv.writer(file)
-        writer.writerow([' Output file for GSR Values Calculation.'])
+        writer.writerow([' Output file for Average GSR Values Calculation.'])
+        file.close()
+        #GSR_MAX
+        file = open(GSROUTPUT, 'wb')
+        writer = csv.writer(file)
+        writer.writerow([' Output file for Maximum GSR Values Calculation.'])
         file.close()
         #Get all the participant folders in the Data folder
         listoffolders = os.listdir(MAINPATH+'/Data/')
@@ -356,6 +374,7 @@ if __name__ == '__main__':
                 participantgsrdict.update({'Participant':folder})
                 participantpddict.update({'Participant':folder})
                 participantperclosdict.update({'Participant':folder})
+                #########################################################################################
                 #POPULATING PERCLOS
                 f = open(PERCLOSOUTPUT,'a')
                 w = csv.writer(f)
@@ -372,9 +391,9 @@ if __name__ == '__main__':
                 #w.writerow(['Participant :' + folder])
                 dw.writeheader()
                 dw.writerow(perclosdict_new)
-                w.writerow([' '])#Blank spaces for easy reading
                 f.close()
-                #Populating HR
+                #########################################################################################
+                #Populating HR Average values
                 f = open(HROUTPUT, 'a')
                 w = csv.writer(f)
                 dw = csv.DictWriter(f, fieldnames = CSV_COLUMNS)
@@ -382,15 +401,31 @@ if __name__ == '__main__':
                 hrdict_new ={}
                 for i, section in enumerate(CSV_COLUMNS):
                     if section in participanthrdict.keys():
-                        hrdict_new.update( { str(section) : participanthrdict[ str(section) ] } )
+                        hrdict_new.update( { str(section) : participanthrdict[str(section)][0] } )
                     elif section not in participanthrdict.keys():
                         hrdict_new.update( { str(section) : ['No values here '] } )
                 #w.writerow(["Participant :"+folder])
                 dw.writeheader()
                 dw.writerow(hrdict_new)
-                w.writerow([' '])#Blank spaces for easy reading
                 f.close()
-                #Populating PD
+                #########################################################################################
+                #Populating HR Max Values
+                f = open(HRMAXOUTPUT, 'a')
+                w = csv.writer(f)
+                dw = csv.DictWriter(f, fieldnames = CSV_COLUMNS)
+                #Final HR dictionary to write to output file
+                hrdict_new ={}
+                for i, section in enumerate(CSV_COLUMNS):
+                    if section in participanthrdict.keys():
+                        hrdict_new.update( { str(section) : participanthrdict[str(section)][1] } )
+                    elif section not in participanthrdict.keys():
+                        hrdict_new.update( { str(section) : ['No values here '] } )
+                #w.writerow(["Participant :"+folder])
+                dw.writeheader()
+                dw.writerow(hrdict_new)
+                f.close()
+                #########################################################################################
+                #Populating Average PD
                 f= open(PDOUTPUT, 'a')
                 w = csv.writer(f)
                 dw = csv.DictWriter(f , fieldnames = CSV_COLUMNS)
@@ -398,15 +433,31 @@ if __name__ == '__main__':
                 pddict_new = {}
                 for i, section in enumerate(CSV_COLUMNS):
                     if section in participantpddict.keys():
-                        pddict_new.update( { str(section) : participantpddict[ str(section) ] } )
+                        pddict_new.update( { str(section) : participantpddict[str(section)][0] } )
                     elif section not in participantpddict.keys():
                         pddict_new.update( {str(section) : ['No values here']} )
                 #w.writerow(["Participant :"+folder])
                 dw.writeheader()
                 dw.writerow(pddict_new)
-                w.writerow([' '])#Blank spaces for easy reading
                 f.close()
-                #Populating the GSR dictionary to write to the OUTPUT file
+                #########################################################################################
+                #Populating Maximum PD
+                f= open(PDMAXOUTPUT, 'a')
+                w = csv.writer(f)
+                dw = csv.DictWriter(f , fieldnames = CSV_COLUMNS)
+                #Final PD Dictionary to write to output file
+                pddict_new = {}
+                for i, section in enumerate(CSV_COLUMNS):
+                    if section in participantpddict.keys():
+                        pddict_new.update( { str(section) : participantpddict[str(section)][1] } )
+                    elif section not in participantpddict.keys():
+                        pddict_new.update( {str(section) : ['No values here']} )
+                #w.writerow(["Participant :"+folder])
+                dw.writeheader()
+                dw.writerow(pddict_new)
+                f.close()
+                #########################################################################################
+                #Populating Avg in GSR
                 f = open(GSROUTPUT, 'a')
                 w = csv.writer(f)
                 dw = csv.DictWriter(f , fieldnames = CSV_COLUMNS)
@@ -414,15 +465,30 @@ if __name__ == '__main__':
                 gsrdict_new = {}
                 for i, section in enumerate(CSV_COLUMNS):
                     if section in participantgsrdict.keys():
-                        gsrdict_new.update( { str(section) : participantgsrdict[str(section)] } )
+                        gsrdict_new.update( { str(section) : participantgsrdict[str(section)][1] } )
                     elif section not in participantgsrdict.keys():
                         gsrdict_new.update( { str(section) : ['No values here'] } )
                 #w.writerow(["Participant :"+folder])
                 dw.writeheader()
                 dw.writerow(gsrdict_new)
-                w.writerow([' '])#Blank spaces for easy reading
                 f.close()
-                #Line Demarcation for the end of the participant analysis
+                #########################################################################################
+                #Populating Avg DECREASE in GSR
+                f = open(GSRDECOUTPUT, 'a')
+                w = csv.writer(f)
+                dw = csv.DictWriter(f , fieldnames = CSV_COLUMNS)
+                #Final GSR Dictionary to write to the output file
+                gsrdict_new = {}
+                for i, section in enumerate(CSV_COLUMNS):
+                    if section in participantgsrdict.keys():
+                        gsrdict_new.update( { str(section) : participantgsrdict[str(section)][0] } )
+                    elif section not in participantgsrdict.keys():
+                        gsrdict_new.update( { str(section) : ['No values here'] } )
+                #w.writerow(["Participant :"+folder])
+                dw.writeheader()
+                dw.writerow(gsrdict_new)
+                f.close()
+                #########################################################################################
                 print " END OF PARTICIPANT ", folder , "\n"
                 print "\n\n\n\n#################################################################################################################################################################"
                 print "#################################################################################################################################################################"
