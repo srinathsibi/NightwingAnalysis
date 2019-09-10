@@ -80,10 +80,10 @@ def ConvertHRToStats(hrheader,hrdata, participant, section , LOGFILE = os.path.a
                 if section in ['EndSectionData']:
                     dict.update({ str('EndSectionData') + str(i+1) : [ hravg[i] , hrmax[i] ] })
             #dict = {str(section): [hravg , hrmax]}
-            if DEBUG == 1:
-                print "\n\n\nParticipant: ", participant, "  Section: ", section
-                print "\nThe length of HRavg : " , len(hravg)
-                print "\nThe length of HRmax : " , len(hrmax), '\n\n'
+            if DEBUG == 1:# and section == 'EndSectionData':
+                print "\n\n\nParticipant: ", participant#, "  Section: ", section
+                print "\nThe HRavg : " , hravg
+                print "\nThe HRmax : " , hrmax, '\n\n'
             return dict
     except Exception as e:
         print "Exception in HR processing to stats for ", participant, " in ", section
@@ -110,7 +110,7 @@ def ConvertGSRToStats(gsrheader, gsrdata , participant, section , LOGFILE = os.p
         elif section in ['Baseline' , 'EndSectionData']:
             filteredgsr = [ float(gsrdata[i][2]) for i in range(len(gsrdata)) ]
             time = [ float(gsrdata[i][0]) for i in range(len(gsrdata)) ]
-            separatelists = SeparateListIntoPieces(filteredgsr, math.floor( abs( time[-1] - time[0] )/20 ), participant, section)#Adjust the number of intervals formed here
+            separatelists = SeparateListIntoPieces(filteredgsr, math.floor( abs( time[-1] - time[0] )/10 ), participant, section)#Adjust the number of intervals formed here
             #For each interval in the Separatelists, we have
             avg_decGSR = []
             avg_GSR =[]
@@ -127,10 +127,10 @@ def ConvertGSRToStats(gsrheader, gsrdata , participant, section , LOGFILE = os.p
                 elif len(list)<=5:
                     if DEBUG == 0:
                         print "There's a very short list here. "
-            if DEBUG == 1:
-                print "\n\n\nParticipant: ", participant, "  Section: ", section
-                print "\nThe length of avg dec in GSR ", len(avg_decGSR)
-                print "\nThe length of avg dec in GSR ", len(avg_GSR) , "\n\n"
+            if DEBUG == 1:# and section == 'EndSectionData':
+                print "\n\n\nParticipant: ", participant#, "  Section: ", section
+                print "\nThe avg dec in GSR ", avg_decGSR
+                print "\nThe avg in GSR ", avg_GSR , "\n\n"
             #Adding a new bit to create multiple section of Baseline and EndSectionData
             dict ={}#Empty dict
             for i in range(len(avg_GSR)):
@@ -161,7 +161,7 @@ def ConvertPDToStats(pdheader, pddata, participant, section , LOGFILE = os.path.
         elif section in ['Baseline' , 'EndSectionData']:
             filteredpd = [ float(pddata[i][2]) for i in range(len(pddata)) ]
             time = [ float(pddata[i][0]) for i in range(len(pddata)) ]
-            pdpieces = SeparateListIntoPieces(filteredpd , math.floor( abs(time[-1] - time[0])/20 ), participant, section)#This is done to make sure that the Baseline and EndSectionData sections don't get averaged out into a single value
+            pdpieces = SeparateListIntoPieces(filteredpd , math.floor( abs(time[-1] - time[0])/10 ), participant, section)#This is done to make sure that the Baseline and EndSectionData sections don't get averaged out into a single value
             pdavg = []
             pdmax = []
             for list in pdpieces:
@@ -175,10 +175,10 @@ def ConvertPDToStats(pdheader, pddata, participant, section , LOGFILE = os.path.
                 if section in ['EndSectionData']:
                     dict.update( { 'EndSectionData'+str(i+1): [ pdavg[i],pdmax[i] ] })
             #dict = { str(section) : [pdavg, pdmax] }
-            if DEBUG == 1:
-                print "\n\n\nParticipant: ", participant, "  Section: ", section
-                print "\nThe length of pdavg : " , len(pdavg)
-                print "\nThe length of pdmax : " , len(pdmax) , "\n\n"
+            if DEBUG == 1:# and section == 'EndSectionData':
+                print "\n\n\nParticipant: ", participant#, "  Section: ", section
+                print "\nThe pdavg : " , pdavg
+                print "\nThe pdmax : " , pdmax , "\n\n"
             return dict
     except Exception as e:
         print "Exception in PD data processing to stats for ", participant, " in ", section
@@ -197,12 +197,16 @@ def ConvertPERCLOSToStats(perclosheader, perclosdata, participant, section , LOG
         dict = {}
         if section not in ['Baseline','EndSectionData']:
             dict = { str(section) : perclos}
-        elif section in ['Baseline','EndSection']:
+        elif section in ['Baseline','EndSectionData']:
             for i in range(len(perclos)):
                 if section in ['Baseline']:
-                    dict.update( {'Baseline'+str(i+1) : perclos[i]} )
+                    dict.update( {str('Baseline')+str(i+1) : perclos[i]} )
                 elif section in ['EndSectionData']:
-                    dict.update( { 'EndSectionData'+str(i): perclos[i] } )
+                    dict.update( { str('EndSectionData')+str(i+1): perclos[i] } )
+            print "\nPERCLOS Dictionary:\n", dict
+        if DEBUG==1:# and section == 'EndSectionData':
+            print "\n\n\nParticipant: ", participant#, " Section: " , section
+            print "\nThe perclos array: ", perclos
         return dict
     except Exception as e:
         print "Exception in PERCLOS data processing to stats for ", participant, " in ", section
@@ -256,7 +260,7 @@ if __name__ == '__main__':
         writer.writerow([' Output file for Average GSR Values Calculation.'])
         file.close()
         #GSR_MAX
-        file = open(GSROUTPUT, 'wb')
+        file = open(GSRDECOUTPUT, 'wb')
         writer = csv.writer(file)
         writer.writerow([' Output file for Maximum GSR Values Calculation.'])
         file.close()
@@ -275,8 +279,10 @@ if __name__ == '__main__':
                 # We need to sort the list to make sure that the CSV columns are properly structured.
                 #We add 'Baseline' and 'EndSectionData' to the list post sorting
                 listofsubfolders.sort(key=SortFunc1)
-                CSV_COLUMNS = ['Participant','Baseline1','Baseline2','Baseline3','Baseline4','Baseline5','Baseline6','Baseline7','Baseline8','Baseline9','Baseline10'] + listofsubfolders \
-                + ['EndSectionData1','EndSectionData2','EndSectionData3','EndSectionData4','EndSectionData5','EndSectionData6','EndSectionData7','EndSectionData8','EndSectionData9','EndSectionData10']# Here we set the CSV_COlUMNS. We can either use the listofsubfolders or we can
+                #There are 2 ways to set the CSV_COLUMNS. One automatically and one hardcoded. The latter offers uniformity of output data
+                #CSV_COLUMNS = ['Participant','Baseline1','Baseline2','Baseline3','Baseline4','Baseline5','Baseline6','Baseline7','Baseline8','Baseline9','Baseline10'] + listofsubfolders \
+                #+ ['EndSectionData1','EndSectionData2','EndSectionData3','EndSectionData4','EndSectionData5','EndSectionData6','EndSectionData7','EndSectionData8','EndSectionData9','EndSectionData10']
+                CSV_COLUMNS = ['Participant', 'Baseline1', 'Baseline2', 'Baseline3', 'Baseline4', 'Baseline5', 'Baseline6', 'Baseline7', 'Baseline8', 'Baseline9', 'Baseline10', 'SECTION0', 'SECTION1', 'SECTION2', 'SECTION3', 'SECTION4', 'SECTION5', 'SECTION6', 'SECTION7', 'SECTION8', 'SECTION9', 'SECTION10', 'SECTION11', 'SECTION12', 'SECTION13', 'SECTION14', 'SECTION15', 'SECTION16', 'SECTION17', 'SECTION18', 'SECTION19', 'SECTION20', 'SECTION21', 'SECTION22', 'SECTION23', 'SECTION24', 'SECTION25', 'SECTION26', 'SECTION27', 'SECTION28', 'SECTION29', 'SECTION30', 'SECTION31', 'SECTION32', 'SECTION33', 'SECTION34', 'SECTION35', 'SECTION36', 'SECTION37', 'SECTION38', 'SECTION39', 'SECTION40', 'SECTION41', 'SECTION42', 'SECTION43', 'SECTION44', 'SECTION45', 'SECTION46', 'SECTION47', 'SECTION48', 'SECTION49', 'SECTION50', 'SECTION51', 'SECTION52', 'SECTION53', 'SECTION54', 'SECTION55', 'SECTION56', 'SECTION57', 'SECTION58', 'SECTION59', 'SECTION60', 'SECTION61', 'SECTION62', 'SECTION63', 'SECTION64', 'SECTION65', 'SECTION66', 'SECTION67', 'SECTION68', 'SECTION69', 'SECTION70', 'SECTION71', 'SECTION72', 'SECTION73', 'SECTION74', 'SECTION75', 'SECTION76', 'SECTION77', 'SECTION78', 'SECTION79', 'SECTION80', 'SECTION81', 'SECTION82', 'SECTION83', 'SECTION84', 'SECTION85', 'SECTION86', 'SECTION87', 'SECTION88', 'SECTION89', 'SECTION90', 'SECTION91', 'SECTION92', 'SECTION93', 'SECTION94', 'SECTION95', 'SECTION96', 'SECTION97', 'SECTION98', 'SECTION99', 'SECTION100', 'SECTION101', 'SECTION102', 'SECTION103', 'SECTION104', 'SECTION105', 'SECTION106', 'SECTION107', 'SECTION108', 'SECTION109', 'SECTION110', 'SECTION111', 'SECTION112', 'SECTION113', 'SECTION114', 'SECTION115', 'SECTION116', 'SECTION117', 'SECTION118', 'SECTION119', 'SECTION120', 'SECTION121', 'SECTION122', 'SECTION123', 'SECTION124', 'SECTION125', 'SECTION126', 'SECTION127', 'SECTION128', 'SECTION129', 'SECTION130', 'SECTION131', 'SECTION132', 'SECTION133', 'SECTION134', 'SECTION135', 'SECTION136', 'SECTION137', 'SECTION138', 'SECTION139', 'SECTION140', 'SECTION141', 'SECTION142', 'SECTION143', 'SECTION144', 'SECTION145', 'EndSectionData1', 'EndSectionData2', 'EndSectionData3', 'EndSectionData4', 'EndSectionData5', 'EndSectionData6', 'EndSectionData7', 'EndSectionData8', 'EndSectionData9', 'EndSectionData10', 'EndSectionData11','EndSectionData12','EndSectionData13', 'EndSectionData14','EndSectionData15','EndSectionData16','EndSectionData17','EndSectionData18','EndSectionData19','EndSectionData20']
                 listofsubfolders = listofsubfolders +['EndSectionData']
                 listofsubfolders = ['Baseline']+listofsubfolders
 
@@ -387,7 +393,9 @@ if __name__ == '__main__':
                 #Final Dictionary to Write to the file
                 perclosdict_new = {}
                 for i,section in enumerate(CSV_COLUMNS):
-                    if section in participantperclosdict.keys():
+                    if section in participantperclosdict.keys() and section not in ['Participant']:
+                        perclosdict_new.update( { str(section) : participantperclosdict[ str(section) ] } )
+                    elif section in participantperclosdict.keys() and section in ['Participant']:#No purpose here yet
                         perclosdict_new.update( { str(section) : participantperclosdict[ str(section) ] } )
                     elif section not in participantperclosdict.keys():
                         perclosdict_new.update( { str(section) : ['No values here'] })
@@ -405,8 +413,10 @@ if __name__ == '__main__':
                 #Final HR dictionary to write to output file
                 hrdict_new ={}
                 for i, section in enumerate(CSV_COLUMNS):
-                    if section in participanthrdict.keys():
+                    if section in participanthrdict.keys() and section not in ['Participant']:
                         hrdict_new.update( { str(section) : participanthrdict[str(section)][0] } )
+                    elif section in participanthrdict.keys() and section in ['Participant']:#TO print the participant number in output
+                        hrdict_new.update( { str(section) : participanthrdict[str(section)] } )
                     elif section not in participanthrdict.keys():
                         hrdict_new.update( { str(section) : ['No values here '] } )
                 #w.writerow(["Participant :"+folder])
@@ -421,8 +431,10 @@ if __name__ == '__main__':
                 #Final HR dictionary to write to output file
                 hrdict_new ={}
                 for i, section in enumerate(CSV_COLUMNS):
-                    if section in participanthrdict.keys():
+                    if section in participanthrdict.keys() and section not in ['Participant']:
                         hrdict_new.update( { str(section) : participanthrdict[str(section)][1] } )
+                    elif section in participanthrdict.keys() and section in ['Participant']:
+                        hrdict_new.update( { str(section) : participanthrdict[str(section)] } )
                     elif section not in participanthrdict.keys():
                         hrdict_new.update( { str(section) : ['No values here '] } )
                 #w.writerow(["Participant :"+folder])
@@ -437,8 +449,10 @@ if __name__ == '__main__':
                 #Final PD Dictionary to write to output file
                 pddict_new = {}
                 for i, section in enumerate(CSV_COLUMNS):
-                    if section in participantpddict.keys():
+                    if section in participantpddict.keys() and section not in ['Participant']:
                         pddict_new.update( { str(section) : participantpddict[str(section)][0] } )
+                    elif section in participantpddict.keys() and section in ['Participant']:
+                        pddict_new.update( { str(section) : participantpddict[str(section)] } )
                     elif section not in participantpddict.keys():
                         pddict_new.update( {str(section) : ['No values here']} )
                 #w.writerow(["Participant :"+folder])
@@ -453,8 +467,10 @@ if __name__ == '__main__':
                 #Final PD Dictionary to write to output file
                 pddict_new = {}
                 for i, section in enumerate(CSV_COLUMNS):
-                    if section in participantpddict.keys():
+                    if section in participantpddict.keys() and section not in ['Participant']:
                         pddict_new.update( { str(section) : participantpddict[str(section)][1] } )
+                    elif section in participantpddict.keys() and section in ['Participant']:
+                        pddict_new.update( { str(section) : participantpddict[str(section)] } )
                     elif section not in participantpddict.keys():
                         pddict_new.update( {str(section) : ['No values here']} )
                 #w.writerow(["Participant :"+folder])
@@ -469,8 +485,10 @@ if __name__ == '__main__':
                 #Final GSR Dictionary to write to the output file
                 gsrdict_new = {}
                 for i, section in enumerate(CSV_COLUMNS):
-                    if section in participantgsrdict.keys():
+                    if section in participantgsrdict.keys() and section not in ['Participant']:
                         gsrdict_new.update( { str(section) : participantgsrdict[str(section)][1] } )
+                    elif section in participantgsrdict.keys() and section in ['Participant']:
+                        gsrdict_new.update( { str(section) : participantgsrdict[str(section)] } )
                     elif section not in participantgsrdict.keys():
                         gsrdict_new.update( { str(section) : ['No values here'] } )
                 #w.writerow(["Participant :"+folder])
@@ -485,8 +503,10 @@ if __name__ == '__main__':
                 #Final GSR Dictionary to write to the output file
                 gsrdict_new = {}
                 for i, section in enumerate(CSV_COLUMNS):
-                    if section in participantgsrdict.keys():
+                    if section in participantgsrdict.keys() and section not in ['Participant']:
                         gsrdict_new.update( { str(section) : participantgsrdict[str(section)][0] } )
+                    elif section in participantgsrdict.keys() and section in ['Participant']:
+                        gsrdict_new.update( { str(section) : participantgsrdict[str(section)] } )
                     elif section not in participantgsrdict.keys():
                         gsrdict_new.update( { str(section) : ['No values here'] } )
                 #w.writerow(["Participant :"+folder])
