@@ -103,7 +103,8 @@ def ConvertGSRToStats(gsrheader, gsrdata , participant, section , LOGFILE = os.p
             decreasesinGSR = []#Array that records the decrease in GSR for the 10 intervals
             for i in range(len(seperatedlists)):
                 decreasesinGSR.append( seperatedlists[i][-1]  - seperatedlists[i][0] )
-            avg_decGSR = mean( decreasesinGSR )
+            #avg_decGSR = mean( decreasesinGSR )
+            avg_decGSR = filteredgsr[-1] - filteredgsr[0]#Alternate method to calcaulate the drop in GSR.
             avg_GSR = mean ( filteredgsr )
             dict  = { str(section) : [avg_decGSR , avg_GSR] }
             return dict
@@ -122,7 +123,8 @@ def ConvertGSRToStats(gsrheader, gsrdata , participant, section , LOGFILE = os.p
                     while (index+inc+1) < len(list):
                         temp.append( ( list[index+inc] - list[index] ) )
                         index = index + inc
-                    avg_decGSR.append( mean(temp) )# Mean reduction in GSR over an interval
+                    #avg_decGSR.append( mean(temp) )# Mean reduction in GSR over an interval
+                    avg_decGSR.append( list[-1] -list[0] )#Alternate way to calculate the decrease in GSR. Lot simpler than the alternate shown above
                     avg_GSR.append( mean(list) )# Mean GSR over an interval
                 elif len(list)<=5:
                     if DEBUG == 0:
