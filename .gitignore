@@ -18,3 +18,4 @@ RunMultiplePythonScripts.sh
 PDMAXOUTPUT.csv
 HRMAXOUTPUT.csv
 GSRDECOUTPUT.csv
+HeatMaps.py
